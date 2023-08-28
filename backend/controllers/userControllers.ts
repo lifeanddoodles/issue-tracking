@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { IUser } from "../../shared/interfaces/index.js";
+import { IUser, UserRole } from "../../shared/interfaces/index.js";
 import db from "../config/db.json" assert { type: "json" };
 
 // CREATE
@@ -14,13 +14,13 @@ export const addUser = asyncHandler(async (req: Request, res: Response) => {
     lastName,
     email,
     password,
-    role = "CLIENT",
+    role = UserRole.CLIENT,
     company,
     position,
   } = req.body;
 
   // Validation
-  // (Optional) Find authenticated user
+  // (Optional) Get authenticated user
   // Handle authenticated user not authorized for request
   // if (authUser.role === "CLIENT") {
   //   res.status(401)
@@ -28,8 +28,9 @@ export const addUser = asyncHandler(async (req: Request, res: Response) => {
   // }
 
   // Handle user already exists
-  const users = db.users;
-  const user = users.find((user) => user.email === email);
+  // TODO: Refactor to find user by email from MongoDB
+  const users: IUser[] = db.users;
+  const user: IUser | undefined = users.find((user) => user.email === email);
   if (user) {
     res.status(400);
     throw new Error("User already exists");
@@ -63,13 +64,14 @@ export const addUser = asyncHandler(async (req: Request, res: Response) => {
     lastModifiedAt: new Date(),
   };
 
+  // TODO: Remove temp function once we invoke correct function in MongoDB
   const createUser: (
     newUser: Partial<IUser>
   ) => Promise<Partial<IUser> | IUser> = async (newUser: Partial<IUser>) =>
     newUser;
 
   // Request user creation
-  // TODO: Remove Partial<IUser> once connected to MongoDB
+  // TODO: Remove Partial<IUser> once we get a full IUser from correct function in MongoDB
   const createdUser: IUser | Partial<IUser> = await createUser(newUser);
 
   // Handle user creation error
@@ -90,7 +92,8 @@ export const getUsers = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
 
   // Find users
-  const users = db.users;
+  // TODO: Refactor to fetch users from MongoDB
+  const users: IUser[] = db.users;
 
   // Handle users not found
   if (!users) {
@@ -107,10 +110,13 @@ export const getUsers = asyncHandler(async (req: Request, res: Response) => {
 // @access  Public
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
-  const users = db.users;
 
   // Find user
-  const user = users.find((user) => user._id === req.params.userId);
+  // TODO: Refactor to find user by _id from MongoDB
+  const users: IUser[] = db.users;
+  const user: IUser | undefined = users.find(
+    (user) => user._id === req.params.userId
+  );
 
   // Handle user not found
   if (!user) {
@@ -129,13 +135,11 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
   const { firstName, lastName, email, role, company, position } = req.body;
-  const users = db.users;
 
   // Find user
-  // TODO: Change to find by _id
-  const user: IUser | Partial<IUser> | undefined = users.find(
-    (user) => user.email === email
-  );
+  // TODO: Refactor to find user by email from MongoDB
+  const users: IUser[] = db.users;
+  const user: IUser | undefined = users.find((user) => user.email === email);
 
   // Handle user not found
   if (!user) {
@@ -167,11 +171,12 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
     lastModifiedAt: new Date(),
   };
 
+  // TODO: Remove temp function once we invoke correct function in MongoDB
   const updateUser: (
-    user: Partial<IUser>,
+    user: IUser,
     updatedUserData: Partial<IUser>
   ) => Promise<Partial<IUser> | IUser> = async (
-    user: Partial<IUser>,
+    user: IUser,
     updatedUserData: Partial<IUser>
   ) => ({
     ...user,
@@ -179,7 +184,7 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   });
 
   // Request user update
-  // TODO: Remove Partial<IUser> once connected to MongoDB
+  // TODO: Remove Partial<IUser> once we get a full IUser from correct function in MongoDB
   const updatedUser: Partial<IUser> | IUser = await updateUser(
     user,
     updatedUserData
