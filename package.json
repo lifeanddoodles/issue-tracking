@@ -1,9 +1,12 @@
 {
   "name": "issue-tracking",
+  "type": "module",
   "version": "1.0.0",
   "description": "Fullstack app for issue tracking using the MERN stack.",
   "main": "server.ts",
   "scripts": {
+    "start": "ts-node backend/server.ts",
+    "server": "nodemon backend/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
