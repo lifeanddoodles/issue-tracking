@@ -1,9 +1,9 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { IUser, UserRole } from "../../shared/interfaces/index.js";
-import db from "../config/db.json" assert { type: "json" };
+import User from "../models/userModel.js";
 
-// CREATE
 // @desc    Create user
 // @route   POST /api/users/
 // @access  Public
@@ -28,10 +28,8 @@ export const addUser = asyncHandler(async (req: Request, res: Response) => {
   // }
 
   // Handle user already exists
-  // TODO: Refactor to find user by email from MongoDB
-  const users: IUser[] = db.users;
-  const user: IUser | undefined = users.find((user) => user.email === email);
-  if (user) {
+  const userExists = await User.findOne({ email });
+  if (userExists) {
     res.status(400);
     throw new Error("User already exists");
   }
@@ -52,11 +50,14 @@ export const addUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   // Prepare new user data
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
   const newUser: Partial<IUser> = {
     firstName,
     lastName,
     email,
-    password,
+    password: hashedPassword,
     role,
     company,
     position,
@@ -64,15 +65,8 @@ export const addUser = asyncHandler(async (req: Request, res: Response) => {
     lastModifiedAt: new Date(),
   };
 
-  // TODO: Remove temp function once we invoke correct function in MongoDB
-  const createUser: (
-    newUser: Partial<IUser>
-  ) => Promise<Partial<IUser> | IUser> = async (newUser: Partial<IUser>) =>
-    newUser;
-
   // Request user creation
-  // TODO: Remove Partial<IUser> once we get a full IUser from correct function in MongoDB
-  const createdUser: IUser | Partial<IUser> = await createUser(newUser);
+  const createdUser = await User.create(newUser);
 
   // Handle user creation error
   if (!createdUser) {
@@ -84,16 +78,12 @@ export const addUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(201).send(createdUser);
 });
 
-// READ
 // @desc    Get all users
 // @route   GET /api/users/
 // @access  Public
 export const getUsers = asyncHandler(async (req: Request, res: Response) => {
-  // Prepare request variables (body, params, user, etc.)
-
   // Find users
-  // TODO: Refactor to fetch users from MongoDB
-  const users: IUser[] = db.users;
+  const users = await User.find().select("-password");
 
   // Handle users not found
   if (!users) {
@@ -110,13 +100,10 @@ export const getUsers = asyncHandler(async (req: Request, res: Response) => {
 // @access  Public
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
+  const userId = req.params.userId;
 
   // Find user
-  // TODO: Refactor to find user by _id from MongoDB
-  const users: IUser[] = db.users;
-  const user: IUser | undefined = users.find(
-    (user) => user._id === req.params.userId
-  );
+  const user = await User.findById(userId).select("-password");
 
   // Handle user not found
   if (!user) {
@@ -128,24 +115,13 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).send(user);
 });
 
-// UPDATE
 // @desc    Update user
 // @route   UPDATE /api/users/:userId
 // @access  Private
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
   const { firstName, lastName, email, role, company, position } = req.body;
-
-  // Find user
-  // TODO: Refactor to find user by email from MongoDB
-  const users: IUser[] = db.users;
-  const user: IUser | undefined = users.find((user) => user.email === email);
-
-  // Handle user not found
-  if (!user) {
-    res.status(404);
-    throw new Error("User not found");
-  }
+  const userId = req.params.userId;
 
   // Validation
   // Get authenticated user
@@ -171,24 +147,10 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
     lastModifiedAt: new Date(),
   };
 
-  // TODO: Remove temp function once we invoke correct function in MongoDB
-  const updateUser: (
-    user: IUser,
-    updatedUserData: Partial<IUser>
-  ) => Promise<Partial<IUser> | IUser> = async (
-    user: IUser,
-    updatedUserData: Partial<IUser>
-  ) => ({
-    ...user,
+  // Request find user by ID and update
+  const updatedUser = await User.findByIdAndUpdate(userId, {
     ...updatedUserData,
-  });
-
-  // Request user update
-  // TODO: Remove Partial<IUser> once we get a full IUser from correct function in MongoDB
-  const updatedUser: Partial<IUser> | IUser = await updateUser(
-    user,
-    updatedUserData
-  );
+  }).select("-password");
 
   // Handle user update error
   if (!updatedUser) {
@@ -197,25 +159,28 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   // Handle success
-  res.status(201).send(updatedUser);
+  res.status(200).send(updatedUser);
 });
 
-// DELETE
 // @desc    Delete user
 // @route   DELETE /api/users/:userId
 // @access  Private
 export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
-
-  // Find user
-
-  // Handle user not found
+  const userId = req.params.userId;
 
   // Validation
   // Get authenticated user
   // Handle authenticated user not authorized for request
 
   // Request user deletion
+  const deletedUser = await User.findByIdAndDelete(userId);
+
+  // Handle user not found
+  if (!deletedUser) {
+    res.status(404);
+    throw new Error("User not found");
+  }
 
   // Handle success
   res.status(200).json({ message: "User deleted successfully" });
