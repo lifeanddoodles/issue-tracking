@@ -7,6 +7,7 @@ import {
   Status,
 } from "../../shared/interfaces/index.js";
 import { addDays } from "../../shared/utils/index.js";
+import Comment from "../models/commentModel.js";
 import Ticket from "../models/ticketModel.js";
 
 function getDeadlineAutoFill(priority: string) {
@@ -107,6 +108,9 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
 
   // Find ticket
   const ticket = await Ticket.findById(ticketId);
+  const comments = await Comment.find({ ticketId })
+    .select("-ticketId, -__v")
+    .sort({ createdAt: "desc" });
 
   // Handle ticket not found
   if (!ticket) {
@@ -117,7 +121,7 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   // Validation
 
   // Handle success
-  res.status(200).send(ticket);
+  res.status(200).send({ ticket, comments });
 });
 
 // @desc  Get all tickets by user

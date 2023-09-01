@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./config/db.js";
 import { handleError } from "./middleware/errorMiddleware.js";
+import commentRoutes from "./routes/commentRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/tickets", ticketRoutes);
+app.use("/api/comments", commentRoutes);
 
 // Error handler
 app.use(handleError);
