@@ -66,7 +66,10 @@ export const getComment = asyncHandler(async (req: Request, res: Response) => {
   const commentId = req.params.commentId;
 
   // Find comment
-  const comment = await Comment.findById(commentId).populate("ticketId", "_id, title");
+  const comment = await Comment.findById(commentId).populate(
+    "ticketId",
+    "_id title"
+  );
 
   // Handle comment not found
   if (!comment) {

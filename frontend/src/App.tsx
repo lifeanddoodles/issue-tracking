@@ -25,14 +25,22 @@ function App() {
         comments={[
           {
             _id: "64f11434f13bd520d237f15d",
-            author: "64edaaac9225a02d87486654",
+            author: {
+              _id: "64edaaac9225a02d87486654",
+              firstName: "Keith",
+              lastName: "Gottlieb",
+            },
             message: "Got it, thanks for the update!",
             ticketId: "64eec35406a517b31fb7f010",
             isEdited: false,
           },
           {
             _id: "64f11407a934f6fa8160d5fb",
-            author: "64eda7140a3e527cbe48b45c",
+            author: {
+              _id: "64eda7140a3e527cbe48b45c",
+              firstName: "Jason",
+              lastName: "Schultz",
+            },
             message: "Update: Links fixed, will deploy soon.",
             ticketId: "64eec35406a517b31fb7f010",
             isEdited: false,

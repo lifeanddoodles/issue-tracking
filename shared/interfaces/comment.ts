@@ -9,4 +9,18 @@ export interface IComment {
   lastModifiedAt?: Date | string;
 }
 
+export interface IAuthorInfo {
+  _id: string | ObjectId | Record<string, unknown>;
+  firstName: string;
+  lastName: string;
+}
+
 export interface ICommentDocument extends IComment, Document {}
+
+export type ICommentPopulatedDocument = IComment & {
+  _id: string | ObjectId | Record<string, unknown>;
+} & {
+  author: IAuthorInfo;
+};
+{
+}

@@ -1,5 +1,5 @@
 import {
-  IComment,
+  ICommentPopulatedDocument,
   ITicket,
   Priority,
   Status,
@@ -109,11 +109,15 @@ export const fakeStaffUser = fakeStaffUsers()[0];
 
 export const fakeDevUser = fakeDevUsers()[0];
 
-export const fakeComments: (IComment & { _id: string })[] = [
+export const fakeComments: ICommentPopulatedDocument[] = [
   {
     _id: "ticket-001-001",
     ticketId: "ticket-001",
-    author: "staff-001",
+    author: {
+      _id: "staff-001",
+      firstName: "John",
+      lastName: "Doe",
+    },
     message: "Hello team, can we have an update on this ticket?",
     createdAt: "2023-08-30T22:22:30.440Z",
     lastModifiedAt: "2023-08-30T22:22:30.440Z",
@@ -122,7 +126,11 @@ export const fakeComments: (IComment & { _id: string })[] = [
   {
     _id: "ticket-001-002",
     ticketId: "ticket-001",
-    author: "dev-001",
+    author: {
+      _id: "dev-001",
+      firstName: "Jane",
+      lastName: "Doe",
+    },
     message: "Just finished implementing the changes, will deploy soon!",
     createdAt: "2023-08-31T22:22:30.440Z",
     lastModifiedAt: "2023-08-31T22:22:30.440Z",

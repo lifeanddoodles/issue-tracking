@@ -1,13 +1,11 @@
-import { ObjectId } from "mongoose";
-import { IComment, IUser } from "../../../../shared/interfaces";
-import { getFullName } from "../../../../shared/utils";
+import { ICommentPopulatedDocument } from "../../../../shared/interfaces";
 
 interface ICommentProps {
-  comment: IComment & { _id: string | ObjectId | Record<string, unknown> };
-  author: IUser & { _id: string | ObjectId | Record<string, unknown> };
+  comment: ICommentPopulatedDocument;
 }
 
-const Comment = ({ comment, author }: ICommentProps) => {
+const Comment = ({ comment }: ICommentProps) => {
+  const { author } = comment;
   return (
     <li
       id={
@@ -15,7 +13,7 @@ const Comment = ({ comment, author }: ICommentProps) => {
       }
     >
       <p>{comment.message}</p>
-      <p>{getFullName(author.firstName, author.lastName)}</p>
+      <p>{`${author?.firstName} ${author?.lastName}`}</p>
     </li>
   );
 };

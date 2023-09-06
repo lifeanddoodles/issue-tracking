@@ -110,6 +110,7 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   const ticket = await Ticket.findById(ticketId);
   const comments = await Comment.find({ ticketId })
     .select("-ticketId, -__v")
+    .populate("author", "_id firstName lastName")
     .sort({ createdAt: "desc" });
 
   // Handle ticket not found

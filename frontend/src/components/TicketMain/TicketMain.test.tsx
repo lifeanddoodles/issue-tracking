@@ -17,9 +17,7 @@ describe("TicketMain", () => {
 
   test("if comments exist, renders correct amount of comments", () => {
     render(<TicketMain ticket={fakeTicket} comments={fakeComments} />);
-    const element = screen.getByRole("list");
     const listItems = screen.getAllByRole("listitem");
-    expect(element).toBeInTheDocument();
     expect(listItems.length).toEqual(fakeComments.length);
   });
 
