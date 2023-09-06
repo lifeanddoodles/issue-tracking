@@ -1,21 +1,24 @@
-import { ITicketDocument, IUser } from "../../../../shared/interfaces";
+import { ITicketPopulatedDocument } from "../../../../shared/interfaces";
 import { getFullName } from "../../../../shared/utils";
 
 interface ITicketSidebarProps {
-  ticket: Partial<ITicketDocument>;
-  assignee: IUser & { _id: string };
-  reporter: IUser & { _id: string };
+  ticket: ITicketPopulatedDocument;
 }
 
-const TicketSidebar = ({ ticket, assignee, reporter }: ITicketSidebarProps) => {
+const TicketSidebar = ({ ticket }: ITicketSidebarProps) => {
+  const { assignee, reporter } = ticket;
   const assigneeFullName = getFullName(assignee.firstName!, assignee.lastName!);
   const reporterFullName = getFullName(reporter.firstName!, reporter.lastName!);
 
   return (
     <aside>
       <p>{ticket.status}</p>
-      <p>{assigneeFullName ?? "Click to assign"}</p>
-      <p>{reporterFullName}</p>
+      <p>
+        <strong>Assignee:</strong> {assigneeFullName ?? "Click to assign"}
+      </p>
+      <p>
+        <strong>Reporter:</strong> {reporterFullName}
+      </p>
     </aside>
   );
 };

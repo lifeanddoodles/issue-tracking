@@ -7,25 +7,13 @@ const fakeTicket = fakeTickets[0];
 
 describe("TicketSidebar", () => {
   test("renders correctly", () => {
-    render(
-      <TicketSidebar
-        ticket={fakeTicket}
-        assignee={fakeDevUser}
-        reporter={fakeStaffUser}
-      />
-    );
+    render(<TicketSidebar ticket={fakeTicket} />);
     const element = screen.getByText(fakeTicket.status);
     expect(element).toBeInTheDocument();
   });
 
   test("renders assignee info", () => {
-    render(
-      <TicketSidebar
-        ticket={fakeTicket}
-        assignee={fakeDevUser}
-        reporter={fakeStaffUser}
-      />
-    );
+    render(<TicketSidebar ticket={fakeTicket} />);
     const element = screen.getByText(
       `${fakeDevUser.firstName} ${fakeDevUser.lastName}`
     );
@@ -33,13 +21,7 @@ describe("TicketSidebar", () => {
   });
 
   test("renders reporter info", () => {
-    render(
-      <TicketSidebar
-        ticket={fakeTicket}
-        assignee={fakeDevUser}
-        reporter={fakeStaffUser}
-      />
-    );
+    render(<TicketSidebar ticket={fakeTicket} />);
     const element = screen.getByText(
       `${fakeStaffUser.firstName} ${fakeStaffUser.lastName}`
     );

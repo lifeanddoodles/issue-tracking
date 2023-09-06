@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ICommentPopulatedDocument,
-  ITicket,
+  ITicketPopulatedDocument,
 } from "../../../../shared/interfaces";
 import Comment from "../Comment";
 
 interface ITicketMainProps {
-  ticket: ITicket & { _id: string };
+  ticket: ITicketPopulatedDocument;
   comments: ICommentPopulatedDocument[];
 }
 

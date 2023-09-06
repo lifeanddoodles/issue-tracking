@@ -1,15 +1,15 @@
 import { Document, ObjectId } from "mongoose";
 
 export enum Priority {
-  High = "HIGH",
-  Low = "LOW",
-  Medium = "MEDIUM",
+  HIGH = "High",
+  LOW = "Low",
+  MEDIUM = "Medium",
 }
 
 export enum Status {
-  InProgress = "IN_PROGRESS",
-  Open = "OPEN",
-  Closed = "CLOSED",
+  IN_PROGRESS = "In progress",
+  OPEN = "Open",
+  CLOSED = "Closed",
 }
 
 export interface ITicket {
@@ -26,5 +26,18 @@ export interface ITicket {
   createdAt: Date | string;
   lastModifiedAt: Date | string;
 }
+
+export interface IEmployeeInfo {
+  _id: string | ObjectId | Record<string, unknown>;
+  firstName: string;
+  lastName: string;
+}
+
+export type ITicketPopulatedDocument = ITicket & {
+  _id: string | ObjectId | Record<string, unknown>;
+} & {
+  assignee: IEmployeeInfo;
+  reporter: IEmployeeInfo;
+};
 
 export interface ITicketDocument extends ITicket, Document {}

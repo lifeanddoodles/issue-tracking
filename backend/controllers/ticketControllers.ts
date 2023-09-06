@@ -32,8 +32,8 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
     description,
     assignee,
     reporter,
-    status = Status.Open,
-    priority = Priority.Low,
+    status = Status.OPEN,
+    priority = Priority.LOW,
     deadline,
     moveToDevSprint = false,
     isSubtask = false,
@@ -107,7 +107,9 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   const ticketId = req.params.ticketId;
 
   // Find ticket
-  const ticket = await Ticket.findById(ticketId);
+  const ticket = await Ticket.findById(ticketId)
+    .populate("assignee", "_id firstName lastName")
+    .populate("reporter", "_id firstName lastName");
   const comments = await Comment.find({ ticketId })
     .select("-ticketId, -__v")
     .populate("author", "_id firstName lastName")

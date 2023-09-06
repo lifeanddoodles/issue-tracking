@@ -1,20 +1,28 @@
 import {
   ICommentPopulatedDocument,
-  ITicket,
+  ITicketPopulatedDocument,
   Priority,
   Status,
 } from "../../../shared/interfaces";
 
-export const fakeTickets: (ITicket & { _id: string })[] = [
+export const fakeTickets: ITicketPopulatedDocument[] = [
   {
     _id: "ticket-001",
     title: "Fix login page alignment",
     description:
       "The login page elements are misaligned. Adjust the CSS to align them properly.",
-    assignee: "5",
-    status: Status.InProgress,
-    priority: Priority.Low,
-    reporter: "53",
+    assignee: {
+      _id: "staff-001",
+      firstName: "John",
+      lastName: "Doe",
+    },
+    status: Status.IN_PROGRESS,
+    priority: Priority.LOW,
+    reporter: {
+      _id: "dev-001",
+      firstName: "Jane",
+      lastName: "Doe",
+    },
     moveToDevSprint: true,
     deadline: "2023-08-30T22:22:30.440Z",
     createdAt: "2023-08-30T22:22:30.440Z",
@@ -27,10 +35,18 @@ export const fakeTickets: (ITicket & { _id: string })[] = [
     title: "Add user profile picture support",
     description:
       "Allow users to upload and display profile pictures on their profiles.",
-    assignee: "12",
-    status: Status.Open,
-    priority: Priority.Medium,
-    reporter: "53",
+    assignee: {
+      _id: "dev-002",
+      firstName: "Mark",
+      lastName: "Holmes",
+    },
+    status: Status.OPEN,
+    priority: Priority.MEDIUM,
+    reporter: {
+      _id: "staff-002",
+      firstName: "Mary",
+      lastName: "Smith",
+    },
     deadline: "2023-08-30T22:22:30.440Z",
     createdAt: "2023-08-30T22:22:30.440Z",
     lastModifiedAt: "2023-08-30T22:22:30.440Z",
@@ -43,10 +59,18 @@ export const fakeTickets: (ITicket & { _id: string })[] = [
     title: "Implement password reset functionality",
     description:
       "Create a mechanism for users to reset their passwords if they forget them.",
-    assignee: "12",
-    status: Status.InProgress,
-    priority: Priority.High,
-    reporter: "15",
+    assignee: {
+      _id: "dev-001",
+      firstName: "Jane",
+      lastName: "Doe",
+    },
+    status: Status.IN_PROGRESS,
+    priority: Priority.HIGH,
+    reporter: {
+      _id: "staff-002",
+      firstName: "Mary",
+      lastName: "Smith",
+    },
     deadline: "2023-08-30T22:22:30.440Z",
     createdAt: "2023-08-30T22:22:30.440Z",
     lastModifiedAt: "2023-08-30T22:22:30.440Z",
