@@ -15,16 +15,16 @@ export enum Status {
 export interface ITicket {
   title: string;
   description: string;
-  assignee: ObjectId | Record<string, unknown>;
-  reporter: ObjectId | Record<string, unknown>;
+  assignee: ObjectId | Record<string, unknown> | string;
+  reporter: ObjectId | Record<string, unknown> | string;
   status: Status;
   priority: Priority;
   moveToDevSprint: boolean;
-  deadline: Date;
+  deadline: Date | string;
   isSubtask: boolean;
   parentTask: ObjectId | Record<string, unknown> | null;
-  createdAt: Date;
-  lastModifiedAt: Date;
+  createdAt: Date | string;
+  lastModifiedAt: Date | string;
 }
 
 export interface ITicketDocument extends ITicket, Document {}

@@ -121,7 +121,7 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   // Validation
 
   // Handle success
-  res.status(200).send({ ticket, comments });
+  res.status(200).json({ ticket, comments });
 });
 
 // @desc  Get all tickets by user

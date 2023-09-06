@@ -112,7 +112,7 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   // Handle success
-  res.status(200).send(user);
+  res.status(200).json(user);
 });
 
 // @desc    Update user

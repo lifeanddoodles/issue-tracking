@@ -11,12 +11,12 @@ export interface IUser {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+  password?: string;
   role: UserRole | string;
   company: string;
   position: string;
-  createdAt: Date | string;
-  lastModifiedAt: Date | string;
+  createdAt?: Date | string;
+  lastModifiedAt?: Date | string;
 }
 
 export interface IUserDocument extends IUser, Document {}
