@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect } from "vitest";
 import TicketMain from ".";
-import { fakeComments, fakeTickets } from "../../__mocks__";
+import { fakeComments, fakePopulatedTickets } from "../../__mocks__";
 
-const fakeTicket = fakeTickets[0];
+const fakeTicket = fakePopulatedTickets[0];
 
 describe("TicketMain", () => {
   test("renders correctly", () => {
