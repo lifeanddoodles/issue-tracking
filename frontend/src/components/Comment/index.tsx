@@ -19,23 +19,35 @@ const Comment = ({ comment }: ICommentProps) => {
   };
 
   return (
-    <li id={commentId}>
+    <li id={commentId} className="comment comment__container">
       <div>
         {author.avatarUrl ? (
           <img
             src={author.avatarUrl}
             alt={`Profile image of ${author?.firstName} ${author?.lastName}`}
+            className="comment__avatar--image"
           />
         ) : (
-          <span>{getInitials(author.firstName, author.lastName)}</span>
+          <span className="comment__avatar--initials">
+            {getInitials(author.firstName, author.lastName)}
+          </span>
         )}
       </div>
       <div>
-        <header>
-          <p>{`${author?.firstName} ${author?.lastName}`}</p>
+        <header className="comment__header">
+          <span>{`${author?.firstName} ${author?.lastName}`}</span>
+          {comment?.createdAt && (
+            <span>
+              {typeof comment.createdAt === "string"
+                ? new Date(comment.createdAt).toLocaleString()
+                : comment.createdAt.toLocaleDateString()}
+            </span>
+          )}
         </header>
-        <p>{comment.message}</p>
-        <footer>
+        <div className="comment__message">
+          <p>{comment.message}</p>
+        </div>
+        <footer className="comment__footer comment__footer--actions">
           <button onClick={() => handleUpdateComment(commentId)}>Edit</button>
           <button onClick={() => handleDeleteComment(commentId)}>Delete</button>
         </footer>
