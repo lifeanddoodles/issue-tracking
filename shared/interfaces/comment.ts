@@ -13,6 +13,7 @@ export interface IAuthorInfo {
   _id: string | ObjectId | Record<string, unknown>;
   firstName: string;
   lastName: string;
+  avatarUrl?: string;
 }
 
 export interface ICommentDocument extends IComment, Document {}

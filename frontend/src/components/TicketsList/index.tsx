@@ -1,16 +1,30 @@
+import { Link } from "react-router-dom";
 import {
-  ITicketDocument,
+  ITicket,
   ITicketPopulatedDocument,
 } from "../../../../shared/interfaces";
 
 interface ITicketsListProps {
-  tickets: ITicketDocument[] | ITicketPopulatedDocument[];
+  tickets: (ITicket & { _id: string })[] | ITicketPopulatedDocument[];
 }
 const TicketsList = ({ tickets }: ITicketsListProps) => {
+  if (tickets.length === 0) return <h1>No tickets</h1>;
   return (
     <ul>
       {tickets.map((ticket) => {
-        return <li key={ticket._id}>{ticket.title}</li>;
+        const ticketId =
+          typeof ticket._id === "string" ? ticket._id : ticket._id.toString();
+
+        return (
+          <li key={ticketId}>
+            <Link to={`/tickets/${ticketId}`}>
+              <article>
+                <h3>{ticket.title}</h3>
+                <footer>{ticket.status}</footer>
+              </article>
+            </Link>
+          </li>
+        );
       })}
     </ul>
   );

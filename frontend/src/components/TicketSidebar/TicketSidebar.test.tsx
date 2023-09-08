@@ -1,9 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect } from "vitest";
 import TicketSidebar from ".";
-import { fakeDevUser, fakeStaffUser, fakeTickets } from "../../__mocks__";
+import {
+  fakeDevUser,
+  fakePopulatedTickets,
+  fakeStaffUser,
+} from "../../__mocks__";
 
-const fakeTicket = fakeTickets[0];
+const fakeTicket = fakePopulatedTickets[0];
 
 describe("TicketSidebar", () => {
   test("renders correctly", () => {

@@ -12,6 +12,7 @@ interface ITicketMainProps {
 
 const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
   const [loading, setLoading] = useState(false);
+  const [displayCommentEditor, setDisplayCommentEditor] = useState(false);
   const [formattedComments, setFormattedComments] = useState<
     | {
         comment: ICommentPopulatedDocument;
@@ -26,6 +27,12 @@ const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
 
   const handleAddComment = () => {
     console.log("Add Comment");
+    setDisplayCommentEditor(false);
+  };
+
+  const handleCancelComment = () => {
+    console.log("Cancel Comment");
+    setDisplayCommentEditor(false);
   };
 
   const loadFormattedComments = useCallback(async () => {
@@ -55,6 +62,16 @@ const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
       </main>
       <aside>
         <h2>Comments</h2>
+        <input
+          placeholder="Add a comment..."
+          onFocus={() => setDisplayCommentEditor(true)}
+        ></input>
+        {displayCommentEditor && (
+          <>
+            <button onClick={handleAddComment}>Add comment</button>
+            <button onClick={handleCancelComment}>Cancel</button>
+          </>
+        )}
         {noComments ? (
           <p>No comments yet</p>
         ) : (
@@ -72,9 +89,6 @@ const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
               ))}
           </ul>
         )}
-        <div>
-          <button onClick={handleAddComment}>Add comment</button>
-        </div>
       </aside>
     </>
   );

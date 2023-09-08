@@ -1,25 +1,17 @@
-import { useEffect, useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import TicketsList from "./components/TicketsList";
+import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
+import TicketDetails from "./pages/TicketDetails";
 
 function App() {
-  const [tickets, setTickets] = useState([]);
-  const getTickets = async () => {
-    const response = await fetch("/api/tickets");
-    const data = await response.json();
-    return data;
-  };
-
-  useEffect(() => {
-    getTickets().then((data) => {
-      setTickets(data);
-    });
-  }, []);
-
   return (
-    <>
-      <TicketsList tickets={tickets} />
-    </>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/tickets/:ticketId" element={<TicketDetails />} />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
   );
 }
 

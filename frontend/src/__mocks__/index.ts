@@ -1,11 +1,63 @@
 import {
   ICommentPopulatedDocument,
+  ITicket,
   ITicketPopulatedDocument,
   Priority,
   Status,
 } from "../../../shared/interfaces";
 
-export const fakeTickets: ITicketPopulatedDocument[] = [
+export const fakeTickets: (ITicket & { _id: string })[] = [
+  {
+    _id: "ticket-001",
+    title: "Fix login page alignment",
+    description:
+      "The login page elements are misaligned. Adjust the CSS to align them properly.",
+    assignee: "staff-001",
+    status: Status.IN_PROGRESS,
+    priority: Priority.LOW,
+    reporter: "dev-001",
+    moveToDevSprint: true,
+    deadline: "2023-08-30T22:22:30.440Z",
+    createdAt: "2023-08-30T22:22:30.440Z",
+    lastModifiedAt: "2023-08-30T22:22:30.440Z",
+    isSubtask: false,
+    parentTask: null,
+  },
+  {
+    _id: "ticket-002",
+    title: "Add user profile picture support",
+    description:
+      "Allow users to upload and display profile pictures on their profiles.",
+    assignee: "dev-002",
+    status: Status.OPEN,
+    priority: Priority.MEDIUM,
+    reporter: "staff-002",
+    deadline: "2023-08-30T22:22:30.440Z",
+    createdAt: "2023-08-30T22:22:30.440Z",
+    lastModifiedAt: "2023-08-30T22:22:30.440Z",
+    moveToDevSprint: true,
+    isSubtask: false,
+    parentTask: null,
+  },
+  {
+    _id: "ticket-003",
+    title: "Implement password reset functionality",
+    description:
+      "Create a mechanism for users to reset their passwords if they forget them.",
+    assignee: "dev-001",
+    status: Status.IN_PROGRESS,
+    priority: Priority.HIGH,
+    reporter: "staff-002",
+    deadline: "2023-08-30T22:22:30.440Z",
+    createdAt: "2023-08-30T22:22:30.440Z",
+    lastModifiedAt: "2023-08-30T22:22:30.440Z",
+    moveToDevSprint: true,
+    isSubtask: false,
+    parentTask: null,
+  },
+];
+
+export const fakePopulatedTickets: ITicketPopulatedDocument[] = [
   {
     _id: "ticket-001",
     title: "Fix login page alignment",
