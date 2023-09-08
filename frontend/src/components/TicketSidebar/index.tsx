@@ -1,5 +1,5 @@
 import { ITicketPopulatedDocument } from "../../../../shared/interfaces";
-import { getFullName } from "../../../../shared/utils";
+import { getFullName, getStatusText } from "../../utils";
 
 interface ITicketSidebarProps {
   ticket: ITicketPopulatedDocument;
@@ -12,7 +12,7 @@ const TicketSidebar = ({ ticket }: ITicketSidebarProps) => {
 
   return (
     <aside>
-      <p>{ticket.status}</p>
+      <p>{getStatusText(ticket.status)}</p>
       <p>
         <strong>Assignee:</strong> {assigneeFullName ?? "Click to assign"}
       </p>

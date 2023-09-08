@@ -1,15 +1,15 @@
 import { Document, ObjectId } from "mongoose";
 
 export enum Priority {
-  HIGH = "High",
-  LOW = "Low",
-  MEDIUM = "Medium",
+  HIGH = "HIGH",
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
 }
 
 export enum Status {
-  IN_PROGRESS = "In progress",
-  OPEN = "Open",
-  CLOSED = "Closed",
+  IN_PROGRESS = "IN_PROGRESS",
+  OPEN = "OPEN",
+  CLOSED = "CLOSED",
 }
 
 export interface ITicket {

@@ -3,6 +3,7 @@ import {
   ITicket,
   ITicketPopulatedDocument,
 } from "../../../../shared/interfaces";
+import { getStatusText } from "../../utils";
 
 interface ITicketsListProps {
   tickets: (ITicket & { _id: string })[] | ITicketPopulatedDocument[];
@@ -20,7 +21,7 @@ const TicketsList = ({ tickets }: ITicketsListProps) => {
             <Link to={`/tickets/${ticketId}`}>
               <article>
                 <h3>{ticket.title}</h3>
-                <footer>{ticket.status}</footer>
+                <footer>{getStatusText(ticket.status)}</footer>
               </article>
             </Link>
           </li>
