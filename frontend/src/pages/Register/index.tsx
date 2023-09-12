@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Input from "../../components/Input";
+import useValidation from "../../hooks/useValidation";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +10,7 @@ const Register = () => {
     company: "",
     position: "",
     password: "",
-    passwordConfirm: "",
+    confirmPassword: "",
   });
   const {
     firstName,
@@ -18,11 +19,12 @@ const Register = () => {
     company,
     position,
     password,
-    passwordConfirm,
+    confirmPassword,
   } = formData;
   const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
     null
   );
+  const { validateInput } = useValidation();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
@@ -30,6 +32,20 @@ const Register = () => {
     setFormData({
       ...formData,
       [target.name]: target.value,
+    });
+
+    const changedId =
+      target.id === "confirmPassword" ? "confirmPassword" : "password";
+    const idToCompare =
+      changedId === "confirmPassword" ? "password" : "confirmPassword";
+
+    validateInput({
+      target,
+      setErrors,
+      elementToCompare:
+        (target.id === changedId || idToCompare) && password && confirmPassword
+          ? { id: idToCompare, value: formData[idToCompare] }
+          : undefined,
     });
   };
 
@@ -106,9 +122,9 @@ const Register = () => {
       <Input
         label="Confirm password"
         type="password"
-        id="passwordConfirm"
+        id="confirmPassword"
         onChange={handleChange}
-        value={passwordConfirm}
+        value={confirmPassword}
         required
         errors={errors}
         setErrors={setErrors}

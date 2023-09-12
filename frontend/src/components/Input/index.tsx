@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import useValidation from "../../hooks/useValidation";
+
 interface IBaseInputProps {
   label?: string;
   id: string;
@@ -19,90 +22,6 @@ interface IEmailInputProps extends IBaseInputProps {
   pattern?: string;
 }
 
-function getReadableInputName(id: string) {
-  switch (id) {
-    case "firstName":
-      return "First name";
-    case "lastName":
-      return "Last name";
-    case "email":
-      return "Email";
-    case "password":
-      return "Password";
-    case "confirmPassword":
-      return "Confirm password";
-    case "company":
-      return "Company";
-    case "position":
-      return "Position";
-    default:
-      return id;
-  }
-}
-
-function validateInput({
-  target,
-  setErrors,
-}: {
-  target: HTMLInputElement;
-  setErrors: React.Dispatch<
-    React.SetStateAction<{
-      [key: string]: string[];
-    } | null>
-  >;
-}) {
-  const { id, value, pattern, minLength, required } = target;
-  if (required && value.length === 0) {
-    setErrors((errors: { [key: string]: string[] } | null) => {
-      return !errors?.[id].includes(`${getReadableInputName(id)} is required`)
-        ? {
-            ...errors,
-            [`${id}`]: [
-              ...(errors?.[id] ?? []),
-              `${getReadableInputName(id)} is required`,
-            ],
-          }
-        : errors;
-    });
-  }
-  if (minLength && value.length < minLength) {
-    setErrors((errors: { [key: string]: string[] } | null) => {
-      return !errors?.[id].includes(
-        `${getReadableInputName(id)} must be at least ${minLength} characters`
-      )
-        ? {
-            ...errors,
-            [`${id}`]: [
-              ...(errors?.[id] ?? []),
-              `${getReadableInputName(
-                id
-              )} must be at least ${minLength} characters`,
-            ],
-          }
-        : errors;
-    });
-  }
-  if (pattern && !value.match(pattern)) {
-    setErrors((errors: { [key: string]: string[] } | null) => {
-      return !errors?.[id].includes(
-        `${getReadableInputName(
-          id
-        )} must match the following pattern: ${pattern}`
-      )
-        ? {
-            ...errors,
-            [`${id}`]: [
-              ...(errors?.[id] ?? []),
-              `${getReadableInputName(
-                id
-              )} must match the following pattern: ${pattern}`,
-            ],
-          }
-        : errors;
-    });
-  }
-}
-
 const Input = ({
   label,
   id,
@@ -114,6 +33,7 @@ const Input = ({
   required,
   ...props
 }: IBaseInputProps | IEmailInputProps) => {
+  const { validateInput } = useValidation();
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e);
   };
