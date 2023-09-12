@@ -132,7 +132,6 @@ const useValidation = () => {
     >;
     elementToCompare?: { id: string; value: string };
   }) {
-    console.log(elementToCompare);
     const { id, value, pattern, minLength, required } = target;
     const errorRequiredText = getErrorMessage({ id, type: ErrorType.REQUIRED });
     const errorMinLengthText = getErrorMessage({
@@ -152,7 +151,7 @@ const useValidation = () => {
     });
 
     if (required) {
-      const shouldAdd = value.length === 0;
+      const shouldAdd = target.validity.valueMissing;
       const shouldRemove = value.length !== 0;
 
       setErrors((errors) =>
@@ -161,7 +160,7 @@ const useValidation = () => {
     }
 
     if (minLength) {
-      const shouldAdd = value.length < minLength;
+      const shouldAdd = target.validity.tooShort;
       const shouldRemove = value.length >= minLength;
 
       setErrors((errors) =>
