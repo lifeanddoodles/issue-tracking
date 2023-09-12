@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Input from "../../components/Input";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +20,9 @@ const Register = () => {
     password,
     passwordConfirm,
   } = formData;
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
+    null
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
@@ -38,70 +41,77 @@ const Register = () => {
   return (
     <form onSubmit={handleSubmit}>
       <h1>Register</h1>
-      <label htmlFor="firstName">First name:</label>
-      <input
+      <Input
+        label="First name:"
         type="text"
         id="firstName"
-        name="firstName"
         onChange={handleChange}
         value={firstName}
         minLength={2}
+        errors={errors}
+        setErrors={setErrors}
         required
       />
-      <label htmlFor="lastName">Last name:</label>
-      <input
+      <Input
+        label="Last name:"
         type="text"
         id="lastName"
-        name="lastName"
         onChange={handleChange}
         value={lastName}
         minLength={2}
+        errors={errors}
+        setErrors={setErrors}
         required
       />
-      <label htmlFor="email">Email:</label>
-      <input
+      <Input
+        label="Email:"
         type="email"
         id="email"
-        name="email"
         onChange={handleChange}
         value={email}
         required
+        errors={errors}
+        setErrors={setErrors}
       />
-      <label htmlFor="company">Company</label>
-      <input
+      <Input
+        label="Company"
         type="text"
         id="company"
-        name="company"
         onChange={handleChange}
         value={company}
         required
+        errors={errors}
+        setErrors={setErrors}
       />
-      <label htmlFor="position">Position</label>
-      <input
+      <Input
+        label="Position"
         type="text"
         id="position"
-        name="position"
         onChange={handleChange}
         value={position}
         required
+        errors={errors}
+        setErrors={setErrors}
       />
-      <label htmlFor="password">Password</label>
-      <input
+      <Input
+        label="Password"
         type="password"
         id="password"
-        name="password"
         onChange={handleChange}
         value={password}
         required
+        errors={errors}
+        setErrors={setErrors}
       />
-      <label htmlFor="passwordConfirm">Confirm password</label>
-      <input
+      <Input
+        label="Confirm password"
         type="password"
         id="passwordConfirm"
-        name="passwordConfirm"
         onChange={handleChange}
         value={passwordConfirm}
         required
+        errors={errors}
+        setErrors={setErrors}
       />
       <button type="submit">Submit</button>
     </form>
