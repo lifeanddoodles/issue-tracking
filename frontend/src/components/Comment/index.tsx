@@ -1,26 +1,57 @@
-import { ICommentPopulatedDocument } from "../../../../shared/interfaces";
+import { useState } from "react";
+import {
+  IComment,
+  ICommentPopulatedDocument,
+} from "../../../../shared/interfaces";
 import { getInitials } from "../../../src/utils";
+import useFetch from "../../hooks/useFetch";
+import {
+  COMMENTS_BASE_API_URL,
+  getDeleteCommentOptions,
+  getUpdateCommentOptions,
+} from "../../routes";
 
 interface ICommentProps {
   comment: ICommentPopulatedDocument;
 }
 
 const Comment = ({ comment }: ICommentProps) => {
+  const [isEdited, setIsEdited] = useState(comment.isEdited);
+  const [message, setMessage] = useState(comment.message);
+  const [toggleEdit, setToggleEdit] = useState(false);
   const commentId =
     typeof comment._id === "string" ? comment._id : comment._id.toString();
   const { author } = comment;
+  const { data, loading, error, sendRequest } = useFetch<IComment>();
+
+  const commentRequest = (commentId: string, options?: RequestInit) => {
+    sendRequest({
+      url: `${COMMENTS_BASE_API_URL}/${commentId}`,
+      options,
+    });
+    if (error) {
+      console.log(error);
+    }
+  };
 
   const handleUpdateComment = (commentId: string) => {
-    console.log(`Update Comment ${commentId}`);
+    setToggleEdit((prev) => !prev);
+    if (toggleEdit) {
+      const options = getUpdateCommentOptions(message);
+      commentRequest(commentId, options);
+      data && setIsEdited(data?.isEdited);
+    }
   };
 
   const handleDeleteComment = (commentId: string) => {
     console.log(`Delete Comment ${commentId}`);
+    const options = getDeleteCommentOptions();
+    commentRequest(commentId, options);
   };
 
   return (
     <li id={commentId} className="comment comment__container">
-      <div>
+      <div className="comment__avatar">
         {author.avatarUrl ? (
           <img
             src={author.avatarUrl}
@@ -43,9 +74,17 @@ const Comment = ({ comment }: ICommentProps) => {
                 : comment.createdAt.toLocaleDateString()}
             </span>
           )}
+          {isEdited && <span>Edited</span>}
         </header>
         <div className="comment__message">
-          <p>{comment.message}</p>
+          {!loading && !toggleEdit && <p>{message}</p>}
+          {toggleEdit && (
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          )}
         </div>
         <footer className="comment__footer comment__footer--actions">
           <button onClick={() => handleUpdateComment(commentId)}>Edit</button>

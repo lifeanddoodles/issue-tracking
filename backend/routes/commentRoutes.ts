@@ -27,7 +27,7 @@ router.get("/:commentId", getComment);
 // @desc Update comment
 // @route UPDATE /api/comments/:commentId
 // @access Private
-router.put("/:commentId", updateComment);
+router.patch("/:commentId", updateComment);
 
 // @desc Delete comment
 // @route DELETE /api/comments/:commentId

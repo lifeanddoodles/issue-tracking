@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import useValidation from "../../hooks/useValidation";
 
 interface IBaseInputProps {

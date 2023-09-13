@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   ICommentPopulatedDocument,
@@ -6,26 +5,27 @@ import {
 } from "../../../../shared/interfaces";
 import TicketMain from "../../components/TicketMain";
 import TicketSidebar from "../../components/TicketSidebar";
-import { getTicketInfo } from "../../routes";
+import useFetch from "../../hooks/useFetch";
+import { TICKETS_BASE_API_URL } from "../../routes";
 
 const TicketDetails = () => {
-  const [loading, setLoading] = useState(true);
-  const [ticketInfo, setTicketInfo] = useState<{
-    ticket: ITicketPopulatedDocument;
-    comments: ICommentPopulatedDocument[];
-  } | null>(null);
   const params = useParams();
   const ticketId = params.ticketId;
-
-  useEffect(() => {
-    getTicketInfo(ticketId!).then((data) => {
-      setTicketInfo(data);
-      setLoading(false);
-    });
-  }, [ticketId]);
+  const {
+    data: ticketInfo,
+    loading,
+    error,
+  } = useFetch<{
+    ticket: ITicketPopulatedDocument;
+    comments: ICommentPopulatedDocument[];
+  } | null>({ url: `${TICKETS_BASE_API_URL}/${ticketId}` });
 
   if (loading) {
     return <h1 role="status">Loading...</h1>;
+  }
+
+  if (error) {
+    return <h1 role="status">{error.message}</h1>;
   }
 
   if (!ticketInfo) {

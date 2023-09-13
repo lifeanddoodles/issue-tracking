@@ -89,17 +89,13 @@ export const getComment = asyncHandler(async (req: Request, res: Response) => {
 export const updateComment = asyncHandler(
   async (req: Request, res: Response) => {
     // Prepare request variables (body, params, user, etc.)
-    const { ticketId, author, message } = req.body;
+    const { message } = req.body;
     const commentId = req.params.commentId;
-
-    // Find comment
-
-    // Handle comment not found
 
     // Validation
 
     // Handle request with missing fields
-    const missingFields = !ticketId || !author || !message;
+    const missingFields = !message;
 
     if (missingFields) {
       res.status(400);
@@ -108,8 +104,6 @@ export const updateComment = asyncHandler(
 
     // Prepare updated comment data
     const updatedCommentData = {
-      ticketId,
-      author,
       message,
       isEdited: true,
     };
