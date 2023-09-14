@@ -3,6 +3,8 @@ import {
   ICommentPopulatedDocument,
   ITicketPopulatedDocument,
 } from "../../../../shared/interfaces";
+import Button from "../../components/Button";
+import Input from "../../components/Input";
 import Comment from "../Comment";
 
 interface ITicketMainProps {
@@ -26,12 +28,10 @@ const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
   );
 
   const handleAddComment = () => {
-    console.log("Add Comment");
     setDisplayCommentEditor(false);
   };
 
   const handleCancelComment = () => {
-    console.log("Cancel Comment");
     setDisplayCommentEditor(false);
   };
 
@@ -62,14 +62,16 @@ const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
       </main>
       <aside>
         <h2>Comments</h2>
-        <input
+        <Input
+          id="comment__message--input"
+          type="text"
           placeholder="Add a comment..."
           onFocus={() => setDisplayCommentEditor(true)}
-        ></input>
+        />
         {displayCommentEditor && (
           <>
-            <button onClick={handleAddComment}>Add comment</button>
-            <button onClick={handleCancelComment}>Cancel</button>
+            <Button label="Add comment" onClick={handleAddComment} />
+            <Button label="Cancel" onClick={handleCancelComment} />
           </>
         )}
         {noComments ? (

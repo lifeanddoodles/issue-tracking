@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "../../components/Button";
 import Input from "../../components/Input";
 import useValidation from "../../hooks/useValidation";
 
@@ -129,7 +130,7 @@ const Register = () => {
         errors={errors}
         setErrors={setErrors}
       />
-      <button type="submit">Submit</button>
+      <Button label="Submit" type="submit" />
     </form>
   );
 };

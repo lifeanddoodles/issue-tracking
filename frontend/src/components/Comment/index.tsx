@@ -10,6 +10,8 @@ import {
   getDeleteCommentOptions,
   getUpdateCommentOptions,
 } from "../../routes";
+import Button from "../Button";
+import Input from "../Input";
 
 interface ICommentProps {
   comment: ICommentPopulatedDocument;
@@ -79,7 +81,8 @@ const Comment = ({ comment }: ICommentProps) => {
         <div className="comment__message">
           {!loading && !toggleEdit && <p>{message}</p>}
           {toggleEdit && (
-            <input
+            <Input
+              id="comment__message--input"
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -87,8 +90,11 @@ const Comment = ({ comment }: ICommentProps) => {
           )}
         </div>
         <footer className="comment__footer comment__footer--actions">
-          <button onClick={() => handleUpdateComment(commentId)}>Edit</button>
-          <button onClick={() => handleDeleteComment(commentId)}>Delete</button>
+          <Button label="Edit" onClick={() => handleUpdateComment(commentId)} />
+          <Button
+            label="Delete"
+            onClick={() => handleDeleteComment(commentId)}
+          />
         </footer>
       </div>
     </li>
