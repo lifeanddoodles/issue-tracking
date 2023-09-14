@@ -5,6 +5,7 @@ import {
 } from "../../../../shared/interfaces";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
+import Column from "../../layout/Column";
 import Comment from "../Comment";
 
 interface ITicketMainProps {
@@ -50,7 +51,7 @@ const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
   }, [loadFormattedComments]);
 
   return (
-    <>
+    <Column>
       <main>
         <h1>{ticket.title}</h1>
         <h2>Description</h2>
@@ -92,7 +93,7 @@ const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
           </ul>
         )}
       </aside>
-    </>
+    </Column>
   );
 };
 

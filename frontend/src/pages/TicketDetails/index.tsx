@@ -6,6 +6,7 @@ import {
 import TicketMain from "../../components/TicketMain";
 import TicketSidebar from "../../components/TicketSidebar";
 import useFetch from "../../hooks/useFetch";
+import Row from "../../layout/Row";
 import { TICKETS_BASE_API_URL } from "../../routes";
 
 const TicketDetails = () => {
@@ -35,10 +36,10 @@ const TicketDetails = () => {
   return (
     ticketInfo &&
     !loading && (
-      <>
+      <Row>
         <TicketMain ticket={ticketInfo.ticket} comments={ticketInfo.comments} />
         <TicketSidebar ticket={ticketInfo.ticket} />
-      </>
+      </Row>
     )
   );
 };

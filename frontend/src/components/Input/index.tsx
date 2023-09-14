@@ -54,7 +54,7 @@ const Input = ({
   const inputHasErrors = errors && errors?.[id]?.length > 0;
 
   return (
-    <div>
+    <div role={label && "group"} className="flex flex-col mb-4">
       {label && <label htmlFor={id}>{label}</label>}
       <input
         type={type || "text"}
