@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
 import Register from "./pages/Register";
 import TicketDetails from "./pages/TicketDetails";
 
@@ -9,6 +10,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/tickets/:ticketId" element={<TicketDetails />} />
       <Route path="*" element={<Navigate to="/" />} />
