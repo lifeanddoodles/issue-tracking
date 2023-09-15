@@ -3,15 +3,16 @@ import {
   IComment,
   ICommentPopulatedDocument,
 } from "../../../../shared/interfaces";
-import { getInitials } from "../../../src/utils";
 import useFetch from "../../hooks/useFetch";
 import {
   COMMENTS_BASE_API_URL,
   getDeleteCommentOptions,
   getUpdateCommentOptions,
 } from "../../routes";
+import Avatar from "../Avatar";
 import Button from "../Button";
 import Input from "../Input";
+import CommentHeader from "./CommentHeader";
 
 interface ICommentProps {
   comment: ICommentPopulatedDocument;
@@ -52,33 +53,26 @@ const Comment = ({ comment }: ICommentProps) => {
   };
 
   return (
-    <li id={commentId} className="comment comment__container">
-      <div className="comment__avatar">
-        {author.avatarUrl ? (
-          <img
-            src={author.avatarUrl}
-            alt={`Profile image of ${author?.firstName} ${author?.lastName}`}
-            className="comment__avatar--image"
-          />
-        ) : (
-          <span className="comment__avatar--initials">
-            {getInitials(author.firstName, author.lastName)}
-          </span>
-        )}
-      </div>
+    <li id={commentId} className="comment comment__container flex gap-4">
+      <Avatar
+        firstName={author?.firstName}
+        lastName={author?.lastName}
+        imageUrl={author?.avatarUrl}
+        className="comment__avatar"
+      />
       <div>
-        <header className="comment__header">
-          <span>{`${author?.firstName} ${author?.lastName}`}</span>
-          {comment?.createdAt && (
-            <span>
-              {typeof comment.createdAt === "string"
-                ? new Date(comment.createdAt).toLocaleString()
-                : comment.createdAt.toLocaleDateString()}
-            </span>
-          )}
-          {isEdited && <span>Edited</span>}
-        </header>
-        <div className="comment__message">
+        <CommentHeader
+          firstName={author?.firstName}
+          lastName={author?.lastName}
+          createdAt={
+            comment.lastModifiedAt &&
+            comment.createdAt !== comment.lastModifiedAt
+              ? comment.lastModifiedAt
+              : comment.createdAt
+          }
+          isEdited={isEdited}
+        />
+        <div className="comment__message mb-4">
           {!loading && !toggleEdit && <p>{message}</p>}
           {toggleEdit && (
             <Input
@@ -89,11 +83,16 @@ const Comment = ({ comment }: ICommentProps) => {
             />
           )}
         </div>
-        <footer className="comment__footer comment__footer--actions">
-          <Button label="Edit" onClick={() => handleUpdateComment(commentId)} />
+        <footer className="comment__footer comment__footer--actions flex gap-4">
+          <Button
+            label="Edit"
+            onClick={() => handleUpdateComment(commentId)}
+            variant="link"
+          />
           <Button
             label="Delete"
             onClick={() => handleDeleteComment(commentId)}
+            variant="link"
           />
         </footer>
       </div>

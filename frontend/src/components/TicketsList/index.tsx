@@ -2,8 +2,23 @@ import { Link } from "react-router-dom";
 import {
   ITicket,
   ITicketPopulatedDocument,
+  Status,
 } from "../../../../shared/interfaces";
 import { getStatusText } from "../../utils";
+import Badge from "../Badge";
+import Heading from "../Heading";
+
+function getStatusClasses(status: Status) {
+  switch (status) {
+    case Status.IN_PROGRESS:
+      return "bg-green-400";
+    case Status.CLOSED:
+      return "bg-yellow-400";
+    case Status.OPEN:
+    default:
+      return "bg-red-400";
+  }
+}
 
 interface ITicketsListProps {
   tickets: (ITicket & { _id: string })[] | ITicketPopulatedDocument[] | [];
@@ -17,11 +32,21 @@ const TicketsList = ({ tickets }: ITicketsListProps) => {
           typeof ticket._id === "string" ? ticket._id : ticket._id.toString();
 
         return (
-          <li key={ticketId}>
+          <li key={ticketId} className="ticket mb-4">
             <Link to={`/tickets/${ticketId}`}>
               <article>
-                <h3>{ticket.title}</h3>
-                <footer>{getStatusText(ticket.status)}</footer>
+                <Heading
+                  text={ticket.title}
+                  level={3}
+                  marginBottom={3}
+                  className="text-lg"
+                />
+                <footer>
+                  <Badge
+                    text={getStatusText(ticket.status)}
+                    className={getStatusClasses(ticket.status)}
+                  />
+                </footer>
               </article>
             </Link>
           </li>

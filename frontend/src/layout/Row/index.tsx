@@ -1,6 +1,18 @@
-const Row = ({ id, children }: { id?: string; children: React.ReactNode }) => {
+import { twMerge } from "tailwind-merge";
+
+const Row = ({
+  id,
+  children,
+  className,
+}: {
+  id?: string;
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  const mergedClasses = twMerge("flex sm:flex-col md:flex-row", className);
+
   return (
-    <div id={id} className="flex sm:flex-col md:flex-row">
+    <div id={id} className={mergedClasses}>
       {children}
     </div>
   );

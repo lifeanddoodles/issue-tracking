@@ -9,9 +9,14 @@ export default {
     extend: {
       colors: {
         primary: {
-          light: colors.green[600],
-          DEFAULT: colors.green[800],
-          dark: colors.green[900],
+          light: colors.blue[600],
+          DEFAULT: colors.blue[800],
+          dark: colors.blue[900],
+        },
+        secondary: {
+          light: colors.purple[600],
+          DEFAULT: colors.purple[800],
+          dark: colors.purple[900],
         },
         accent: {
           light: colors.red[400],

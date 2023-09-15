@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "../../components/Button";
 import Form from "../../components/Form";
+import Heading from "../../components/Heading";
 import Input from "../../components/Input";
 import useValidation from "../../hooks/useValidation";
 
@@ -58,7 +59,7 @@ const Register = () => {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <h1>Register</h1>
+      <Heading text="Register" level={1} />
       <Input
         label="First name:"
         type="text"

@@ -4,6 +4,7 @@ import {
   ITicketPopulatedDocument,
 } from "../../../../shared/interfaces";
 import Button from "../../components/Button";
+import Heading from "../../components/Heading";
 import Input from "../../components/Input";
 import Column from "../../layout/Column";
 import Comment from "../Comment";
@@ -51,10 +52,10 @@ const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
   }, [loadFormattedComments]);
 
   return (
-    <Column>
+    <Column className="w-full max-w-3xl">
       <main>
-        <h1>{ticket.title}</h1>
-        <h2>Description</h2>
+        <Heading text={ticket.title} level={1} />
+        <Heading text="Description" className="text-2xl" />
         <p>{ticket.description}</p>
         {/* TODO: Add attachments
         {<h2>Attachments</h2>} */}
@@ -62,7 +63,7 @@ const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
         {<h2>Subtasks</h2>} */}
       </main>
       <aside>
-        <h2>Comments</h2>
+        <Heading text="Comments" className="text-2xl" />
         <Input
           id="comment__message--input"
           type="text"

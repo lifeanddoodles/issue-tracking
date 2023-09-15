@@ -15,6 +15,7 @@ export interface IUser {
   role: UserRole | string;
   company: string;
   position: string;
+  avatarUrl?: string;
   createdAt?: Date | string;
   lastModifiedAt?: Date | string;
 }

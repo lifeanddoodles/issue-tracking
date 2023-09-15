@@ -36,7 +36,7 @@ const TicketDetails = () => {
   return (
     ticketInfo &&
     !loading && (
-      <Row>
+      <Row className="gap-8">
         <TicketMain ticket={ticketInfo.ticket} comments={ticketInfo.comments} />
         <TicketSidebar ticket={ticketInfo.ticket} />
       </Row>

@@ -1,4 +1,5 @@
 import { ITicket, ITicketPopulatedDocument } from "shared/interfaces";
+import Heading from "../../components/Heading";
 import TicketsList from "../../components/TicketsList";
 import useFetch from "../../hooks/useFetch";
 import { TICKETS_BASE_API_URL } from "../../routes";
@@ -14,9 +15,9 @@ const Dashboard = () => {
 
   return (
     <>
-      <h1>Dashboard</h1>
-      <h2>Notifications</h2>
-      <h2>Tickets</h2>
+      <Heading text="Dashboard" level={1} />
+      <Heading text="Notifications" />
+      <Heading text="Tickets" />
       {loadingTickets && <h3 role="status">Loading tickets...</h3>}
       {error && <h3 role="status">{error.message}</h3>}
       {!loadingTickets && tickets && tickets?.length === 0 && (

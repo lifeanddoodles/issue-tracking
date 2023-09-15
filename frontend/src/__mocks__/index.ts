@@ -213,3 +213,18 @@ export const fakeComments: ICommentPopulatedDocument[] = [
     isEdited: false,
   },
 ];
+
+export const fakeOptions = [
+  {
+    label: "a",
+    value: "A",
+  },
+  {
+    label: "b",
+    value: "B",
+  },
+  {
+    label: "c",
+    value: "C",
+  },
+];
