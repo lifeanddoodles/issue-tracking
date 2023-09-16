@@ -57,7 +57,7 @@ export function getVariantClasses(variant: ButtonVariant) {
     case "secondary":
       return "text-white bg-secondary hover:bg-secondary-dark py-1 px-3";
     case "transparent":
-      return "text-primary hover:bg-neutral-200 py-1 px-3";
+      return "text-primary hover:bg-neutral-200 py-2 px-3";
     case "link":
       return "text-primary hover:text-primary-dark hover:underline";
   }

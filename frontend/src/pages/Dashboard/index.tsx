@@ -12,7 +12,7 @@ const Dashboard = () => {
         <Column className="w-full md:w-1/3 max-w-xs py-2 px-4">
           <DashboardSidebar />
         </Column>
-        <Column className="w-full">
+        <Column className="w-full py-2 px-4">
           <Outlet />
         </Column>
       </Row>
