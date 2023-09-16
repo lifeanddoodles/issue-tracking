@@ -3,6 +3,7 @@ import {
   ICommentPopulatedDocument,
   ITicketPopulatedDocument,
 } from "../../../../shared/interfaces";
+import TicketComments from "../../components/TicketComments";
 import TicketMain from "../../components/TicketMain";
 import TicketSidebar from "../../components/TicketSidebar";
 import useFetch from "../../hooks/useFetch";
@@ -36,9 +37,10 @@ const TicketDetails = () => {
   return (
     ticketInfo &&
     !loading && (
-      <Row className="gap-8">
-        <TicketMain ticket={ticketInfo.ticket} comments={ticketInfo.comments} />
+      <Row className="grid gap-8 grid-cols-[1fr_minmax(max-content,_24rem)]">
+        <TicketMain ticket={ticketInfo.ticket} />
         <TicketSidebar ticket={ticketInfo.ticket} />
+        <TicketComments comments={ticketInfo.comments} />
       </Row>
     )
   );

@@ -33,7 +33,7 @@ const TicketsList = ({ tickets }: ITicketsListProps) => {
 
         return (
           <li key={ticketId} className="ticket mb-4">
-            <Link to={`/tickets/${ticketId}`}>
+            <Link to={`/dashboard/tickets/${ticketId}`}>
               <article>
                 <Heading
                   text={ticket.title}

@@ -9,7 +9,7 @@ const Row = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  const mergedClasses = twMerge("flex sm:flex-col md:flex-row", className);
+  const mergedClasses = twMerge("flex flex-col md:flex-row", className);
 
   return (
     <div id={id} className={mergedClasses}>

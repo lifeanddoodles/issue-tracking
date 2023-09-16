@@ -53,7 +53,7 @@ const Comment = ({ comment }: ICommentProps) => {
   };
 
   return (
-    <li id={commentId} className="comment comment__container flex gap-4">
+    <li id={commentId} className="comment comment__container flex gap-4 mb-6">
       <Avatar
         firstName={author?.firstName}
         lastName={author?.lastName}
@@ -72,7 +72,7 @@ const Comment = ({ comment }: ICommentProps) => {
           }
           isEdited={isEdited}
         />
-        <div className="comment__message mb-4">
+        <div className="comment__message mb-2">
           {!loading && !toggleEdit && <p>{message}</p>}
           {toggleEdit && (
             <Input

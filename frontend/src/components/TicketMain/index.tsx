@@ -1,99 +1,27 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ICommentPopulatedDocument,
-  ITicketPopulatedDocument,
-} from "../../../../shared/interfaces";
-import Button from "../../components/Button";
+import { ITicketPopulatedDocument } from "../../../../shared/interfaces";
 import Heading from "../../components/Heading";
-import Input from "../../components/Input";
 import Column from "../../layout/Column";
-import Comment from "../Comment";
 
 interface ITicketMainProps {
   ticket: ITicketPopulatedDocument;
-  comments: ICommentPopulatedDocument[];
 }
 
-const TicketMain = ({ ticket, comments }: ITicketMainProps) => {
-  const [loading, setLoading] = useState(false);
-  const [displayCommentEditor, setDisplayCommentEditor] = useState(false);
-  const [formattedComments, setFormattedComments] = useState<
-    | {
-        comment: ICommentPopulatedDocument;
-      }[]
-    | []
-  >([]);
-
-  const noComments = useMemo(
-    () => formattedComments?.length === 0,
-    [formattedComments]
-  );
-
-  const handleAddComment = () => {
-    setDisplayCommentEditor(false);
-  };
-
-  const handleCancelComment = () => {
-    setDisplayCommentEditor(false);
-  };
-
-  const loadFormattedComments = useCallback(async () => {
-    if (!comments || comments.length === 0) return;
-    const newComments = comments.map((comment) => ({
-      comment,
-    }));
-
-    setFormattedComments(newComments);
-    setLoading(false);
-  }, [comments]);
-
-  useEffect(() => {
-    loadFormattedComments();
-  }, [loadFormattedComments]);
-
+const TicketMain = ({ ticket }: ITicketMainProps) => {
   return (
-    <Column className="w-full max-w-3xl">
+    <Column className="w-full md:col-start-1 md:row-start-1 py-2 px-4">
       <main>
-        <Heading text={ticket.title} level={1} />
-        <Heading text="Description" className="text-2xl" />
+        <Heading
+          text={ticket.title}
+          level={1}
+          className="md:text-2xl xl:text-3xl"
+        />
+        <Heading text="Description" className="text-xl" />
         <p>{ticket.description}</p>
         {/* TODO: Add attachments
         {<h2>Attachments</h2>} */}
         {/* TODO: Populate subtasks
         {<h2>Subtasks</h2>} */}
       </main>
-      <aside>
-        <Heading text="Comments" className="text-2xl" />
-        <Input
-          id="comment__message--input"
-          type="text"
-          placeholder="Add a comment..."
-          onFocus={() => setDisplayCommentEditor(true)}
-        />
-        {displayCommentEditor && (
-          <>
-            <Button label="Add comment" onClick={handleAddComment} />
-            <Button label="Cancel" onClick={handleCancelComment} />
-          </>
-        )}
-        {noComments ? (
-          <p>No comments yet</p>
-        ) : (
-          <ul>
-            {!loading &&
-              formattedComments.map((item) => (
-                <Comment
-                  key={
-                    typeof item.comment._id === "string"
-                      ? item.comment._id
-                      : item.comment._id.toString()
-                  }
-                  comment={item.comment}
-                />
-              ))}
-          </ul>
-        )}
-      </aside>
     </Column>
   );
 };

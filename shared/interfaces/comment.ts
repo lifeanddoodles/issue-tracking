@@ -5,7 +5,7 @@ export interface IComment {
   author: ObjectId | Record<string, unknown> | string;
   message: string;
   isEdited: boolean;
-  createdAt?: Date | string;
+  createdAt: Date | string;
   lastModifiedAt?: Date | string;
 }
 

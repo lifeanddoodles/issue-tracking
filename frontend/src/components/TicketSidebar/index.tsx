@@ -26,7 +26,7 @@ const TicketSidebar = ({ ticket }: ITicketSidebarProps) => {
   const reporterFullName = getFullName(reporter.firstName!, reporter.lastName!);
 
   return (
-    <aside className="w-full max-w-md flex flex-col gap-4 items-start">
+    <aside className="w-full flex flex-col gap-4 items-start md:col-start-2 md:row-span-2 py-2 px-4">
       <div className="ticket-details__sidebar--actions self-end">
         <Button label="Share" onClick={() => {}} />
         <Button label="..." onClick={() => {}} />

@@ -40,3 +40,25 @@ export function getStatusText(status: Status): string {
       return "Open";
   }
 }
+
+export type ButtonVariant =
+  | "accent"
+  | "primary"
+  | "secondary"
+  | "transparent"
+  | "link";
+
+export function getVariantClasses(variant: ButtonVariant) {
+  switch (variant) {
+    case "accent":
+      return "text-white bg-accent hover:bg-accent-dark py-1 px-3";
+    case "primary":
+      return "text-white bg-primary hover:bg-primary-dark py-1 px-3";
+    case "secondary":
+      return "text-white bg-secondary hover:bg-secondary-dark py-1 px-3";
+    case "transparent":
+      return "text-primary hover:bg-neutral-200 py-1 px-3";
+    case "link":
+      return "text-primary hover:text-primary-dark hover:underline";
+  }
+}
