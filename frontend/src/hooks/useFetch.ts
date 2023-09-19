@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface RequestProps {
   url: string;
@@ -26,8 +26,6 @@ const useFetch = <T>(reqProps?: RequestProps | null): FetchState<T> => {
         const options = props?.options || reqProps?.options;
         if (!url) return;
 
-        console.log(url, options);
-
         const response = await fetch(url, options);
 
         if (!response.ok) {
@@ -49,7 +47,12 @@ const useFetch = <T>(reqProps?: RequestProps | null): FetchState<T> => {
     if (reqProps?.url) sendRequest();
   }, [sendRequest, reqProps?.url]);
 
-  return { data, loading, error, sendRequest };
+  return {
+    data: useMemo(() => data, [data]),
+    loading: useMemo(() => loading, [loading]),
+    error: useMemo(() => error, [error]),
+    sendRequest,
+  };
 };
 
 export default useFetch;

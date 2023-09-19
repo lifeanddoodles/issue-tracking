@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import Form from "../../components/Form";
 import Heading from "../../components/Heading";
 import Input from "../../components/Input";
+import useFetch from "../../hooks/useFetch";
 import useValidation from "../../hooks/useValidation";
+import { USERS_BASE_API_URL, getRegisterUserOptions } from "../../routes";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -28,6 +31,8 @@ const Register = () => {
     null
   );
   const { validateInput } = useValidation();
+  const { data, loading, error, sendRequest } = useFetch();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
@@ -52,10 +57,27 @@ const Register = () => {
     });
   };
 
+  const registerRequest = (options?: RequestInit) => {
+    sendRequest({
+      url: USERS_BASE_API_URL,
+      options,
+    });
+    if (error) {
+      console.log(error);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
+    const options = getRegisterUserOptions(formData);
+    registerRequest(options);
   };
+
+  useEffect(() => {
+    if (data && !loading) {
+      navigate("/dashboard");
+    }
+  });
 
   return (
     <Form onSubmit={handleSubmit}>

@@ -6,36 +6,38 @@ import {
   getTickets,
   updateTicket,
 } from "../controllers/ticketControllers.js";
+import { ensureAuth } from "../middleware/auth.js";
+
 const router = express.Router();
 
 // @desc Create ticket
 // @route POST /api/tickets/
 // @access Private
-router.post("/", addTicket);
+router.post("/", ensureAuth, addTicket);
 
 // @desc Show all tickets
 // @route GET /api/tickets/
-// @access Public
-router.get("/", getTickets);
+// @access Private
+router.get("/", ensureAuth, getTickets);
 
 // @desc Show all tickets by user
 // @route GET /api/tickets/:user
-// @access Public
+// @access Private
 // TODO
 
 // @desc Show one ticket
 // @route GET /api/tickets/:ticketId
-// @access Public
-router.get("/:ticketId", getTicket);
+// @access Private
+router.get("/:ticketId", ensureAuth, getTicket);
 
 // @desc Update ticket
 // @route UPDATE /api/tickets/:ticketId
 // @access Private
-router.put("/:ticketId", updateTicket);
+router.put("/:ticketId", ensureAuth, updateTicket);
 
 // @desc Delete ticket
 // @route DELETE /api/tickets/:ticketId
 // @access Private
-router.delete("/:ticketId", deleteTicket);
+router.delete("/:ticketId", ensureAuth, deleteTicket);
 
 export default router;

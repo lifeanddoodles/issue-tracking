@@ -8,7 +8,7 @@ const menuItems = {
     title: "Planning",
     items: [
       {
-        title: "Dashboard start",
+        title: "Dashboard",
         link: "/dashboard",
       },
       {

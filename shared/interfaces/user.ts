@@ -8,6 +8,8 @@ export enum UserRole {
 }
 
 export interface IUser {
+  username?: string;
+  googleId?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -20,4 +22,6 @@ export interface IUser {
   lastModifiedAt?: Date | string;
 }
 
-export interface IUserDocument extends IUser, Document {}
+export interface IUserDocument extends IUser, Document {
+  matchPassword: (enteredPassword: string) => Promise<boolean>;
+}

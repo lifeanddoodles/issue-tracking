@@ -15,7 +15,7 @@ const Start = () => {
 
   return (
     <>
-      <Heading text="Dashboard Home" level={1} />
+      <Heading text="Dashboard" level={1} />
       <Heading text="Notifications" />
       <Heading text="Tickets" />
       {loadingTickets && <h3 role="status">Loading tickets...</h3>}

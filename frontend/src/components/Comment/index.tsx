@@ -47,7 +47,6 @@ const Comment = ({ comment }: ICommentProps) => {
   };
 
   const handleDeleteComment = (commentId: string) => {
-    console.log(`Delete Comment ${commentId}`);
     const options = getDeleteCommentOptions();
     commentRequest(commentId, options);
   };

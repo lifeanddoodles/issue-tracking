@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import { IUserDocument } from "../../shared/interfaces/index.js";
 
@@ -18,6 +19,12 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Please add a password"],
+  },
+  username: {
+    type: String,
+  },
+  googleId: {
+    type: String,
   },
   role: {
     type: String,
@@ -41,6 +48,20 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+// Match user entered password to hashed password in database
+userSchema.methods.matchPassword = async function (enteredPassword: string) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Encrypt password using bcrypt
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 export default mongoose.model<IUserDocument>("User", userSchema);
