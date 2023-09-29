@@ -1,12 +1,15 @@
-import { Outlet } from "react-router-dom";
-import Header from "../Header";
+import { Navigate, Outlet } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 const GuestPageWrapper = () => {
-  return (
-    <>
-      <Header />
+  const { user } = useAuth();
+
+  return !user ? (
+    <main>
       <Outlet />
-    </>
+    </main>
+  ) : (
+    <Navigate to="/dashboard" replace />
   );
 };
 

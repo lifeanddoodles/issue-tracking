@@ -8,7 +8,7 @@ import {
   updateUser,
   updateUserProfile,
 } from "../controllers/userControllers.js";
-import { ensureAuth, ensureGuest } from "../middleware/auth.js";
+import { ensureAuth, ensureGuest } from "../middleware/authMiddleware.ts";
 
 const router = express.Router();
 
@@ -43,9 +43,9 @@ router.get("/:userId", ensureAuth, getUser);
 
 // UPDATE
 // @desc Update user
-// @route UPDATE /api/users/:userId
+// @route PATCH /api/users/:userId
 // @access Private/Admin
-router.put("/:userId", ensureAuth, updateUser);
+router.patch("/:userId", ensureAuth, updateUser);
 
 // DELETE
 // @desc Delete user

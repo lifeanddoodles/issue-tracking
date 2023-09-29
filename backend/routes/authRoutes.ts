@@ -1,6 +1,11 @@
 import express from "express";
-import passport from "passport";
-import { ensureAuth, ensureGuest } from "../middleware/auth.js";
+import {
+  getGoogleLoginCallback,
+  loginWithEmailAndPassword,
+  loginWithGoogle,
+  logoutUser,
+} from "../controllers/authControllers.ts";
+import { ensureAuth, ensureGuest } from "../middleware/authMiddleware.ts";
 
 const router = express.Router();
 
@@ -8,48 +13,22 @@ const router = express.Router();
 // @desc Authenticate with email and password
 // @route POST /api/auth/login
 // @access Public
-router.post(
-  "/login",
-  ensureGuest,
-  passport.authenticate("local", {
-    successRedirect: "/dashboard",
-    failureRedirect: "/login",
-  })
-);
+router.post("/login", ensureGuest, loginWithEmailAndPassword);
 
 // @desc Authenticate with Google
 // @route GET /api/auth/google
 // @access Public
-router.get(
-  "/google",
-  ensureGuest,
-  passport.authenticate("google", {
-    scope: ["profile"],
-  })
-);
+router.get("/google", ensureGuest, loginWithGoogle);
 
 // @desc Get Google authentication callback
 // @route GET /api/auth/google/callback
 // @access Public
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: "/",
-    failureRedirect: "/login",
-  })
-);
+router.get("/google/callback", getGoogleLoginCallback);
 
 // LOGOUT
 // @desc Logout user
 // @route GET /api/auth/logout
 // @access Private
-router.get("/logout", ensureAuth, (req, res, next) => {
-  req.logout((error) => {
-    if (error) {
-      return next(error);
-    }
-    res.redirect("/");
-  });
-});
+router.get("/logout", ensureAuth, logoutUser);
 
 export default router;

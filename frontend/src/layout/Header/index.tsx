@@ -1,10 +1,7 @@
 import { Link } from "react-router-dom";
+import Button from "../../components/Button";
+import useAuth from "../../hooks/useAuth";
 import { getVariantClasses } from "../../utils";
-
-function getUser() {
-  // TODO: Implement user authentication
-  return false;
-}
 
 const guestMenuItems = [
   {
@@ -22,7 +19,6 @@ const userMenuItems = [
   {
     title: "Notifications",
     link: "/dashboard/start#notifications",
-    isMainCTA: true,
   },
   {
     title: "Profile",
@@ -31,7 +27,7 @@ const userMenuItems = [
 ];
 
 const Header = () => {
-  const user = getUser();
+  const { user, logoutUserReq } = useAuth();
   const menuItems = user ? userMenuItems : guestMenuItems;
   const variantClasses = getVariantClasses("transparent");
 
@@ -42,12 +38,13 @@ const Header = () => {
         {menuItems.map((item) => (
           <Link
             key={item.title}
-            to={item.link}
+            to={item.link!}
             className={`header__user-options__link rounded-lg ${variantClasses}`}
           >
             {item.title}
           </Link>
         ))}
+        {user && <Button label="Logout" onClick={logoutUserReq} />}
       </div>
     </header>
   );

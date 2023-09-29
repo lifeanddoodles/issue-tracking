@@ -1,12 +1,10 @@
 import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import {
-  IUser,
-  IUserDocument,
-  UserRole,
-} from "../../shared/interfaces/index.js";
+import { RootQuerySelector } from "mongoose";
+import { IUserDocument, UserRole } from "../../shared/interfaces/index.js";
 import User from "../models/userModel.js";
+import generateToken from "../utils/generateToken.js";
 
 // @desc    Create user
 // @route   POST /api/users/
@@ -22,6 +20,7 @@ export const addUser = asyncHandler(
       role = UserRole.CLIENT,
       company,
       position,
+      department,
     } = req.body;
 
     // Handle user already exists
@@ -50,7 +49,7 @@ export const addUser = asyncHandler(
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser: Partial<IUser> = {
+    const newUser: Partial<IUserDocument> = {
       firstName,
       lastName,
       email,
@@ -58,8 +57,7 @@ export const addUser = asyncHandler(
       role,
       company,
       position,
-      createdAt: new Date(),
-      lastModifiedAt: new Date(),
+      department,
     };
 
     // Request user creation
@@ -72,21 +70,52 @@ export const addUser = asyncHandler(
     }
 
     // Handle success
+
+    // Generate JWT token
+    generateToken(res, createdUser._id);
+
     req.login(createdUser, function (err) {
       if (err) {
         return next(err);
       }
-      return res.status(201).json(createdUser);
+
+      res.status(201).json({
+        _id: createdUser._id,
+        firstName: createdUser.firstName,
+        lastName: createdUser.lastName,
+        email: createdUser.email,
+        role: createdUser.role,
+        company: createdUser.company,
+        position: createdUser.position,
+        department: createdUser.department,
+        avatarUrl: createdUser.avatarUrl,
+      });
     });
   }
 );
 
 // @desc    Get all users
 // @route   GET /api/users/
-// @access  Private/Admin
+// @access  Private
 export const getUsers = asyncHandler(async (req: Request, res: Response) => {
+  // Validation
+  // Get authenticated user
+  const authUser: Partial<IUserDocument> | undefined = req.user;
+  const isClient = authUser?.role === UserRole.CLIENT;
+
+  // Handle authenticated user not authorized for request
+  if (isClient) {
+    res.status(401);
+    throw new Error("Not Authorized");
+  }
+
   // Find users
-  const users = await User.find().select("-password");
+  const query: RootQuerySelector<IUserDocument> = {};
+
+  for (const key in req.query) {
+    query[key as keyof IUserDocument] = req.query[key];
+  }
+  const users: IUserDocument[] = await User.find(query).select("-password");
 
   // Handle users not found
   if (!users) {
@@ -171,38 +200,16 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // @desc    Update user
-// @route   UPDATE /api/users/:userId
+// @route   PATCH /api/users/:userId
 // @access  Private/Admin
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
-  const { firstName, lastName, email, role, company, position, avatarUrl } =
-    req.body;
+  const updatedUserData = req.body;
   const userId = req.params.userId;
 
   // Validation
   // Get authenticated user
   // Handle authenticated user not authorized for request
-
-  // Handle request with missing fields
-  const missingFields =
-    !firstName || !lastName || !email || !role || !company || !position;
-
-  if (missingFields) {
-    res.status(400);
-    throw new Error("Please add all required fields");
-  }
-
-  // Prepare updated user data
-  const updatedUserData: Partial<IUser> = {
-    firstName,
-    lastName,
-    email,
-    role,
-    company,
-    position,
-    avatarUrl,
-    lastModifiedAt: new Date(),
-  };
 
   // Request find user by ID and update
   const updatedUser = await User.findByIdAndUpdate(userId, {
@@ -216,7 +223,7 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   // Handle success
-  res.status(200).send(updatedUser);
+  res.status(200).json(updatedUser);
 });
 
 // @desc    Delete user

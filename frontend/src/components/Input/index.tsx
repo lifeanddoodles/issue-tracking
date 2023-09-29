@@ -6,7 +6,7 @@ interface IBaseInputProps {
   label?: string;
   id: string;
   type?: string;
-  value?: string;
+  value?: string | number;
   placeholder?: string;
   className?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -20,6 +20,7 @@ interface IBaseInputProps {
   required?: boolean;
   minLength?: number;
   "aria-invalid"?: boolean;
+  disabled?: boolean;
 }
 
 interface IEmailInputProps extends IBaseInputProps {
@@ -36,10 +37,11 @@ const Input = ({
   errors,
   setErrors,
   required,
+  disabled,
   ...props
 }: IBaseInputProps | IEmailInputProps) => {
-  const [inputValue, setInputValue] = useState(value);
-  const { validateInput } = useValidation();
+  const [inputValue, setInputValue] = useState(value || "");
+  const { validateField } = useValidation();
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
     onChange && onChange(e);
@@ -48,7 +50,7 @@ const Input = ({
   const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
     if (setErrors)
-      validateInput({
+      validateField({
         target,
         setErrors,
       });
@@ -69,12 +71,13 @@ const Input = ({
         name={id}
         onChange={handleOnChange}
         onBlur={handleOnBlur}
-        value={value || inputValue}
+        value={inputValue}
         required={required}
         {...props}
         aria-invalid={inputHasErrors || false}
         aria-errormessage={`${id}-errors`}
         className={mergedClassNames}
+        disabled={disabled}
       />
       {inputHasErrors && (
         <ul

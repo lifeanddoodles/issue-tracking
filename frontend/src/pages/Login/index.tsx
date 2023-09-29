@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import Form from "../../components/Form";
 import Heading from "../../components/Heading";
 import Input from "../../components/Input";
-import useFetch from "../../hooks/useFetch";
+import useAuth from "../../hooks/useAuth";
 import useValidation from "../../hooks/useValidation";
-import { AUTH_BASE_API_URL, getLoginUserOptions } from "../../routes";
+import { LOGIN_API_URL, getLoginUserOptions } from "../../routes";
 import GoogleLoginButton from "./GoogleLoginButton";
 
 const Login = () => {
@@ -17,8 +18,9 @@ const Login = () => {
   const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
     null
   );
-  const { validateInput } = useValidation();
-  const { data, loading, error, sendRequest } = useFetch();
+  const { validateField } = useValidation();
+  const { user, error, loading, authUserReq } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
@@ -28,34 +30,24 @@ const Login = () => {
       [target.name]: target.value,
     });
 
-    validateInput({
+    validateField({
       target,
       setErrors,
     });
-  };
-
-  const loginRequest = (options?: RequestInit) => {
-    sendRequest({
-      url: AUTH_BASE_API_URL,
-      options,
-    });
-    if (error) {
-      console.log(error);
-    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const options = getLoginUserOptions(formData);
-    loginRequest(options);
+    authUserReq(LOGIN_API_URL, options);
   };
 
   useEffect(() => {
-    if (data && !loading) {
-      console.log(data);
+    if (user && !loading && !error) {
+      navigate("/dashboard");
     }
-  });
+  }, [user, error, loading, navigate]);
 
   return (
     <>

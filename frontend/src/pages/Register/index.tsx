@@ -4,7 +4,7 @@ import Button from "../../components/Button";
 import Form from "../../components/Form";
 import Heading from "../../components/Heading";
 import Input from "../../components/Input";
-import useFetch from "../../hooks/useFetch";
+import useAuth from "../../hooks/useAuth";
 import useValidation from "../../hooks/useValidation";
 import { USERS_BASE_API_URL, getRegisterUserOptions } from "../../routes";
 
@@ -30,8 +30,8 @@ const Register = () => {
   const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
     null
   );
-  const { validateInput } = useValidation();
-  const { data, loading, error, sendRequest } = useFetch();
+  const { validateField } = useValidation();
+  const { user, error, loading, authUserReq } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +47,7 @@ const Register = () => {
     const idToCompare =
       changedId === "confirmPassword" ? "password" : "confirmPassword";
 
-    validateInput({
+    validateField({
       target,
       setErrors,
       elementToCompare:
@@ -57,27 +57,18 @@ const Register = () => {
     });
   };
 
-  const registerRequest = (options?: RequestInit) => {
-    sendRequest({
-      url: USERS_BASE_API_URL,
-      options,
-    });
-    if (error) {
-      console.log(error);
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const options = getRegisterUserOptions(formData);
-    registerRequest(options);
+
+    authUserReq(USERS_BASE_API_URL, options);
   };
 
   useEffect(() => {
-    if (data && !loading) {
+    if (user && !loading && !error) {
       navigate("/dashboard");
     }
-  });
+  }, [user, error, loading, navigate]);
 
   return (
     <Form onSubmit={handleSubmit}>

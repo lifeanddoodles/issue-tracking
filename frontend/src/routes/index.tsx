@@ -1,11 +1,19 @@
+import {
+  ITicket,
+  ITicketBase,
+  ITicketPopulatedDocument,
+} from "../../../shared/interfaces";
+
 /*
  * Auth
  */
 export const AUTH_BASE_API_URL = "/api/auth";
+export const LOGIN_API_URL = `${AUTH_BASE_API_URL}/login`;
+export const LOGOUT_API_URL = `${AUTH_BASE_API_URL}/logout`;
 export const GOOGLE_AUTH_BASE_API_URL = `${AUTH_BASE_API_URL}/google`;
 export const GOOGLE_AUTH_CALLBACK_API_URL = `${GOOGLE_AUTH_BASE_API_URL}/callback`;
 
-export const getLoginUserOptions = (userData: {
+export const getLoginUserOptions = (reqBody: {
   email: string;
   password: string;
 }) => ({
@@ -13,15 +21,16 @@ export const getLoginUserOptions = (userData: {
   headers: {
     "Content-Type": "application/json",
   },
-  body: JSON.stringify(userData),
+  body: JSON.stringify(reqBody),
 });
 
 /*
  * Users
  */
 export const USERS_BASE_API_URL = "/api/users";
+export const PROFILE_API_URL = `${USERS_BASE_API_URL}/profile`;
 
-export const getRegisterUserOptions = (userData: {
+export const getRegisterUserOptions = (reqBody: {
   firstName: string;
   lastName: string;
   email: string;
@@ -34,13 +43,28 @@ export const getRegisterUserOptions = (userData: {
   headers: {
     "Content-Type": "application/json",
   },
-  body: JSON.stringify(userData),
+  body: JSON.stringify(reqBody),
 });
 
 /*
  * Tickets
  */
 export const TICKETS_BASE_API_URL = "/api/tickets";
+export const TICKET_BY_ID_API_URL = `${TICKETS_BASE_API_URL}/:ticketId`;
+
+export const getPostTicketOptions = (
+  reqBody: ITicketBase | ITicket | Partial<ITicketPopulatedDocument>
+) => ({
+  method: "PATCH",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(reqBody),
+});
+
+export const getDeleteTicketOptions = () => ({
+  method: "DELETE",
+});
 
 /*
  * Comments

@@ -1,10 +1,12 @@
 import MongoStore from "connect-mongo";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
 import session from "express-session";
 import passport from "passport";
 import connectDB from "./config/db.js";
 import configPassport from "./config/passport.js";
+import { ensureAuth } from "./middleware/authMiddleware.ts";
 import { handleError } from "./middleware/errorMiddleware.js";
 import authRoutes from "./routes/authRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
@@ -22,6 +24,7 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // Sessions
 app.use(
@@ -50,8 +53,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/tickets", ticketRoutes);
-app.use("/api/comments", commentRoutes);
+app.use("/api/tickets", ensureAuth, ticketRoutes);
+app.use("/api/comments", ensureAuth, commentRoutes);
 
 // Error handler
 app.use(handleError);

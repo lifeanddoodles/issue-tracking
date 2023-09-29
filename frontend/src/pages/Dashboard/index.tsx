@@ -1,22 +1,32 @@
-import { Outlet } from "react-router-dom";
-import Column from "../../layout/Column";
-import Header from "../../layout/Header";
-import Row from "../../layout/Row";
-import DashboardSidebar from "./DashboardSidebar";
+import { ITicket, ITicketPopulatedDocument } from "shared/interfaces";
+import Heading from "../../components/Heading";
+import TicketsList from "../../components/TicketsList";
+import useFetch from "../../hooks/useFetch";
+import { TICKETS_BASE_API_URL } from "../../routes";
 
 const Dashboard = () => {
+  const {
+    data: tickets,
+    loading: loadingTickets,
+    error,
+  } = useFetch<(ITicket & { _id: string })[] | ITicketPopulatedDocument[] | []>(
+    { url: TICKETS_BASE_API_URL }
+  );
+
   return (
-    <Column>
-      <Header />
-      <Row className="w-full">
-        <Column className="w-full md:w-1/3 max-w-xs py-2 px-4">
-          <DashboardSidebar />
-        </Column>
-        <Column className="w-full py-2 px-4">
-          <Outlet />
-        </Column>
-      </Row>
-    </Column>
+    <>
+      <Heading text="Dashboard" level={1} />
+      <Heading text="Notifications" />
+      <Heading text="Tickets" />
+      {loadingTickets && <h3 role="status">Loading tickets...</h3>}
+      {error && <h3 role="status">{error.message}</h3>}
+      {!loadingTickets && tickets && tickets?.length === 0 && (
+        <h3 role="status">No tickets found</h3>
+      )}
+      {!loadingTickets && tickets && tickets?.length > 0 && (
+        <TicketsList tickets={tickets} />
+      )}
+    </>
   );
 };
 

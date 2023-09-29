@@ -122,7 +122,6 @@ const useValidation = () => {
   function validateInput({
     target,
     setErrors,
-    elementToCompare,
   }: {
     target: HTMLInputElement;
     setErrors: React.Dispatch<
@@ -132,18 +131,67 @@ const useValidation = () => {
     >;
     elementToCompare?: { id: string; value: string };
   }) {
-    const { id, value, pattern, minLength, required } = target;
-    const errorRequiredText = getErrorMessage({ id, type: ErrorType.REQUIRED });
+    const { id, value } = target;
+    const errorPatternText = getErrorMessage({
+      id,
+      type: ErrorType.MINLENGTH,
+      options: { pattern: target?.pattern },
+    });
+    if (target.pattern && errorPatternText) {
+      const shouldAdd = !value.match(target.pattern);
+
+      setErrors((errors) =>
+        updateErrors(id, errorPatternText, errors, shouldAdd, !shouldAdd)
+      );
+    }
+  }
+
+  function validateInputOrTextArea({
+    target,
+    setErrors,
+  }: {
+    target: HTMLInputElement | HTMLTextAreaElement;
+    setErrors: React.Dispatch<
+      React.SetStateAction<{
+        [key: string]: string[];
+      } | null>
+    >;
+    elementToCompare?: { id: string; value: string };
+  }) {
+    const { id, value, minLength } = target;
     const errorMinLengthText = getErrorMessage({
       id,
       type: ErrorType.MINLENGTH,
       options: { minLength },
     });
-    const errorPatternText = getErrorMessage({
-      id,
-      type: ErrorType.MINLENGTH,
-      options: { pattern },
-    });
+    if (minLength) {
+      const shouldAdd = target.validity.tooShort;
+      const shouldRemove = value.length >= minLength;
+
+      setErrors((errors) =>
+        updateErrors(id, errorMinLengthText, errors, shouldAdd, shouldRemove)
+      );
+    }
+  }
+
+  function validateField({
+    target,
+    setErrors,
+    elementToCompare,
+  }: {
+    target: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+    setErrors: React.Dispatch<
+      React.SetStateAction<{
+        [key: string]: string[];
+      } | null>
+    >;
+    elementToCompare?: { id: string; value: string };
+  }) {
+    const isTextArea = target.tagName === "TEXTAREA";
+    const isSelect = target.tagName === "SELECT";
+    const { id, value, required } = target;
+    const errorRequiredText = getErrorMessage({ id, type: ErrorType.REQUIRED });
+
     const errorMismatchText = getErrorMessage({
       id,
       type: ErrorType.MISMATCH,
@@ -159,23 +207,6 @@ const useValidation = () => {
       );
     }
 
-    if (minLength) {
-      const shouldAdd = target.validity.tooShort;
-      const shouldRemove = value.length >= minLength;
-
-      setErrors((errors) =>
-        updateErrors(id, errorMinLengthText, errors, shouldAdd, shouldRemove)
-      );
-    }
-
-    if (pattern) {
-      const shouldAdd = !value.match(pattern);
-
-      setErrors((errors) =>
-        updateErrors(id, errorPatternText, errors, shouldAdd, !shouldAdd)
-      );
-    }
-
     if (elementToCompare) {
       const shouldAdd = value !== elementToCompare.value;
 
@@ -183,10 +214,21 @@ const useValidation = () => {
         updateErrors(id, errorMismatchText, errors, shouldAdd, !shouldAdd)
       );
     }
+
+    if (!isTextArea) {
+      validateInput({ target: target as HTMLInputElement, setErrors });
+    }
+
+    if (!isSelect) {
+      validateInputOrTextArea({
+        target: target as HTMLInputElement | HTMLTextAreaElement,
+        setErrors,
+      });
+    }
   }
 
   return {
-    validateInput,
+    validateField,
   };
 };
 export default useValidation;
