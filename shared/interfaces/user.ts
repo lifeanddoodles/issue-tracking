@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import { DepartmentTeam } from "./ticket.ts";
 
 export enum UserRole {
   CLIENT = "CLIENT",
@@ -17,6 +18,7 @@ export interface IUser {
   role: UserRole | string;
   company: string;
   position: string;
+  department?: DepartmentTeam;
   avatarUrl?: string;
   createdAt?: Date | string;
   lastModifiedAt?: Date | string;

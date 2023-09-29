@@ -47,7 +47,7 @@ const TicketComments = ({ comments }: ITicketCommentsProps) => {
   }, [loadFormattedComments]);
 
   return (
-    <aside className="w-full md:col-start-1 md:row-start-2 py-2 px-4">
+    <aside className="w-full lg:col-start-1 lg:row-start-2 py-2 px-4">
       <Heading text="Comments" className="text-xl" />
       <Input
         id="comment__message--input"

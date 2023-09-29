@@ -1,12 +1,17 @@
+import { twMerge } from "tailwind-merge";
 const Form = ({
   children,
   onSubmit,
+  className,
 }: {
   children: React.ReactNode;
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
+  className?: string;
 }) => {
+  const mergedClasses = twMerge("mx-auto w-full max-w-md", className);
+
   return (
-    <form className="mx-auto w-full max-w-md" onSubmit={onSubmit}>
+    <form className={mergedClasses} onSubmit={onSubmit}>
       {children}
     </form>
   );

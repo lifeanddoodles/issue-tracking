@@ -7,7 +7,7 @@ const Button = ({
   variant = "primary",
 }: {
   label: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLElement>) => void;
   type?: "button" | "submit" | "reset";
   variant?: ButtonVariant;
 }) => {

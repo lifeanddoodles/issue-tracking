@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import {
+  DepartmentTeam,
+  IPersonInfo,
   ITicket,
   ITicketDocument,
+  ITicketPopulatedDocument,
+  IUserDocument,
   Priority,
   Status,
+  TicketType,
+  UserRole,
 } from "../../shared/interfaces/index.js";
-import { addDays } from "../../shared/utils/index.js";
 import Comment from "../models/commentModel.js";
 import Ticket from "../models/ticketModel.js";
 
@@ -32,10 +37,13 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
     description,
     assignee,
     reporter,
+    externalReporter,
     status = Status.OPEN,
     priority = Priority.LOW,
+    assignToTeam = DepartmentTeam.UNASSIGNED,
+    ticketType = TicketType.ISSUE,
+    estimatedTime,
     deadline,
-    moveToDevSprint = false,
     isSubtask = false,
     parentTask = null,
   } = req.body;
@@ -46,7 +54,8 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
   // Handle user not authorized for request
 
   // Handle request with missing fields
-  const missingFields = !title || !description || !reporter;
+  const missingFields =
+    !title || (!description && (!reporter || !externalReporter));
 
   if (missingFields) {
     res.status(400);
@@ -59,14 +68,15 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
     description,
     assignee,
     reporter,
+    externalReporter,
     status,
     priority,
-    moveToDevSprint,
+    assignToTeam,
+    ticketType,
+    estimatedTime,
     deadline,
     isSubtask,
     parentTask,
-    createdAt: new Date(),
-    lastModifiedAt: new Date(),
   };
 
   // Request ticket creation
@@ -107,9 +117,13 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   const ticketId = req.params.ticketId;
 
   // Find ticket
-  const ticket = await Ticket.findById(ticketId)
+  const ticket: ITicketPopulatedDocument | null = await Ticket.findById(
+    ticketId
+  )
     .populate("assignee", "_id firstName lastName")
-    .populate("reporter", "_id firstName lastName");
+    .populate("reporter", "_id firstName lastName")
+    .populate("externalReporter", "_id firstName lastName");
+
   const comments = await Comment.find({ ticketId })
     .select("-ticketId, -__v")
     .populate("author", "_id firstName lastName")
@@ -152,52 +166,34 @@ export const getTicketsByUser = asyncHandler(
 // @access Private
 export const updateTicket = asyncHandler(
   async (req: Request, res: Response) => {
-    // Prepare request variables (body, params, user, etc.)
-    const {
-      title,
-      description,
-      assignee,
-      reporter,
-      status,
-      priority,
-      deadline,
-      moveToDevSprint,
-      isSubtask,
-      parentTask,
-    } = req.body;
+    const updatedTicketData = req.body;
     const ticketId = req.params.ticketId;
 
     // Find ticket
+    const ticket = await Ticket.findById(ticketId);
 
     // Handle ticket not found
+    if (!ticket) {
+      res.status(404);
+      throw new Error("Ticket not found");
+    }
 
     // Validation
     // Get authenticated user
+    const authUser: Partial<IUserDocument> | undefined = req.user;
+    const authUserId = authUser?._id.toString();
+    const isClient = authUser?.role === UserRole.CLIENT;
+    const externalReporterId = ticket?.externalReporter?.toString();
 
     // Handle authenticated user not authorized for request
-
-    // Handle request with missing fields
-    const missingFields = !title || !description || !reporter;
-
-    if (missingFields) {
-      res.status(400);
-      throw new Error("Please add all required fields");
+    if (
+      isClient &&
+      (authUserId !== externalReporterId ||
+        ticket?.assignToTeam !== DepartmentTeam.UNASSIGNED)
+    ) {
+      res.status(401);
+      throw new Error("Not Authorized");
     }
-
-    // Prepare updated ticket data
-    const updatedTicketData = {
-      title,
-      description,
-      assignee,
-      reporter,
-      status,
-      priority,
-      deadline: deadline || addDays(new Date(), getDeadlineAutoFill(priority)),
-      moveToDevSprint,
-      isSubtask,
-      parentTask,
-      lastModifiedAt: new Date(),
-    };
 
     // Request ticket update
     const updatedTicket = await Ticket.findByIdAndUpdate(ticketId, {
@@ -223,13 +219,23 @@ export const deleteTicket = asyncHandler(
     // Prepare request variables (body, params, user, etc.)
     const ticketId = req.params.ticketId;
 
+    const ticket = await Ticket.findById(ticketId);
+
     // Validation
     // Get authenticated user
+    const authUser: Partial<IUserDocument> | undefined = req.user;
+    const authUserId = authUser?._id.toString();
+    const isClient = authUser?.role === UserRole.CLIENT;
+    const externalReporterId = ticket?.externalReporter?.toString();
 
     // Handle authenticated user not authorized for request
+    if (isClient && authUserId !== externalReporterId) {
+      res.status(401);
+      throw new Error("Not Authorized");
+    }
 
     // Request ticket deletion
-    const deletedTicket = await Ticket.findByIdAndDelete(ticketId);
+    const deletedTicket = await Ticket.deleteOne({ _id: ticketId });
 
     // Handle ticket not found
     if (!deletedTicket) {
