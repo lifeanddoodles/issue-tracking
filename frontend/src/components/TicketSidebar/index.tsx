@@ -5,12 +5,13 @@ import {
   UserRole,
 } from "../../../../shared/interfaces";
 import useAuth from "../../hooks/useAuth";
-import { USERS_BASE_API_URL } from "../../routes";
+import { TICKETS_BASE_API_URL, USERS_BASE_API_URL } from "../../routes";
 import {
   getDepartmentTeamOptions,
   getFullName,
   getPriorityOptions,
   getStatusOptions,
+  getTicketDataOptions,
   getTicketTypeOptions,
   getUserDataOptions,
 } from "../../utils";
@@ -31,8 +32,8 @@ interface ITicketSidebarProps {
   ) => void;
   onSave?: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   onDelete?: () => void;
-  formData: Partial<ITicketPopulatedDocument>;
-  errors: { [key: string]: string[] } | null;
+  formData?: Partial<ITicketPopulatedDocument>;
+  errors?: { [key: string]: string[] } | null;
   setErrors?: React.Dispatch<
     React.SetStateAction<{ [key: string]: string[] } | null>
   >;
@@ -88,7 +89,7 @@ const TicketSidebar = ({
   };
 
   return (
-    <aside className="w-full flex flex-col gap-4 items-start lg:col-start-2 lg:row-span-2 py-2 px-4">
+    <aside className="w-full flex flex-col gap-4 items-start md:col-start-2 md:row-span-2 py-2 px-4">
       <div className="ticket-details__sidebar--actions self-end flex gap-4">
         <Button label="Save" onClick={handleSave} />
         <Button label="Delete" onClick={handleDelete} />
@@ -117,7 +118,7 @@ const TicketSidebar = ({
           required
           errors={errors}
           setErrors={setErrors}
-          className="grid grid-cols-[1fr_2fr]"
+          direction="row"
         />
         <SelectWithFetch
           label="Assignee:"
@@ -166,7 +167,7 @@ const TicketSidebar = ({
               required
               errors={errors}
               setErrors={setErrors}
-              className="grid grid-cols-[1fr_2fr]"
+              direction="row"
             />
             <Select
               label="Type:"
@@ -177,7 +178,7 @@ const TicketSidebar = ({
               required
               errors={errors}
               setErrors={setErrors}
-              className="grid grid-cols-[1fr_2fr]"
+              direction="row"
             />
             <Input
               label="Estimated time (in hours):"
@@ -197,14 +198,19 @@ const TicketSidebar = ({
               errors={errors}
               setErrors={setErrors}
             />
-            <Input
+            <SelectWithFetch
               label="Parent task:"
               id="parentTask"
+              value={
+                !ticket?.isSubtask || !ticket?.parentTask
+                  ? ""
+                  : ticket?.parentTask?.toString()
+              }
               onChange={handleChange}
-              value={ticket?.parentTask?.toString()}
-              required
+              disabled={isClient || !ticket?.isSubtask}
               errors={errors}
-              setErrors={setErrors}
+              url={TICKETS_BASE_API_URL}
+              getFormattedOptions={getTicketDataOptions}
             />
           </>
         )}

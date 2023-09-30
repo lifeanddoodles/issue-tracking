@@ -149,6 +149,17 @@ export function getUserDataOptions(users: FetchedData) {
     }));
 }
 
+export function getTicketDataOptions(tickets: FetchedData) {
+  return tickets
+    .filter(
+      (ticket): ticket is Partial<ITicketPopulatedDocument> => "title" in ticket
+    )
+    .map((ticket) => ({
+      value: ticket._id as string,
+      label: ticket.title || (ticket._id as string),
+    }));
+}
+
 export type ButtonVariant =
   | "accent"
   | "primary"

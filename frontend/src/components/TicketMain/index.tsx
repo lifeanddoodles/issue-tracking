@@ -21,7 +21,7 @@ const TicketMain = ({
   setErrors,
 }: ITicketMainProps) => {
   return (
-    <Column className="w-full lg:col-start-1 lg:row-start-1 py-2 px-4">
+    <Column className="w-full md:col-start-1 md:row-start-1 py-2 px-4">
       <main>
         <Heading
           text={ticket?.title}

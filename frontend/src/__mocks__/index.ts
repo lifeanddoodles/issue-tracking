@@ -1,12 +1,16 @@
 import {
+  DepartmentTeam,
   ICommentPopulatedDocument,
-  ITicket,
+  ITicketDocument,
   ITicketPopulatedDocument,
   Priority,
   Status,
+  TicketType,
+  UserRole,
 } from "../../../shared/interfaces";
 
-export const fakeTickets: (ITicket & { _id: string })[] = [
+// TODO: Fix errors
+export const fakeTickets: ITicketDocument[] = [
   {
     _id: "ticket-001",
     title: "Fix login page alignment",
@@ -14,14 +18,13 @@ export const fakeTickets: (ITicket & { _id: string })[] = [
       "The login page elements are misaligned. Adjust the CSS to align them properly.",
     assignee: "staff-001",
     status: Status.IN_PROGRESS,
+    ticketType: TicketType.ISSUE,
     priority: Priority.LOW,
     reporter: "dev-001",
     moveToDevSprint: true,
+    assignToTeam: DepartmentTeam.DEVELOPMENT,
     deadline: "2023-08-30T22:22:30.440Z",
-    createdAt: "2023-08-30T22:22:30.440Z",
-    lastModifiedAt: "2023-08-30T22:22:30.440Z",
     isSubtask: false,
-    parentTask: null,
   },
   {
     _id: "ticket-002",
@@ -30,14 +33,13 @@ export const fakeTickets: (ITicket & { _id: string })[] = [
       "Allow users to upload and display profile pictures on their profiles.",
     assignee: "dev-002",
     status: Status.OPEN,
+    ticketType: TicketType.ISSUE,
     priority: Priority.MEDIUM,
     reporter: "staff-002",
     deadline: "2023-08-30T22:22:30.440Z",
-    createdAt: "2023-08-30T22:22:30.440Z",
-    lastModifiedAt: "2023-08-30T22:22:30.440Z",
     moveToDevSprint: true,
+    assignToTeam: DepartmentTeam.DEVELOPMENT,
     isSubtask: false,
-    parentTask: null,
   },
   {
     _id: "ticket-003",
@@ -46,14 +48,13 @@ export const fakeTickets: (ITicket & { _id: string })[] = [
       "Create a mechanism for users to reset their passwords if they forget them.",
     assignee: "dev-001",
     status: Status.IN_PROGRESS,
+    ticketType: TicketType.ISSUE,
     priority: Priority.HIGH,
     reporter: "staff-002",
     deadline: "2023-08-30T22:22:30.440Z",
-    createdAt: "2023-08-30T22:22:30.440Z",
-    lastModifiedAt: "2023-08-30T22:22:30.440Z",
     moveToDevSprint: true,
+    assignToTeam: DepartmentTeam.DEVELOPMENT,
     isSubtask: false,
-    parentTask: null,
   },
 ];
 
@@ -69,6 +70,7 @@ export const fakePopulatedTickets: ITicketPopulatedDocument[] = [
       lastName: "Doe",
     },
     status: Status.IN_PROGRESS,
+    ticketType: TicketType.ISSUE,
     priority: Priority.LOW,
     reporter: {
       _id: "dev-001",
@@ -76,11 +78,9 @@ export const fakePopulatedTickets: ITicketPopulatedDocument[] = [
       lastName: "Doe",
     },
     moveToDevSprint: true,
+    assignToTeam: DepartmentTeam.DEVELOPMENT,
     deadline: "2023-08-30T22:22:30.440Z",
-    createdAt: "2023-08-30T22:22:30.440Z",
-    lastModifiedAt: "2023-08-30T22:22:30.440Z",
     isSubtask: false,
-    parentTask: null,
   },
   {
     _id: "ticket-002",
@@ -93,6 +93,7 @@ export const fakePopulatedTickets: ITicketPopulatedDocument[] = [
       lastName: "Holmes",
     },
     status: Status.OPEN,
+    ticketType: TicketType.ISSUE,
     priority: Priority.MEDIUM,
     reporter: {
       _id: "staff-002",
@@ -100,11 +101,9 @@ export const fakePopulatedTickets: ITicketPopulatedDocument[] = [
       lastName: "Smith",
     },
     deadline: "2023-08-30T22:22:30.440Z",
-    createdAt: "2023-08-30T22:22:30.440Z",
-    lastModifiedAt: "2023-08-30T22:22:30.440Z",
     moveToDevSprint: true,
+    assignToTeam: DepartmentTeam.DEVELOPMENT,
     isSubtask: false,
-    parentTask: null,
   },
   {
     _id: "ticket-003",
@@ -117,6 +116,7 @@ export const fakePopulatedTickets: ITicketPopulatedDocument[] = [
       lastName: "Doe",
     },
     status: Status.IN_PROGRESS,
+    ticketType: TicketType.ISSUE,
     priority: Priority.HIGH,
     reporter: {
       _id: "staff-002",
@@ -124,11 +124,9 @@ export const fakePopulatedTickets: ITicketPopulatedDocument[] = [
       lastName: "Smith",
     },
     deadline: "2023-08-30T22:22:30.440Z",
-    createdAt: "2023-08-30T22:22:30.440Z",
-    lastModifiedAt: "2023-08-30T22:22:30.440Z",
     moveToDevSprint: true,
+    assignToTeam: DepartmentTeam.DEVELOPMENT,
     isSubtask: false,
-    parentTask: null,
   },
 ];
 
@@ -140,7 +138,7 @@ export const fakeUsers = [
     position: "Lead Graphic Designer",
     email: "jane.doe@someagency.com",
     password: "bETj6uCOI",
-    role: "STAFF",
+    role: UserRole.STAFF,
     company: "000",
   },
   {
@@ -150,7 +148,7 @@ export const fakeUsers = [
     position: "Fullstack Developer",
     email: "jane.doe@someagency.com",
     password: "esTkitT1r",
-    role: "DEVELOPER",
+    role: UserRole.DEVELOPER,
     company: "000",
   },
   {
@@ -160,7 +158,7 @@ export const fakeUsers = [
     position: "Project Manager",
     email: "mary.smith@someagency.com",
     password: "bETj6uCOI",
-    role: "STAFF",
+    role: UserRole.STAFF,
     company: "000",
   },
   {
@@ -170,7 +168,7 @@ export const fakeUsers = [
     position: "Fullstack Developer",
     email: "mark.holmes@someagency.com",
     password: "VYaG1Ew",
-    role: "DEVELOPER",
+    role: UserRole.DEVELOPER,
     company: "000",
   },
 ];

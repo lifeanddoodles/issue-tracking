@@ -45,7 +45,9 @@ const Select = ({
   const selectHasErrors = errors && errors?.[id!]?.length > 0;
   const { validateField } = useValidation();
   const mergeClassName = twMerge(
-    `flex flex-${direction} mb-4 gap-2`,
+    `flex flex-${direction} mb-4 gap-2${
+      direction === "row" ? " w-full flex-wrap" : ""
+    }`,
     className
   );
 
@@ -76,7 +78,14 @@ const Select = ({
   return (
     <Wrapper>
       {label && (
-        <label htmlFor={id}>
+        <label
+          className={`${
+            direction === "row"
+              ? " basis-full max-w-1/3 shrink-0 sm:basis-1/3 md:basis-full lg:basis-1/3"
+              : ""
+          }`}
+          htmlFor={id}
+        >
           <strong className="font-semibold">{label}</strong>
         </label>
       )}
@@ -88,6 +97,10 @@ const Select = ({
         onBlur={handleOnBlur}
         className={`text-neutral-800 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-700 rounded-lg border focus:ring-blue-500 focus:border-blue-500 block p-2 pr-4 dark:placeholder-neutral-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full max-w-xs${
           !label ? " mb-4" : ""
+        }${
+          direction === "row"
+            ? " basis-full max-w-2/3 shrink grow sm:basis-2/3 md:basis-full lg:basis-2/3"
+            : ""
         }`}
         required={required}
         disabled={disabled}

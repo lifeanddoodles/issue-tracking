@@ -20,7 +20,7 @@ export interface ISelectWithFetchProps {
     >
   ) => void;
   disabled?: boolean;
-  errors: { [key: string]: string[] } | null;
+  errors?: { [key: string]: string[] } | null;
   setErrors?: React.Dispatch<
     React.SetStateAction<{ [key: string]: string[] } | null>
   >;
@@ -62,15 +62,27 @@ const SelectWithFetch = ({
   }, [getOptionsList]);
 
   if (loading) {
-    return <h1 role="status">Loading...</h1>;
+    return (
+      <p id={id} role="status">
+        Loading...
+      </p>
+    );
   }
 
   if (error) {
-    return <h1 role="status">{error.message}</h1>;
+    return (
+      <p id={id} role="status">
+        {error.message}
+      </p>
+    );
   }
 
   if (!data) {
-    return <h1 role="status">Users not found</h1>;
+    return (
+      <p id={id} role="status">
+        Users not found
+      </p>
+    );
   }
 
   return (
@@ -88,7 +100,7 @@ const SelectWithFetch = ({
           required
           errors={errors}
           setErrors={setErrors}
-          className="grid grid-cols-[1fr_2fr]"
+          direction="row"
           disabled={disabled}
         />
       </>

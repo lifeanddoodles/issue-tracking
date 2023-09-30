@@ -125,7 +125,7 @@ const TicketDetails = () => {
   return (
     ticketInfo &&
     !loading && (
-      <Row className="grid gap-8 grid-cols-1fr md:grid-cols-[2fr_minmax(max-content,_1fr)]">
+      <Row className="grid gap-8 grid-cols-1fr md:grid-rows-[minmax(0px,_max-content)] md:grid-cols-[1fr_1fr] lg:grid-cols-[3fr_2fr]">
         <TicketMain
           ticket={ticketInfo.ticket}
           onChange={handleChange}

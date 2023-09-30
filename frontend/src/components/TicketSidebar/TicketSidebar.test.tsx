@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect } from "vitest";
 import TicketSidebar from ".";
 import {
@@ -12,13 +13,21 @@ const fakeTicket = fakePopulatedTickets[0];
 
 describe("TicketSidebar", () => {
   test("renders correctly", () => {
-    render(<TicketSidebar ticket={fakeTicket} />);
+    render(
+      <MemoryRouter>
+        <TicketSidebar ticket={fakeTicket} />
+      </MemoryRouter>
+    );
     const element = screen.getByText(getStatusText(fakeTicket.status));
     expect(element).toBeInTheDocument();
   });
 
   test("renders assignee info", () => {
-    render(<TicketSidebar ticket={fakeTicket} />);
+    render(
+      <MemoryRouter>
+        <TicketSidebar ticket={fakeTicket} />
+      </MemoryRouter>
+    );
     const element = screen.getByText(
       `${fakeDevUser.firstName} ${fakeDevUser.lastName}`
     );
@@ -26,7 +35,11 @@ describe("TicketSidebar", () => {
   });
 
   test("renders reporter info", () => {
-    render(<TicketSidebar ticket={fakeTicket} />);
+    render(
+      <MemoryRouter>
+        <TicketSidebar ticket={fakeTicket} />
+      </MemoryRouter>
+    );
     const element = screen.getByText(
       `${fakeStaffUser.firstName} ${fakeStaffUser.lastName}`
     );
