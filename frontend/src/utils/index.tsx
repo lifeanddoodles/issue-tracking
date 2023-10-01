@@ -55,6 +55,18 @@ export function getOptionsFromEnum<E extends { [key: string]: string }>(
   }));
 }
 
+export function getStatusClasses(status: Status) {
+  switch (status) {
+    case Status.IN_PROGRESS:
+      return "bg-blue-300";
+    case Status.CLOSED:
+      return "bg-green-400";
+    case Status.OPEN:
+    default:
+      return "bg-red-400";
+  }
+}
+
 export function getStatusText<Status>(status: Status): string {
   switch (status) {
     case Status.IN_PROGRESS:
@@ -69,6 +81,18 @@ export function getStatusText<Status>(status: Status): string {
 
 export function getStatusOptions() {
   return getOptionsFromEnum(Status, getStatusText);
+}
+
+export function getPriorityClasses<Priority>(priority: Priority): string {
+  switch (priority) {
+    case Priority.HIGH:
+      return "bg-red-400";
+    case Priority.LOW:
+      return "bg-gray-300";
+    case Priority.MEDIUM:
+    default:
+      return "bg-yellow-400";
+  }
 }
 
 export function getPriorityText<Priority>(enumName: Priority): string {
@@ -87,12 +111,24 @@ export function getPriorityOptions() {
   return getOptionsFromEnum(Priority, getPriorityText);
 }
 
+export function getTicketTypeClasses<TicketType>(enumName: TicketType): string {
+  switch (enumName) {
+    case TicketType.BUG:
+      return "bg-red-400";
+    case TicketType.FEATURE_REQUEST:
+      return "bg-orange-400";
+    case TicketType.ISSUE:
+    default:
+      return "bg-gray-300";
+  }
+}
+
 export function getTicketTypeText<TicketType>(enumName: TicketType): string {
   switch (enumName) {
     case TicketType.BUG:
       return "Bug";
     case TicketType.FEATURE_REQUEST:
-      return "Feature request";
+      return "Feature";
     case TicketType.ISSUE:
     default:
       return "Issue";

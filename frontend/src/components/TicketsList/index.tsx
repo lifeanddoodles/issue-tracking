@@ -2,23 +2,14 @@ import { Link } from "react-router-dom";
 import {
   ITicket,
   ITicketPopulatedDocument,
-  Status,
 } from "../../../../shared/interfaces";
-import { getStatusText, getVariantClasses } from "../../utils";
+import {
+  getStatusClasses,
+  getStatusText,
+  getVariantClasses,
+} from "../../utils";
 import Badge from "../Badge";
 import Heading from "../Heading";
-
-function getStatusClasses(status: Status) {
-  switch (status) {
-    case Status.IN_PROGRESS:
-      return "bg-green-400";
-    case Status.CLOSED:
-      return "bg-yellow-400";
-    case Status.OPEN:
-    default:
-      return "bg-red-400";
-  }
-}
 
 interface ITicketsListProps {
   tickets: (ITicket & { _id: string })[] | ITicketPopulatedDocument[] | [];

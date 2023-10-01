@@ -12,6 +12,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import "./index.css";
 import DashboardLayout from "./layout/DashboardLayout";
 import GuestPageWrapper from "./layout/GuestPageWrapper";
+import AllTickets from "./pages/AllTickets";
 import CreateTicket from "./pages/CreateTicket/index.tsx";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
@@ -31,11 +32,15 @@ const router = createBrowserRouter(
       <Route path="" element={<PrivateRoute />}>
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="" element={<Dashboard />} />
-          <Route path="/dashboard/create-ticket" element={<CreateTicket />} />
+          <Route
+            path="/dashboard/tickets/create-ticket"
+            element={<CreateTicket />}
+          />
           <Route
             path="/dashboard/tickets/:ticketId"
             element={<TicketDetails />}
           />
+          <Route path="/dashboard/tickets/" element={<AllTickets />} />
         </Route>
       </Route>
       {/* TODO:Add Admin users' routes */}

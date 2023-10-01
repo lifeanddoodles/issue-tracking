@@ -116,7 +116,7 @@ const CreateTicket = () => {
         label={isClient ? "Reporter:" : "External reporter:"}
         id="externalReporter"
         value={formData.externalReporter}
-        options={getUserDataOptions([user!])}
+        options={isClient ? getUserDataOptions([user!]) : []}
         onChange={handleChange}
         required
         errors={errors}

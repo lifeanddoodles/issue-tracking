@@ -16,8 +16,16 @@ function CommentHeader({
         {createdAt && (
           <span className="comment__header--date">
             {typeof createdAt === "string"
-              ? new Date(createdAt).toLocaleString()
-              : createdAt.toLocaleDateString()}
+              ? new Date(createdAt).toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : createdAt.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
           </span>
         )}
         {isEdited && <span className="comment__header--edited">Edited</span>}

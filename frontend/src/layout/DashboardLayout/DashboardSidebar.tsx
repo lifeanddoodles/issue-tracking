@@ -17,6 +17,32 @@ const menuItems = {
       },
     ],
   },
+  tickets: {
+    title: "Tickets",
+    items: [
+      {
+        title: "All Tickets",
+        link: "/dashboard/tickets",
+      },
+      {
+        title: "Add Ticket",
+        link: "/dashboard/tickets/create-ticket",
+      },
+    ],
+  },
+  projects: {
+    title: "Projects",
+    items: [
+      {
+        title: "All Projects",
+        link: "/projects",
+      },
+      {
+        title: "Add Project",
+        link: "/projects/add-project",
+      },
+    ],
+  },
 };
 
 const DashboardSidebar = () => {

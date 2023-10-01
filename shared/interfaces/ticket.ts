@@ -54,7 +54,10 @@ export interface ITicket extends ITicketBase {
   parentTask?: ObjectId | Record<string, unknown>;
 }
 
-export interface ITicketDocument extends ITicket, Document {}
+export interface ITicketDocument extends ITicket, Document {
+  createdAt: Date | string;
+  lastModifiedAt: Date | string;
+}
 
 export type ITicketPopulatedDocument = ITicketDocument & {
   assignee: IPersonInfo;
