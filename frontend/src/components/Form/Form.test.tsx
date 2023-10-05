@@ -22,7 +22,7 @@ describe("Form", () => {
     render(
       <Form onSubmit={mockOnSubmit}>
         <h1>Form tile</h1>
-        <Button label={"Submit"} type={"submit"} />
+        <Button type={"submit"}>Submit</Button>
       </Form>
     );
     const submitButton = screen.getByRole("button");

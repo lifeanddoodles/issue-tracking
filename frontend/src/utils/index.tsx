@@ -201,6 +201,7 @@ export type ButtonVariant =
   | "primary"
   | "secondary"
   | "transparent"
+  | "icon"
   | "link";
 
 export function getVariantClasses(variant: ButtonVariant) {
@@ -213,6 +214,8 @@ export function getVariantClasses(variant: ButtonVariant) {
       return "text-white bg-secondary hover:bg-secondary-dark py-1 px-3";
     case "transparent":
       return "text-primary hover:bg-neutral-200 py-2 px-3";
+    case "icon":
+      return "text-primary hover:bg-neutral-200 py-1 px-1 w-8 h-8";
     case "link":
       return "text-primary hover:text-primary-dark hover:underline";
   }

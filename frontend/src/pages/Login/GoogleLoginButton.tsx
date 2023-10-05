@@ -25,7 +25,7 @@ const GoogleLoginButton = () => {
     }
   });
 
-  return <Button onClick={handleOnClick} label="Login with Google" />;
+  return <Button onClick={handleOnClick}>Login with Google</Button>;
 };
 
 export default GoogleLoginButton;

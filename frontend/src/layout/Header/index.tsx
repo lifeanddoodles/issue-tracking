@@ -44,7 +44,7 @@ const Header = () => {
             {item.title}
           </Link>
         ))}
-        {user && <Button label="Logout" onClick={logoutUserReq} />}
+        {user && <Button onClick={logoutUserReq}>Logout</Button>}
       </div>
     </header>
   );

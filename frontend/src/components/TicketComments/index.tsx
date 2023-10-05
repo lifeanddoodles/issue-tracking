@@ -58,8 +58,8 @@ const TicketComments = ({ comments }: ITicketCommentsProps) => {
       />
       {displayCommentEditor && (
         <div role="group" className="flex gap-2 mb-8">
-          <Button label="Add comment" onClick={handleAddComment} />
-          <Button label="Cancel" onClick={handleCancelComment} />
+          <Button onClick={handleAddComment}>Add comment</Button>
+          <Button onClick={handleCancelComment}>Cancel</Button>
         </div>
       )}
       {noComments ? (

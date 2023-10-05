@@ -50,8 +50,12 @@ const EditableTextArea = ({
         className="editable-textarea__textarea"
       />
       <footer className="editable-textarea__footer editable-textarea__footer--actions flex gap-4">
-        <Button label="Save" onClick={handleUpdate} variant="link" />
-        <Button label="Cancel" onClick={handleCancel} variant="link" />
+        <Button onClick={handleUpdate} variant="link">
+          Save
+        </Button>
+        <Button onClick={handleCancel} variant="link">
+          Cancel
+        </Button>
       </footer>
     </div>
   ) : (

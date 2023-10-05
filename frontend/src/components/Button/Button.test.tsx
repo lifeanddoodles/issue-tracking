@@ -5,7 +5,7 @@ import Button from ".";
 
 describe("Button", () => {
   test("renders correctly", () => {
-    render(<Button label={"Click"} />);
+    render(<Button>Click</Button>);
     const element = screen.getByRole("button");
 
     expect(element).toBeInTheDocument();
@@ -16,7 +16,7 @@ describe("Button", () => {
     user.setup();
     const mockOnClick = vi.fn();
 
-    render(<Button label={"Click"} onClick={mockOnClick} />);
+    render(<Button onClick={mockOnClick}>Click</Button>);
     const element = screen.getByRole("button");
 
     await user.click(element);

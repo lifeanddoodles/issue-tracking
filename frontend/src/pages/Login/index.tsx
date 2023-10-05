@@ -73,7 +73,7 @@ const Login = () => {
           errors={errors}
           setErrors={setErrors}
         />
-        <Button label="Submit" type="submit" />
+        <Button type="submit">Submit</Button>
       </Form>
       <GoogleLoginButton />
     </>

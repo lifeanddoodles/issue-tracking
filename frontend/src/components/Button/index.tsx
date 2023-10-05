@@ -1,23 +1,40 @@
+import { twMerge } from "tailwind-merge";
 import { ButtonVariant, getVariantClasses } from "../../utils";
 
-const Button = ({
-  label,
-  onClick,
-  type = "button",
-  variant = "primary",
-}: {
-  label: string;
+export interface IButtonProps {
+  label?: string;
+  children: React.ReactNode;
+  id?: string;
   onClick?: (e: React.MouseEvent<HTMLElement>) => void;
   type?: "button" | "submit" | "reset";
   variant?: ButtonVariant;
-}) => {
+  disabled?: boolean;
+  className?: string;
+}
+
+const Button = ({
+  children,
+  id,
+  onClick,
+  type = "button",
+  variant = "primary",
+  disabled,
+  className,
+}: IButtonProps) => {
+  const mergedClassName = twMerge(
+    `rounded-lg text-base border-0 ${getVariantClasses(variant)}`,
+    className
+  );
+
   return (
     <button
+      id={id}
       type={type}
       onClick={onClick}
-      className={`rounded-lg text-base border-0 ${getVariantClasses(variant)}`}
+      className={mergedClassName}
+      disabled={disabled}
     >
-      {label}
+      {children}
     </button>
   );
 };

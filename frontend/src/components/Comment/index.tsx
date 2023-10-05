@@ -83,16 +83,12 @@ const Comment = ({ comment }: ICommentProps) => {
           )}
         </div>
         <footer className="comment__footer comment__footer--actions flex gap-4">
-          <Button
-            label="Edit"
-            onClick={() => handleUpdateComment(commentId)}
-            variant="link"
-          />
-          <Button
-            label="Delete"
-            onClick={() => handleDeleteComment(commentId)}
-            variant="link"
-          />
+          <Button onClick={() => handleUpdateComment(commentId)} variant="link">
+            Edit
+          </Button>
+          <Button onClick={() => handleDeleteComment(commentId)} variant="link">
+            Delete
+          </Button>
         </footer>
       </div>
     </li>

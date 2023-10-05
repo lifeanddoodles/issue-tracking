@@ -212,7 +212,7 @@ const CreateTicket = () => {
           />
         </>
       )}
-      <Button label="Submit" type="submit" />
+      <Button type="submit">Submit</Button>
     </Form>
   );
 };
