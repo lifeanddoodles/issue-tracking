@@ -2,6 +2,7 @@ import {
   ITicket,
   ITicketBase,
   ITicketPopulatedDocument,
+  IUser,
 } from "../../../shared/interfaces";
 
 /*
@@ -46,6 +47,14 @@ export const getRegisterUserOptions = (reqBody: {
   body: JSON.stringify(reqBody),
 });
 
+export const getUpdateUserOptions = (reqBody: Partial<IUser>) => ({
+  method: "PATCH",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(reqBody),
+});
+
 /*
  * Tickets
  */
@@ -62,10 +71,6 @@ export const getPostTicketOptions = (
   body: JSON.stringify(reqBody),
 });
 
-export const getDeleteTicketOptions = () => ({
-  method: "DELETE",
-});
-
 /*
  * Comments
  */
@@ -79,6 +84,31 @@ export const getUpdateCommentOptions = (message: string) => ({
   body: JSON.stringify({ message }),
 });
 
-export const getDeleteCommentOptions = () => ({
+export const getDeleteOptions = () => ({
   method: "DELETE",
+});
+
+/*
+ * Companies
+ */
+export const COMPANIES_BASE_API_URL = "/api/companies";
+
+export const getPostOptions: <T>(reqBody: Partial<T>) => RequestInit = (
+  reqBody
+) => ({
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(reqBody),
+});
+
+export const getUpdateOptions: <T>(reqBody: Partial<T>) => RequestInit = (
+  reqBody
+) => ({
+  method: "PATCH",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(reqBody),
 });

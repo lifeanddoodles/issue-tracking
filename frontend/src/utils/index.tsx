@@ -4,8 +4,10 @@ import {
   ITicketPopulatedDocument,
   IUser,
   IUserDocument,
+  Industry,
   Priority,
   Status,
+  SubscriptionStatus,
   TicketType,
   UserRole,
 } from "../../../shared/interfaces";
@@ -55,13 +57,24 @@ export function getOptionsFromEnum<E extends { [key: string]: string }>(
   }));
 }
 
-export function getStatusClasses(status: Status) {
+export function getStatusClasses(status: Status | SubscriptionStatus) {
   switch (status) {
     case Status.IN_PROGRESS:
+    case SubscriptionStatus.ACTIVE:
+    case SubscriptionStatus.ONBOARDING:
+    case SubscriptionStatus.PENDING_RENEWAL:
       return "bg-blue-300";
     case Status.CLOSED:
+    case SubscriptionStatus.PENDING_UPGRADE:
+    case SubscriptionStatus.UPGRADING:
       return "bg-green-400";
+    case SubscriptionStatus.DOWNGRADING:
+    case SubscriptionStatus.PENDING_CANCELATION:
+    case SubscriptionStatus.PENDING_DOWNGRADE:
+      return "bg-orange-400";
     case Status.OPEN:
+    case SubscriptionStatus.CANCELLED:
+    case SubscriptionStatus.CHURNED:
     default:
       return "bg-red-400";
   }
@@ -76,6 +89,32 @@ export function getStatusText<Status>(status: Status): string {
     case Status.OPEN:
     default:
       return "Open";
+  }
+}
+
+export function getSubscriptionStatusText(status: SubscriptionStatus) {
+  switch (status) {
+    case SubscriptionStatus.ACTIVE:
+      return "Active";
+    case SubscriptionStatus.PENDING_RENEWAL:
+      return "Pending renewal";
+    case SubscriptionStatus.PENDING_UPGRADE:
+      return "Pending upgrade";
+    case SubscriptionStatus.UPGRADING:
+      return "Upgrading";
+    case SubscriptionStatus.DOWNGRADING:
+      return "Downgrading";
+    case SubscriptionStatus.PENDING_CANCELATION:
+      return "Pending cancellation";
+    case SubscriptionStatus.PENDING_DOWNGRADE:
+      return "Pending downgrade";
+    case SubscriptionStatus.CANCELLED:
+      return "Cancelled";
+    case SubscriptionStatus.CHURNED:
+      return "Churned";
+    case SubscriptionStatus.ONBOARDING:
+    default:
+      return "Onboarding";
   }
 }
 
@@ -161,6 +200,11 @@ export function getDepartmentTeamText<DepartmentTeam>(
 
 export function getDepartmentTeamOptions() {
   const options = getOptionsFromEnum(DepartmentTeam, getDepartmentTeamText);
+  return options;
+}
+
+export function getAssignableDepartmentTeamOptions() {
+  const options = getOptionsFromEnum(DepartmentTeam, getDepartmentTeamText);
   return options.filter((item) => {
     return (
       item.value !== DepartmentTeam.MANAGEMENT &&
@@ -196,6 +240,31 @@ export function getTicketDataOptions(tickets: FetchedData) {
     }));
 }
 
+export function getIndustryText<Industry>(enumName: Industry): string {
+  switch (enumName) {
+    case Industry.HEALTHCARE:
+      return "Healthcare";
+    case Industry.EDUCATION:
+      return "Education";
+    case Industry.FINANCE:
+      return "Finance";
+    case Industry.E_COMMERCE:
+      return "E-commerce";
+    case Industry.MANUFACTURING:
+      return "Manufacturing";
+    case Industry.HOSPITALITY:
+      return "Hospitality";
+    case Industry.UNASSIGNED:
+    default:
+      return "Unassigned";
+  }
+}
+
+export function getIndustryOptions() {
+  const options = getOptionsFromEnum(Industry, getIndustryText);
+  return options;
+}
+
 export type ButtonVariant =
   | "accent"
   | "primary"
@@ -220,3 +289,15 @@ export function getVariantClasses(variant: ButtonVariant) {
       return "text-primary hover:text-primary-dark hover:underline";
   }
 }
+
+export const getColumnTitles: <T>(
+  row: { id: string; data: Partial<T> },
+  columnsEnum: Record<string, string>
+) => { keyTitle: string; title: string }[] = (row, columnsEnum) => {
+  return Object.keys(row.data).map((keyTitle: string) => {
+    return {
+      keyTitle,
+      title: columnsEnum[keyTitle],
+    };
+  });
+};
