@@ -3,9 +3,10 @@ import {
   ITicketPopulatedDocument,
   Priority,
 } from "shared/interfaces";
-import TicketsTable from "../../components/TicketsTable";
+import TableFromDocuments from "../../components/TableFromDocuments";
 import useFetch from "../../hooks/useFetch";
 import { TICKETS_BASE_API_URL } from "../../routes";
+import { getColumnTitles } from "../../utils";
 
 enum TableColumns {
   title = "Title",
@@ -15,18 +16,6 @@ enum TableColumns {
   priority = "Priority",
   createdAt = "Created at",
 }
-
-const getColumnTitles = (ticket: {
-  id: string;
-  data: Partial<ITicketDocument>;
-}) => {
-  return Object.keys(ticket.data).map((key: string) => {
-    return {
-      key,
-      title: TableColumns[key as keyof typeof TableColumns],
-    };
-  });
-};
 
 const AllTickets = () => {
   const {
@@ -65,9 +54,10 @@ const AllTickets = () => {
     !loading &&
     formattedTickets &&
     formattedTickets?.length > 0 && (
-      <TicketsTable
-        cols={getColumnTitles(formattedTickets[0])}
+      <TableFromDocuments
+        cols={getColumnTitles(formattedTickets[0], TableColumns)}
         rows={formattedTickets}
+        resourceBaseUrl="/dashboard/tickets"
       />
     )
   );

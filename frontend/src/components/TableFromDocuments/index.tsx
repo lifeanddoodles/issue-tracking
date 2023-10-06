@@ -1,20 +1,18 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  ITicketDocument,
-  IUserDocument,
+  Industry,
   Priority,
   Status,
+  SubscriptionStatus,
   TicketType,
-} from "shared/interfaces";
-import useFetch from "../../hooks/useFetch";
-import { USERS_BASE_API_URL } from "../../routes";
+} from "../../../../shared/interfaces";
 import {
-  getFullName,
+  getIndustryText,
   getPriorityClasses,
   getPriorityText,
   getStatusClasses,
   getStatusText,
+  getSubscriptionStatusText,
   getTicketTypeClasses,
   getTicketTypeText,
   getVariantClasses,
@@ -27,77 +25,99 @@ import TableHead from "../TableHead";
 import TableHeading from "../TableHeading";
 import TableRow from "../TableRow";
 
-const TicketTableCell = ({
-  title,
-  value,
-}: {
-  title: string;
-  value: string;
-}) => {
-  const { data, loading, error, sendRequest } = useFetch<IUserDocument | null>(
-    null
-  );
+interface PopulatedUserCell {
+  _id: string;
+  firstName: string;
+  lastName: string;
+}
 
-  useEffect(() => {
-    if (title === "assignee") {
-      sendRequest({ url: `${USERS_BASE_API_URL}/${value}` });
-    }
-  }, [sendRequest, title, value]);
+type CellDataValue = string | number | PopulatedUserCell;
 
-  const getCellData = () => {
-    if (title === "assignee") {
-      if (error) return error.message;
-      if (loading) return "Loading...";
-      return !loading && data && getFullName(data.firstName!, data.lastName!);
-    }
-    if (title === "priority") {
+const getCellData = (title: string, value: CellDataValue) => {
+  switch (title) {
+    case "assignee":
+    case "reporter":
+    case "externalReporter":
+      value = value as PopulatedUserCell;
+      return (
+        <span data-original-format={value?._id}>
+          {value?.firstName} {value?.lastName}
+        </span>
+      );
+    case "industry":
+      return (
+        <Badge
+          text={getIndustryText(value as Industry)}
+          className={"bg-gray-200"}
+        />
+      );
+    case "priority":
       return (
         <Badge
           text={getPriorityText(value as Priority)}
           className={getPriorityClasses(value as Priority)}
         />
       );
-    }
-    if (title === "ticketType") {
+    case "ticketType":
       return (
         <Badge
           text={getTicketTypeText(value as TicketType)}
           className={getTicketTypeClasses(value as TicketType)}
         />
       );
-    }
-    if (title === "status") {
+    case "status":
       return (
         <Badge
-          text={getStatusText(value)}
+          text={getStatusText(value as Status)}
           className={getStatusClasses(value as Status)}
         />
       );
-    }
-    if (title === "createdAt") {
+    case "subscriptionStatus":
+      return (
+        <Badge
+          text={getSubscriptionStatusText(value as SubscriptionStatus)}
+          className={getStatusClasses(value as Status)}
+        />
+      );
+    case "createdAt":
+    case "updatedAt":
       return (
         <span data-original-format={value}>
-          {new Date(value).toLocaleString("en-US", {
+          {new Date(value as string).toLocaleString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",
           })}
         </span>
       );
-    }
-    return value;
-  };
-
-  return <TableCell className="shrink-0 grow-0">{getCellData()}</TableCell>;
+    default:
+      return value as string;
+  }
 };
 
-const TicketsTable = ({
+const TableCellData = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: CellDataValue;
+}) => {
+  return (
+    <TableCell className="shrink-0 grow-0">
+      {getCellData(title, value)}
+    </TableCell>
+  );
+};
+
+const TableFromDocuments: <T>({
   cols,
   rows,
+  resourceBaseUrl,
 }: {
-  cols: { key: string; title: string }[];
-  rows: [] | { id: string; data: Partial<ITicketDocument> }[];
-}) => {
+  cols: { keyTitle: string; title: string }[];
+  rows: [] | { id: string; data: Partial<T> }[];
+  resourceBaseUrl?: string;
+}) => JSX.Element | null = ({ cols, rows, resourceBaseUrl }) => {
   const variantClasses = getVariantClasses("transparent");
   if (!cols && !rows) return null;
   return (
@@ -106,7 +126,10 @@ const TicketsTable = ({
         <TableHead className="w-full">
           <TableRow className="grid grid-flow-col md:grid-cols-[5fr_repeat(3,_3fr)_1fr_3fr_1fr]">
             {cols.map((col) => (
-              <TableHeading className="shrink-0 grow-0 text-left" key={col.key}>
+              <TableHeading
+                className="shrink-0 grow-0 text-left"
+                key={col.keyTitle}
+              >
                 {col.title}
               </TableHeading>
             ))}
@@ -122,11 +145,15 @@ const TicketsTable = ({
             className="grid grid-flow-col md:grid-cols-[5fr_repeat(3,_3fr)_1fr_3fr_1fr]"
           >
             {Object.entries(row.data).map(([key, value]) => (
-              <TicketTableCell key={key} title={key} value={value} />
+              <TableCellData
+                key={key}
+                title={key}
+                value={value as CellDataValue}
+              />
             ))}
             <TableCell>
               <Link
-                to={`/dashboard/tickets/${row.id}`}
+                to={`${resourceBaseUrl}/${row.id}`}
                 className={`rounded-lg ${variantClasses}`}
               >
                 View
@@ -139,4 +166,4 @@ const TicketsTable = ({
   );
 };
 
-export default TicketsTable;
+export default TableFromDocuments;

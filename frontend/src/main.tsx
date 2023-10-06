@@ -12,7 +12,9 @@ import PrivateRoute from "./components/PrivateRoute";
 import "./index.css";
 import DashboardLayout from "./layout/DashboardLayout";
 import GuestPageWrapper from "./layout/GuestPageWrapper";
+import AllCompanies from "./pages/AllCompanies/index.tsx";
 import AllTickets from "./pages/AllTickets";
+import CreateCompany from "./pages/CreateCompany/index.tsx";
 import CreateTicket from "./pages/CreateTicket/index.tsx";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
@@ -43,6 +45,11 @@ const router = createBrowserRouter(
           />
           <Route path="/dashboard/tickets/" element={<AllTickets />} />
           <Route path="/dashboard/profile/" element={<Profile />} />
+          <Route path="/dashboard/companies" element={<AllCompanies />} />
+          <Route
+            path="/dashboard/companies/create-company"
+            element={<CreateCompany />}
+          />
         </Route>
       </Route>
       {/* TODO:Add Admin users' routes */}

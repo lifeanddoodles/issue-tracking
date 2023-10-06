@@ -30,6 +30,19 @@ const menuItems = {
       },
     ],
   },
+  companies: {
+    title: "Companies",
+    items: [
+      {
+        title: "All Companies",
+        link: "/dashboard/companies",
+      },
+      {
+        title: "Create a Company",
+        link: "/dashboard/companies/create-company",
+      },
+    ],
+  },
   projects: {
     title: "Projects",
     items: [
