@@ -10,6 +10,7 @@ import { ensureAuth } from "./middleware/authMiddleware.ts";
 import { handleError } from "./middleware/errorMiddleware.js";
 import authRoutes from "./routes/authRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
+import companyRoutes from "./routes/companyRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
@@ -55,6 +56,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/tickets", ensureAuth, ticketRoutes);
 app.use("/api/comments", ensureAuth, commentRoutes);
+app.use("/api/companies", ensureAuth, companyRoutes);
 
 // Error handler
 app.use(handleError);
