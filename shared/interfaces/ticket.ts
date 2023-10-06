@@ -41,11 +41,12 @@ export interface ITicketBase {
 }
 
 export interface ITicket extends ITicketBase {
-  assignee: ObjectId | Record<string, unknown> | string;
-  reporter: ObjectId | Record<string, unknown> | string;
+  assignee?: ObjectId | Record<string, unknown>;
+  reporter?: ObjectId | Record<string, unknown> | string;
   status: Status;
   priority: Priority;
   moveToDevSprint?: boolean;
+  originalTicket?: ObjectId | Record<string, unknown>;
   assignToTeam: DepartmentTeam;
   ticketType: TicketType;
   estimatedTime?: number;

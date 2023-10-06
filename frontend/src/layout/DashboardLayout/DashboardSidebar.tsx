@@ -35,11 +35,11 @@ const menuItems = {
     items: [
       {
         title: "All Projects",
-        link: "/projects",
+        link: "/dashboard/projects",
       },
       {
         title: "Add Project",
-        link: "/projects/add-project",
+        link: "/dashboard/projects/add-project",
       },
     ],
   },

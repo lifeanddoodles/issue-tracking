@@ -22,7 +22,7 @@ const userMenuItems = [
   },
   {
     title: "Profile",
-    link: "/profile",
+    link: "/dashboard/profile",
   },
 ];
 

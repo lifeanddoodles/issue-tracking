@@ -20,8 +20,6 @@ export interface IUser {
   position: string;
   department?: DepartmentTeam;
   avatarUrl?: string;
-  createdAt?: Date | string;
-  lastModifiedAt?: Date | string;
 }
 
 export interface IUserDocument extends IUser, Document {

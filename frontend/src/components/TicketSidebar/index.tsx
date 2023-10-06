@@ -21,10 +21,10 @@ import Heading from "../Heading";
 import Input from "../Input";
 import Select from "../Select";
 import SelectWithFetch from "../Select/SelectWithFetch";
+import Toggle from "../Toggle";
 import MetaInfo from "./MetaInfo";
 
 interface ITicketSidebarProps {
-  ticket: ITicketPopulatedDocument;
   onChange?: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -40,7 +40,6 @@ interface ITicketSidebarProps {
 }
 
 const TicketSidebar = ({
-  ticket,
   onChange,
   onSave,
   onDelete,
@@ -50,13 +49,13 @@ const TicketSidebar = ({
 }: ITicketSidebarProps) => {
   const { user } = useAuth();
   const isClient = user?.role === UserRole.CLIENT;
-  const reporterFullName = ticket?.reporter
-    ? getFullName(ticket?.reporter?.firstName, ticket?.reporter?.lastName)
+  const reporterFullName = formData?.reporter
+    ? getFullName(formData?.reporter?.firstName, formData?.reporter?.lastName)
     : null;
-  const externalReporterFullName = ticket?.externalReporter
+  const externalReporterFullName = formData?.externalReporter
     ? getFullName(
-        ticket?.externalReporter?.firstName,
-        ticket?.externalReporter?.lastName
+        formData?.externalReporter?.firstName,
+        formData?.externalReporter?.lastName
       )
     : null;
   const assignToTeam = formData?.assignToTeam || DepartmentTeam.UNASSIGNED;
@@ -91,13 +90,13 @@ const TicketSidebar = ({
   return (
     <aside className="w-full flex flex-col gap-4 items-start md:col-start-2 md:row-span-2 py-2 px-4">
       <div className="ticket-details__sidebar--actions self-end flex gap-4">
-        <Button label="Save" onClick={handleSave} />
-        <Button label="Delete" onClick={handleDelete} />
+        <Button onClick={handleSave}>Save</Button>
+        <Button onClick={handleDelete}>Delete</Button>
       </div>
       <Select
         // label="Status:"
         id="status"
-        value={ticket?.status}
+        value={formData?.status}
         options={getStatusOptions()}
         onChange={handleChange}
         required
@@ -112,7 +111,7 @@ const TicketSidebar = ({
         <Select
           label="Assign to team:"
           id="assignToTeam"
-          value={ticket?.assignToTeam}
+          value={formData?.assignToTeam}
           options={getDepartmentTeamOptions()}
           onChange={handleChange}
           required
@@ -124,8 +123,8 @@ const TicketSidebar = ({
           label="Assignee:"
           id="assignee"
           value={
-            (ticket?.assignee?._id as string) ||
-            (ticket?.assignee?.toString() as string)
+            (formData?.assignee?._id as string) ||
+            (formData?.assignee?.toString() as string)
           }
           onChange={handleChange}
           disabled={isClient}
@@ -138,8 +137,8 @@ const TicketSidebar = ({
           label={!isClient ? "Reporter" : "Follow up"}
           id="reporter"
           value={
-            (ticket?.reporter?._id as string) ||
-            (ticket?.reporter?.toString() as string)
+            (formData?.reporter?._id as string) ||
+            (formData?.reporter?.toString() as string)
           }
           onChange={handleChange}
           disabled={isClient}
@@ -148,7 +147,7 @@ const TicketSidebar = ({
           getFormattedOptions={getUserDataOptions}
         />
         {isClient && !reporterFullName && (
-          <Button label="Request update" onClick={handleRequestUpdate} />
+          <Button onClick={handleRequestUpdate}>Request update</Button>
         )}
         {externalReporterFullName && (
           <MetaInfo
@@ -161,7 +160,7 @@ const TicketSidebar = ({
             <Select
               label="Priority:"
               id="priority"
-              value={ticket?.priority}
+              value={formData?.priority}
               options={getPriorityOptions()}
               onChange={handleChange}
               required
@@ -172,7 +171,7 @@ const TicketSidebar = ({
             <Select
               label="Type:"
               id="ticketType"
-              value={ticket?.ticketType}
+              value={formData?.ticketType}
               options={getTicketTypeOptions()}
               onChange={handleChange}
               required
@@ -184,7 +183,7 @@ const TicketSidebar = ({
               label="Estimated time (in hours):"
               id="estimatedTime"
               onChange={handleChange}
-              value={ticket?.estimatedTime}
+              value={formData?.estimatedTime}
               required
               errors={errors}
               setErrors={setErrors}
@@ -193,8 +192,16 @@ const TicketSidebar = ({
               label="Deadline:"
               id="deadline"
               onChange={handleChange}
-              value={ticket?.deadline?.toString()}
+              value={formData?.deadline?.toString()}
               required
+              errors={errors}
+              setErrors={setErrors}
+            />
+            <Toggle
+              label="Is subtask:"
+              id="isSubtask"
+              onChange={handleChange}
+              checked={formData?.isSubtask || false}
               errors={errors}
               setErrors={setErrors}
             />
@@ -202,12 +209,12 @@ const TicketSidebar = ({
               label="Parent task:"
               id="parentTask"
               value={
-                !ticket?.isSubtask || !ticket?.parentTask
+                !formData?.isSubtask || !formData?.parentTask
                   ? ""
-                  : ticket?.parentTask?.toString()
+                  : formData?.parentTask?.toString()
               }
               onChange={handleChange}
-              disabled={isClient || !ticket?.isSubtask}
+              disabled={isClient || !formData?.isSubtask}
               errors={errors}
               url={TICKETS_BASE_API_URL}
               getFormattedOptions={getTicketDataOptions}

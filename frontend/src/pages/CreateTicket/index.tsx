@@ -17,7 +17,7 @@ import useFetch from "../../hooks/useFetch";
 import useValidation from "../../hooks/useValidation";
 import { TICKETS_BASE_API_URL, getPostTicketOptions } from "../../routes";
 import {
-  getDepartmentTeamOptions,
+  getAssignableDepartmentTeamOptions,
   getPriorityOptions,
   getStatusOptions,
   getTicketTypeOptions,
@@ -88,6 +88,7 @@ const CreateTicket = () => {
   useEffect(() => {
     if (data && !loading && !error) {
       console.log(data);
+      // TODO: Redirect to ticket details
     }
   }, [data, error, loading]);
 
@@ -167,7 +168,7 @@ const CreateTicket = () => {
             label="Assign to team:"
             id="assignToTeam"
             value={formData?.assignToTeam}
-            options={getDepartmentTeamOptions()}
+            options={getAssignableDepartmentTeamOptions()}
             onChange={handleChange}
             required
             errors={errors}

@@ -17,6 +17,7 @@ import CreateTicket from "./pages/CreateTicket/index.tsx";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import TicketDetails from "./pages/TicketDetails";
 
@@ -41,6 +42,7 @@ const router = createBrowserRouter(
             element={<TicketDetails />}
           />
           <Route path="/dashboard/tickets/" element={<AllTickets />} />
+          <Route path="/dashboard/profile/" element={<Profile />} />
         </Route>
       </Route>
       {/* TODO:Add Admin users' routes */}

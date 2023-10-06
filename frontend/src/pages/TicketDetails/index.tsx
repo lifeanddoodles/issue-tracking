@@ -12,7 +12,7 @@ import useValidation from "../../hooks/useValidation";
 import Row from "../../layout/Row";
 import {
   TICKETS_BASE_API_URL,
-  getDeleteTicketOptions,
+  getDeleteOptions,
   getPostTicketOptions,
 } from "../../routes";
 
@@ -31,23 +31,9 @@ const TicketDetails = () => {
     comments: ICommentPopulatedDocument[];
   } | null>();
 
-  const formDataShape: PartialDocument = {
-    title: ticketInfo?.ticket?.title,
-    description: ticketInfo?.ticket?.description,
-    attachments: ticketInfo?.ticket?.attachments,
-    assignee: ticketInfo?.ticket?.assignee,
-    reporter: ticketInfo?.ticket?.reporter,
-    status: ticketInfo?.ticket?.status,
-    priority: ticketInfo?.ticket?.priority,
-    assignToTeam: ticketInfo?.ticket?.assignToTeam,
-    ticketType: ticketInfo?.ticket?.ticketType,
-    estimatedTime: ticketInfo?.ticket?.estimatedTime,
-    deadline: ticketInfo?.ticket?.deadline,
-    isSubtask: ticketInfo?.ticket?.isSubtask,
-    parentTask: ticketInfo?.ticket?.parentTask,
-  };
-  const [initialFormData] = useState<PartialDocument>(formDataShape);
-  const [formData, setFormData] = useState<PartialDocument>(formDataShape);
+  const [initialFormData, setInitialFormData] =
+    useState<PartialDocument | null>(null);
+  const [formData, setFormData] = useState<PartialDocument | null>(null);
   const [changedFormData, setChangedFormData] = useState<PartialDocument>({});
   const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
     null
@@ -61,7 +47,7 @@ const TicketDetails = () => {
   const requestDelete = () => {
     sendRequest({
       url: `${TICKETS_BASE_API_URL}/${ticketId}`,
-      options: getDeleteTicketOptions(),
+      options: getDeleteOptions(),
     });
   };
 
@@ -74,7 +60,12 @@ const TicketDetails = () => {
 
     setFormData({
       ...formData!,
-      [target.name]: target.value,
+      [target.name]:
+        target.type === "checkbox"
+          ? (target as HTMLInputElement).checked
+          : target.value !== "" && target.value
+          ? target.value
+          : null,
     });
 
     validateField({
@@ -96,12 +87,35 @@ const TicketDetails = () => {
   useEffect(() => getTicketInfo(), [getTicketInfo]);
 
   useEffect(() => {
+    if (ticketInfo && !loading) {
+      const formDataShape: PartialDocument = {
+        title: ticketInfo?.ticket?.title,
+        description: ticketInfo?.ticket?.description,
+        attachments: ticketInfo?.ticket?.attachments,
+        assignee: ticketInfo?.ticket?.assignee,
+        reporter: ticketInfo?.ticket?.reporter,
+        status: ticketInfo?.ticket?.status,
+        priority: ticketInfo?.ticket?.priority,
+        assignToTeam: ticketInfo?.ticket?.assignToTeam,
+        ticketType: ticketInfo?.ticket?.ticketType,
+        estimatedTime: ticketInfo?.ticket?.estimatedTime,
+        deadline: ticketInfo?.ticket?.deadline,
+        isSubtask: ticketInfo?.ticket?.isSubtask,
+        parentTask: ticketInfo?.ticket?.parentTask,
+      };
+      setInitialFormData(formDataShape);
+      setFormData(formDataShape);
+    }
+  }, [loading, ticketInfo]);
+
+  useEffect(() => {
     const changes: PartialDocument = {};
 
     for (const key in formData) {
       if (
+        initialFormData &&
         formData[key as keyof ITicketPopulatedDocument] !==
-        initialFormData[key as keyof ITicketPopulatedDocument]
+          initialFormData[key as keyof ITicketPopulatedDocument]
       ) {
         changes[key as keyof ITicketPopulatedDocument] =
           formData[key as keyof ITicketPopulatedDocument];
@@ -124,7 +138,8 @@ const TicketDetails = () => {
 
   return (
     ticketInfo &&
-    !loading && (
+    !loading &&
+    formData && (
       <Row className="grid gap-8 grid-cols-1fr md:grid-rows-[minmax(0px,_max-content)] md:grid-cols-[1fr_1fr] lg:grid-cols-[3fr_2fr]">
         <TicketMain
           ticket={ticketInfo.ticket}
@@ -134,7 +149,6 @@ const TicketDetails = () => {
           setErrors={setErrors}
         />
         <TicketSidebar
-          ticket={ticketInfo.ticket}
           formData={formData}
           onChange={handleChange}
           onSave={handleSave}

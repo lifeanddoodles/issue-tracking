@@ -6,7 +6,7 @@ import {
 import useFetch from "../../hooks/useFetch";
 import {
   COMMENTS_BASE_API_URL,
-  getDeleteCommentOptions,
+  getDeleteOptions,
   getUpdateCommentOptions,
 } from "../../routes";
 import Avatar from "../Avatar";
@@ -47,7 +47,7 @@ const Comment = ({ comment }: ICommentProps) => {
   };
 
   const handleDeleteComment = (commentId: string) => {
-    const options = getDeleteCommentOptions();
+    const options = getDeleteOptions();
     commentRequest(commentId, options);
   };
 
