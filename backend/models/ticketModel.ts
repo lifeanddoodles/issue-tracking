@@ -28,6 +28,10 @@ const ticketSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    originalTicket: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Ticket",
+    },
     status: {
       type: String,
       default: "OPEN",
@@ -70,6 +74,5 @@ const ticketSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 
 export default mongoose.model<ITicketDocument>("Ticket", ticketSchema);

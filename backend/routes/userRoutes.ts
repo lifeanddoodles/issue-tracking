@@ -31,10 +31,10 @@ router.get("/", ensureAuth, getUsers);
 router.get("/profile", ensureAuth, getUserProfile);
 
 // UPDATE PROFILE
-// @desc Show user's profile
-// @route PUT /api/users/profile
+// @desc Update user's profile
+// @route PATCH /api/users/profile
 // @access Private/Admin
-router.put("/profile", ensureAuth, updateUserProfile);
+router.patch("/profile", ensureAuth, updateUserProfile);
 
 // @desc Show one user
 // @route GET /api/users/:userId

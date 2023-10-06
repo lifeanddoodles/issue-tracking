@@ -151,7 +151,7 @@ export const getUserProfile = asyncHandler(
 );
 
 // @desc Update user's profile
-// @route PUT /api/users/profile
+// @route PATCH /api/users/profile
 // @access Private
 export const updateUserProfile = asyncHandler(
   async (req: Request, res: Response) => {

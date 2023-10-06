@@ -38,6 +38,7 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
     assignee,
     reporter,
     externalReporter,
+    originalTicket,
     status = Status.OPEN,
     priority = Priority.LOW,
     assignToTeam = DepartmentTeam.UNASSIGNED,
@@ -69,6 +70,7 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
     assignee,
     reporter,
     externalReporter,
+    originalTicket,
     status,
     priority,
     assignToTeam,
@@ -97,7 +99,10 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getTickets = asyncHandler(async (req: Request, res: Response) => {
   // Find tickets
-  const tickets = await Ticket.find();
+  const tickets = await Ticket.find()
+    .populate("assignee", "_id firstName lastName")
+    .populate("reporter", "_id firstName lastName")
+    .populate("externalReporter", "_id firstName lastName");
 
   // Handle tickets not found
   if (!tickets) {
@@ -136,6 +141,16 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   }
 
   // Validation
+  // Get authenticated user
+  const authUser: Partial<IUserDocument> | undefined = req.user;
+  const isClient = authUser?.role === UserRole.CLIENT;
+  const externalReporter = ticket?.externalReporter as IPersonInfo;
+
+  // Handle authenticated user not authorized for request
+  if (isClient && authUser._id !== externalReporter?._id) {
+    res.status(401);
+    throw new Error("Not Authorized");
+  }
 
   // Handle success
   res.status(200).json({ ticket, comments });
@@ -162,7 +177,7 @@ export const getTicketsByUser = asyncHandler(
 );
 
 // @desc Update ticket
-// @route UPDATE /api/tickets/:ticketId
+// @route PATCH /api/tickets/:ticketId
 // @access Private
 export const updateTicket = asyncHandler(
   async (req: Request, res: Response) => {

@@ -48,6 +48,7 @@ const userSchema = new mongoose.Schema(
         "DEVELOPMENT",
         "TESTING",
         "PRODUCT",
+        "MANAGEMENT",
         "UNASSIGNED",
       ],
     },
