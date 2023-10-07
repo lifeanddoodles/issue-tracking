@@ -5,24 +5,24 @@ import {
   Status,
   TicketType,
   UserRole,
-} from "../../../../shared/interfaces";
-import Button from "../../components/Button";
-import Form from "../../components/Form";
-import Heading from "../../components/Heading";
-import Input from "../../components/Input";
-import Select from "../../components/Select";
-import TextArea from "../../components/TextArea";
-import useAuth from "../../hooks/useAuth";
-import useFetch from "../../hooks/useFetch";
-import useValidation from "../../hooks/useValidation";
-import { TICKETS_BASE_API_URL, getPostTicketOptions } from "../../routes";
+} from "../../../../../shared/interfaces";
+import Button from "../../../components/Button";
+import Form from "../../../components/Form";
+import Heading from "../../../components/Heading";
+import Input from "../../../components/Input";
+import Select from "../../../components/Select";
+import TextArea from "../../../components/TextArea";
+import useAuth from "../../../hooks/useAuth";
+import useFetch from "../../../hooks/useFetch";
+import useValidation from "../../../hooks/useValidation";
+import { TICKETS_BASE_API_URL, getPostTicketOptions } from "../../../routes";
 import {
   getAssignableDepartmentTeamOptions,
   getPriorityOptions,
   getStatusOptions,
   getTicketTypeOptions,
   getUserDataOptions,
-} from "../../utils";
+} from "../../../utils";
 
 const CreateTicket = () => {
   const { user } = useAuth();

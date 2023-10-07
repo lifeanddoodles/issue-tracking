@@ -49,12 +49,19 @@ export function paragraphsFromMultiLineText(text: string) {
 
 export function getOptionsFromEnum<E extends { [key: string]: string }>(
   enumName: E,
-  getEnumTextFn: (value: string) => string
+  getEnumTextFn: (value: string) => string,
+  noSelectionText?: string
 ) {
-  return Object.values(enumName).map((enumOption) => ({
+  const enumOptions = Object.values(enumName).map((enumOption) => ({
     value: enumOption,
     label: getEnumTextFn(enumOption) || enumOption,
   }));
+  const emptyOption = {
+    value: "",
+    label: noSelectionText || "Select option",
+  };
+
+  return [emptyOption, ...enumOptions];
 }
 
 export function getStatusClasses(status: Status | SubscriptionStatus) {
@@ -118,8 +125,8 @@ export function getSubscriptionStatusText(status: SubscriptionStatus) {
   }
 }
 
-export function getStatusOptions() {
-  return getOptionsFromEnum(Status, getStatusText);
+export function getStatusOptions(noSelectionText?: string) {
+  return getOptionsFromEnum(Status, getStatusText, noSelectionText);
 }
 
 export function getPriorityClasses<Priority>(priority: Priority): string {
@@ -146,8 +153,8 @@ export function getPriorityText<Priority>(enumName: Priority): string {
   }
 }
 
-export function getPriorityOptions() {
-  return getOptionsFromEnum(Priority, getPriorityText);
+export function getPriorityOptions(noSelectionText?: string) {
+  return getOptionsFromEnum(Priority, getPriorityText, noSelectionText);
 }
 
 export function getTicketTypeClasses<TicketType>(enumName: TicketType): string {
@@ -174,8 +181,8 @@ export function getTicketTypeText<TicketType>(enumName: TicketType): string {
   }
 }
 
-export function getTicketTypeOptions() {
-  return getOptionsFromEnum(TicketType, getTicketTypeText);
+export function getTicketTypeOptions(noSelectionText?: string) {
+  return getOptionsFromEnum(TicketType, getTicketTypeText, noSelectionText);
 }
 
 export function getDepartmentTeamText<DepartmentTeam>(
@@ -198,13 +205,21 @@ export function getDepartmentTeamText<DepartmentTeam>(
   }
 }
 
-export function getDepartmentTeamOptions() {
-  const options = getOptionsFromEnum(DepartmentTeam, getDepartmentTeamText);
+export function getDepartmentTeamOptions(noSelectionText?: string) {
+  const options = getOptionsFromEnum(
+    DepartmentTeam,
+    getDepartmentTeamText,
+    noSelectionText
+  );
   return options;
 }
 
-export function getAssignableDepartmentTeamOptions() {
-  const options = getOptionsFromEnum(DepartmentTeam, getDepartmentTeamText);
+export function getAssignableDepartmentTeamOptions(noSelectionText?: string) {
+  const options = getOptionsFromEnum(
+    DepartmentTeam,
+    getDepartmentTeamText,
+    noSelectionText
+  );
   return options.filter((item) => {
     return (
       item.value !== DepartmentTeam.MANAGEMENT &&
@@ -260,8 +275,36 @@ export function getIndustryText<Industry>(enumName: Industry): string {
   }
 }
 
-export function getIndustryOptions() {
-  const options = getOptionsFromEnum(Industry, getIndustryText);
+export function getIndustryOptions(noSelectionText?: string) {
+  const options = getOptionsFromEnum(
+    Industry,
+    getIndustryText,
+    noSelectionText
+  );
+  return options;
+}
+
+export function getUserRoleText<UserRole>(enumName: UserRole): string {
+  switch (enumName) {
+    case UserRole.ADMIN:
+      return "Admin";
+    case UserRole.DEVELOPER:
+      return "Developer";
+    case UserRole.STAFF:
+      return "Staff";
+    case UserRole.CLIENT:
+      return "Client";
+    default:
+      return "Unassigned";
+  }
+}
+
+export function getUserRoleOptions(noSelectionText?: string) {
+  const options = getOptionsFromEnum(
+    UserRole,
+    getUserRoleText,
+    noSelectionText
+  );
   return options;
 }
 
@@ -300,4 +343,25 @@ export const getColumnTitles: <T>(
       title: columnsEnum[keyTitle],
     };
   });
+};
+
+export const objectToQueryString: <
+  T extends Record<string, string | number | boolean>
+>(
+  obj: Partial<T>
+) => string = (obj) => {
+  const queryParams: string[] = [];
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (typeof value !== "undefined") {
+        queryParams.push(
+          encodeURIComponent(key) + "=" + encodeURIComponent(String(value))
+        );
+      }
+    }
+  }
+
+  return queryParams.join("&");
 };

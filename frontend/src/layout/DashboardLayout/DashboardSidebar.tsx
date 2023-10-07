@@ -17,16 +17,16 @@ const menuItems = {
       },
     ],
   },
-  tickets: {
-    title: "Tickets",
+  users: {
+    title: "Users",
     items: [
       {
-        title: "All Tickets",
-        link: "/dashboard/tickets",
+        title: "All Users",
+        link: "/dashboard/users",
       },
       {
-        title: "Add Ticket",
-        link: "/dashboard/tickets/create-ticket",
+        title: "Add User",
+        link: "/dashboard/users/create",
       },
     ],
   },
@@ -38,8 +38,8 @@ const menuItems = {
         link: "/dashboard/companies",
       },
       {
-        title: "Create a Company",
-        link: "/dashboard/companies/create-company",
+        title: "Add Company",
+        link: "/dashboard/companies/create",
       },
     ],
   },
@@ -52,7 +52,20 @@ const menuItems = {
       },
       {
         title: "Add Project",
-        link: "/dashboard/projects/add-project",
+        link: "/dashboard/projects/create",
+      },
+    ],
+  },
+  tickets: {
+    title: "Tickets",
+    items: [
+      {
+        title: "All Tickets",
+        link: "/dashboard/tickets",
+      },
+      {
+        title: "Add Ticket",
+        link: "/dashboard/tickets/create",
       },
     ],
   },

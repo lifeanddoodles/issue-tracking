@@ -3,10 +3,10 @@ import {
   ITicketPopulatedDocument,
   Priority,
 } from "shared/interfaces";
-import TableFromDocuments from "../../components/TableFromDocuments";
-import useFetch from "../../hooks/useFetch";
-import { TICKETS_BASE_API_URL } from "../../routes";
-import { getColumnTitles } from "../../utils";
+import TableFromDocuments from "../../../components/TableFromDocuments";
+import useFetch from "../../../hooks/useFetch";
+import { TICKETS_BASE_API_URL } from "../../../routes";
+import { getColumnTitles } from "../../../utils";
 
 enum TableColumns {
   title = "Title",

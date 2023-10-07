@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import {
+  DepartmentTeam,
   Industry,
   Priority,
   Status,
   SubscriptionStatus,
   TicketType,
+  UserRole,
 } from "../../../../shared/interfaces";
 import {
+  getDepartmentTeamText,
   getIndustryText,
   getPriorityClasses,
   getPriorityText,
@@ -15,6 +18,7 @@ import {
   getSubscriptionStatusText,
   getTicketTypeClasses,
   getTicketTypeText,
+  getUserRoleText,
   getVariantClasses,
 } from "../../utils";
 import Badge from "../Badge";
@@ -44,6 +48,10 @@ const getCellData = (title: string, value: CellDataValue) => {
           {value?.firstName} {value?.lastName}
         </span>
       );
+    case "role":
+      return getUserRoleText(value as UserRole);
+    case "department":
+      return getDepartmentTeamText(value as DepartmentTeam);
     case "industry":
       return (
         <Badge
@@ -121,48 +129,52 @@ const TableFromDocuments: <T>({
   const variantClasses = getVariantClasses("transparent");
   if (!cols && !rows) return null;
   return (
-    <Table>
-      {cols && (
-        <TableHead className="w-full">
-          <TableRow className="grid grid-flow-col md:grid-cols-[5fr_repeat(3,_3fr)_1fr_3fr_1fr]">
-            {cols.map((col) => (
-              <TableHeading
-                className="shrink-0 grow-0 text-left"
-                key={col.keyTitle}
-              >
-                {col.title}
+    <div className="overflow-x-auto grow">
+      <Table>
+        {cols && (
+          <TableHead className="w-full">
+            <TableRow className="grid grid-flow-col grid-cols-[repeat(auto-fit,_minmax(10rem,_1fr))]">
+              {cols.map((col) => (
+                <TableHeading
+                  className="text-left whitespace-nowrap"
+                  key={col.keyTitle}
+                >
+                  {col.title}
+                </TableHeading>
+              ))}
+              <TableHeading className="text-left whitespace-nowrap">
+                Actions
               </TableHeading>
-            ))}
-            <TableHeading>Actions</TableHeading>
-          </TableRow>
-        </TableHead>
-      )}
-      <TableBody className="w-full">
-        {rows.map((row, index) => (
-          <TableRow
-            id={row.id}
-            key={row.id || index}
-            className="grid grid-flow-col md:grid-cols-[5fr_repeat(3,_3fr)_1fr_3fr_1fr]"
-          >
-            {Object.entries(row.data).map(([key, value]) => (
-              <TableCellData
-                key={key}
-                title={key}
-                value={value as CellDataValue}
-              />
-            ))}
-            <TableCell>
-              <Link
-                to={`${resourceBaseUrl}/${row.id}`}
-                className={`rounded-lg ${variantClasses}`}
-              >
-                View
-              </Link>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+            </TableRow>
+          </TableHead>
+        )}
+        <TableBody className="w-full">
+          {rows.map((row, index) => (
+            <TableRow
+              id={row.id}
+              key={row.id || index}
+              className="grid grid-flow-col grid-cols-[repeat(auto-fit,_minmax(10rem,_1fr))]"
+            >
+              {Object.entries(row.data).map(([key, value]) => (
+                <TableCellData
+                  key={key}
+                  title={key}
+                  value={value as CellDataValue}
+                />
+              ))}
+              <TableCell>
+                <Link
+                  to={`${resourceBaseUrl}/${row.id}`}
+                  className={`rounded-lg ${variantClasses}`}
+                >
+                  View
+                </Link>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

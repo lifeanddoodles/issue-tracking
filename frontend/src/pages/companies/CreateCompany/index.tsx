@@ -4,18 +4,18 @@ import {
   Industry,
   SubscriptionStatus,
   UserRole,
-} from "../../../../shared/interfaces";
-import Button from "../../components/Button";
-import Form from "../../components/Form";
-import Heading from "../../components/Heading";
-import Input, { EmailInput, TextInput } from "../../components/Input";
-import Select from "../../components/Select";
-import TextArea from "../../components/TextArea";
-import useAuth from "../../hooks/useAuth";
-import useFetch from "../../hooks/useFetch";
-import useValidation from "../../hooks/useValidation";
-import { COMPANIES_BASE_API_URL, getPostOptions } from "../../routes";
-import { getIndustryOptions } from "../../utils";
+} from "../../../../../shared/interfaces";
+import Button from "../../../components/Button";
+import Form from "../../../components/Form";
+import Heading from "../../../components/Heading";
+import Input, { EmailInput, TextInput } from "../../../components/Input";
+import Select from "../../../components/Select";
+import TextArea from "../../../components/TextArea";
+import useAuth from "../../../hooks/useAuth";
+import useFetch from "../../../hooks/useFetch";
+import useValidation from "../../../hooks/useValidation";
+import { COMPANIES_BASE_API_URL, getPostOptions } from "../../../routes";
+import { getIndustryOptions } from "../../../utils";
 
 const CreateTicket = () => {
   const { user } = useAuth();

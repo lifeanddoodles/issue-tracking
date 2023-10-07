@@ -3,18 +3,18 @@ import { useParams } from "react-router-dom";
 import {
   ICommentPopulatedDocument,
   ITicketPopulatedDocument,
-} from "../../../../shared/interfaces";
-import TicketComments from "../../components/TicketComments";
-import TicketMain from "../../components/TicketMain";
-import TicketSidebar from "../../components/TicketSidebar";
-import useFetch from "../../hooks/useFetch";
-import useValidation from "../../hooks/useValidation";
-import Row from "../../layout/Row";
+} from "../../../../../shared/interfaces";
+import TicketComments from "../../../components/TicketComments";
+import TicketMain from "../../../components/TicketMain";
+import TicketSidebar from "../../../components/TicketSidebar";
+import useFetch from "../../../hooks/useFetch";
+import useValidation from "../../../hooks/useValidation";
+import Row from "../../../layout/Row";
 import {
   TICKETS_BASE_API_URL,
   getDeleteOptions,
   getPostTicketOptions,
-} from "../../routes";
+} from "../../../routes";
 
 type PartialDocument = Partial<ITicketPopulatedDocument>;
 

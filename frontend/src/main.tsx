@@ -12,16 +12,18 @@ import PrivateRoute from "./components/PrivateRoute";
 import "./index.css";
 import DashboardLayout from "./layout/DashboardLayout";
 import GuestPageWrapper from "./layout/GuestPageWrapper";
-import AllCompanies from "./pages/AllCompanies/index.tsx";
-import AllTickets from "./pages/AllTickets";
-import CreateCompany from "./pages/CreateCompany/index.tsx";
-import CreateTicket from "./pages/CreateTicket/index.tsx";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
-import TicketDetails from "./pages/TicketDetails";
+import AllCompanies from "./pages/companies/AllCompanies/index.tsx";
+import CreateCompany from "./pages/companies/CreateCompany/index.tsx";
+import AllTickets from "./pages/tickets/AllTickets/index.tsx";
+import CreateTicket from "./pages/tickets/CreateTicket/index.tsx";
+import TicketDetails from "./pages/tickets/TicketDetails/index.tsx";
+import AllUsers from "./pages/users/AllUsers/index.tsx";
+import UserDetails from "./pages/users/UserDetails/index.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,19 +37,18 @@ const router = createBrowserRouter(
       <Route path="" element={<PrivateRoute />}>
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="" element={<Dashboard />} />
-          <Route
-            path="/dashboard/tickets/create-ticket"
-            element={<CreateTicket />}
-          />
+          <Route path="/dashboard/tickets/create" element={<CreateTicket />} />
           <Route
             path="/dashboard/tickets/:ticketId"
             element={<TicketDetails />}
           />
           <Route path="/dashboard/tickets/" element={<AllTickets />} />
+          <Route path="/dashboard/users" element={<AllUsers />} />
+          <Route path="/dashboard/users/:userId" element={<UserDetails />} />
           <Route path="/dashboard/profile/" element={<Profile />} />
           <Route path="/dashboard/companies" element={<AllCompanies />} />
           <Route
-            path="/dashboard/companies/create-company"
+            path="/dashboard/companies/create"
             element={<CreateCompany />}
           />
         </Route>

@@ -9,7 +9,7 @@ const DashboardLayout = () => {
       <Column className="w-full lg:w-1/3 max-w-xs py-2 px-4">
         <DashboardSidebar />
       </Column>
-      <Column className="w-full py-2 px-4">
+      <Column className="w-full py-2 px-4 overflow-hidden">
         <Outlet />
       </Column>
     </Row>
