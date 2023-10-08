@@ -41,15 +41,16 @@ const AllUsers = () => {
   const clearFilters: () => void = useCallback(() => {
     setFilters({});
     setQuery("");
+    // TODO: Reset controllers to select empty option
   }, []);
 
-  const getOptionsList = useCallback(() => {
+  const getRows = useCallback(() => {
     sendRequest({ url: `${USERS_BASE_API_URL}${query ? `?${query}` : ""}` });
   }, [query, sendRequest]);
 
   useEffect(() => {
-    getOptionsList();
-  }, [getOptionsList]);
+    getRows();
+  }, [getRows]);
 
   const handleChangeFilters = (
     e: React.ChangeEvent<
@@ -80,17 +81,8 @@ const AllUsers = () => {
       };
     });
 
-  {
-    loading && <h3 role="status">Loading users...</h3>;
-  }
-  {
-    error && <h3 role="status">{error.message}</h3>;
-  }
-  {
-    !loading && formattedUsers && formattedUsers?.length === 0 && (
-      <h3 role="status">No users data found</h3>
-    );
-  }
+  if (error) return <h3 role="status">{error.message}</h3>;
+
   return (
     <>
       <div className="filters mb-8">
@@ -117,11 +109,17 @@ const AllUsers = () => {
           <Button onClick={clearFilters}>Clear filters</Button>
         </Row>
       </div>
+      {loading && <h3 role="status">Loading users...</h3>}
+      {!loading && formattedUsers && formattedUsers?.length === 0 && (
+        <h3 role="status">No users found</h3>
+      )}
       {!loading && formattedUsers && formattedUsers?.length > 0 && (
         <TableFromDocuments
           cols={getColumnTitles(formattedUsers[0], TableColumns)}
           rows={formattedUsers}
           resourceBaseUrl="/dashboard/users"
+          apiBaseUrl={USERS_BASE_API_URL}
+          refetch={getRows}
         />
       )}
     </>

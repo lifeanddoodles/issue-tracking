@@ -23,12 +23,20 @@ const Select = forwardRef(
     const [selectValue, setSelectValue] = useState(value || "");
     const selectHasErrors = errors && errors?.[id!]?.length > 0;
     const { validateField } = useValidation();
-    const mergeClassName = twMerge(
+    const mergedClassName = twMerge(
       `flex flex-${direction} mb-4 gap-2${
         direction === "row" ? " w-full flex-wrap" : ""
       }`,
       className
     );
+    const controlBaseClassName = `text-neutral-800 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-700 rounded-lg border focus:ring-blue-500 focus:border-blue-500 block p-2 pr-4 dark:placeholder-neutral-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full max-w-xs${
+      direction === "row"
+        ? " basis-full max-w-2/3 shrink grow sm:basis-2/3 md:basis-full lg:basis-2/3"
+        : ""
+    }`;
+    const controlClassNames = !label
+      ? twMerge(`${controlBaseClassName} mb-4`, className)
+      : controlBaseClassName;
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       setSelectValue(e.target.value);
@@ -47,7 +55,7 @@ const Select = forwardRef(
 
     const Wrapper = ({ children }: { children: React.ReactNode }) =>
       label ? (
-        <div role="group" className={mergeClassName}>
+        <div role="group" className={mergedClassName}>
           {children}
         </div>
       ) : (
@@ -74,13 +82,7 @@ const Select = forwardRef(
           value={selectValue}
           onChange={(e) => handleChange(e)}
           onBlur={handleOnBlur}
-          className={`text-neutral-800 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-700 rounded-lg border focus:ring-blue-500 focus:border-blue-500 block p-2 pr-4 dark:placeholder-neutral-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full max-w-xs${
-            !label ? " mb-4" : ""
-          }${
-            direction === "row"
-              ? " basis-full max-w-2/3 shrink grow sm:basis-2/3 md:basis-full lg:basis-2/3"
-              : ""
-          }`}
+          className={controlClassNames}
           required={required}
           disabled={disabled}
           ref={ref}

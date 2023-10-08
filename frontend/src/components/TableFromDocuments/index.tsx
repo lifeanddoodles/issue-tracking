@@ -8,6 +8,8 @@ import {
   TicketType,
   UserRole,
 } from "../../../../shared/interfaces";
+import useFetch from "../../hooks/useFetch";
+import { getDeleteOptions } from "../../routes";
 import {
   getDepartmentTeamText,
   getIndustryText,
@@ -22,6 +24,7 @@ import {
   getVariantClasses,
 } from "../../utils";
 import Badge from "../Badge";
+import Button from "../Button";
 import Table from "../Table";
 import TableBody from "../TableBody";
 import TableCell from "../TableCell";
@@ -121,13 +124,30 @@ const TableFromDocuments: <T>({
   cols,
   rows,
   resourceBaseUrl,
+  apiBaseUrl,
 }: {
   cols: { keyTitle: string; title: string }[];
   rows: [] | { id: string; data: Partial<T> }[];
-  resourceBaseUrl?: string;
-}) => JSX.Element | null = ({ cols, rows, resourceBaseUrl }) => {
+  resourceBaseUrl: string;
+  apiBaseUrl: string;
+  refetch: () => void;
+}) => JSX.Element | null = ({
+  cols,
+  rows,
+  resourceBaseUrl,
+  apiBaseUrl,
+  refetch,
+}) => {
+  const { sendRequest } = useFetch();
   const variantClasses = getVariantClasses("transparent");
   if (!cols && !rows) return null;
+
+  const handleDelete = (id: string) => {
+    const options = getDeleteOptions();
+    sendRequest({ url: `${apiBaseUrl}/${id}`, options });
+    refetch();
+  };
+
   return (
     <div className="overflow-x-auto grow">
       <Table>
@@ -169,6 +189,9 @@ const TableFromDocuments: <T>({
                 >
                   View
                 </Link>
+                <Button onClick={() => handleDelete(row.id)} variant="link">
+                  Delete
+                </Button>
               </TableCell>
             </TableRow>
           ))}

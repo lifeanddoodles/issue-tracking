@@ -4,6 +4,7 @@ import useValidation from "../../hooks/useValidation";
 import {
   IBaseInputProps,
   IEmailInputProps,
+  IPasswordInputProps,
   ITextInputProps,
 } from "../../interfaces";
 
@@ -104,6 +105,12 @@ export const TextInput = forwardRef(
 export const EmailInput = forwardRef(
   (props: IEmailInputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
     return <Input {...props} type="email" ref={ref} />;
+  }
+);
+
+export const PasswordInput = forwardRef(
+  (props: IPasswordInputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+    return <Input {...props} type="password" ref={ref} />;
   }
 );
 

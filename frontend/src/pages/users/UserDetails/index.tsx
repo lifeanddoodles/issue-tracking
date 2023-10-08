@@ -84,7 +84,6 @@ const TicketDetails = () => {
 
   const handleSave = async () => {
     const options = getUpdateUserOptions(changedFormData);
-    // await sendRequest({ url: `${USERS_BASE_API_URL}/${userId}`, options });
     await sendRequest({ url: `${USERS_BASE_API_URL}/${userId}`, options });
     getUserInfo();
   };
