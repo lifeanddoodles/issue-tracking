@@ -8,6 +8,7 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 import App from "./App.tsx";
+import AdminRoute from "./components/AdminRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import "./index.css";
 import DashboardLayout from "./layout/DashboardLayout";
@@ -23,6 +24,7 @@ import AllTickets from "./pages/tickets/AllTickets/index.tsx";
 import CreateTicket from "./pages/tickets/CreateTicket/index.tsx";
 import TicketDetails from "./pages/tickets/TicketDetails/index.tsx";
 import AllUsers from "./pages/users/AllUsers/index.tsx";
+import CreateUser from "./pages/users/CreateUser/index.tsx";
 import UserDetails from "./pages/users/UserDetails/index.tsx";
 
 const router = createBrowserRouter(
@@ -37,23 +39,26 @@ const router = createBrowserRouter(
       <Route path="" element={<PrivateRoute />}>
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="" element={<Dashboard />} />
-          <Route path="/dashboard/tickets/create" element={<CreateTicket />} />
+          <Route path="/dashboard/tickets/" element={<AllTickets />} />
           <Route
             path="/dashboard/tickets/:ticketId"
             element={<TicketDetails />}
           />
-          <Route path="/dashboard/tickets/" element={<AllTickets />} />
+          <Route path="/dashboard/tickets/create" element={<CreateTicket />} />
           <Route path="/dashboard/users" element={<AllUsers />} />
           <Route path="/dashboard/users/:userId" element={<UserDetails />} />
           <Route path="/dashboard/profile/" element={<Profile />} />
           <Route path="/dashboard/companies" element={<AllCompanies />} />
-          <Route
-            path="/dashboard/companies/create"
-            element={<CreateCompany />}
-          />
+          {/* TODO:Add Admin users' routes */}
+          <Route path="" element={<AdminRoute />}>
+            <Route
+              path="/dashboard/companies/create"
+              element={<CreateCompany />}
+            />
+            <Route path="/dashboard/users/create" element={<CreateUser />} />
+          </Route>
         </Route>
       </Route>
-      {/* TODO:Add Admin users' routes */}
       <Route path="*" element={<Navigate to="/" />} />
     </Route>
   )
