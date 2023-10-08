@@ -1,55 +1,29 @@
 import { useEffect, useState } from "react";
-import {
-  DepartmentTeam,
-  Priority,
-  Status,
-  TicketType,
-  UserRole,
-} from "../../../../../shared/interfaces";
 import Button from "../../../components/Button";
 import Form from "../../../components/Form";
 import Heading from "../../../components/Heading";
-import Input from "../../../components/Input";
-import Select from "../../../components/Select";
-import TextArea from "../../../components/TextArea";
-import useAuth from "../../../hooks/useAuth";
+import {
+  EmailInput,
+  PasswordInput,
+  TextInput,
+} from "../../../components/Input";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
-import { TICKETS_BASE_API_URL, getPostTicketOptions } from "../../../routes";
-import {
-  getAssignableDepartmentTeamOptions,
-  getPriorityOptions,
-  getStatusOptions,
-  getTicketTypeOptions,
-  getUserDataOptions,
-} from "../../../utils";
+import { USERS_BASE_API_URL, getPostOptions } from "../../../routes";
 
 const CreateUser = () => {
-  const { user } = useAuth();
-  const role = user?.role;
-  const isClient = role === UserRole.CLIENT;
-  const formDataShape = isClient
-    ? {
-        title: "",
-        description: "",
-        externalReporter: user!._id,
-        attachments: [],
-      }
-    : {
-        title: "",
-        description: "",
-        attachments: [],
-        assignee: "",
-        reporter: user!._id,
-        status: Status.OPEN,
-        priority: Priority.MEDIUM,
-        assignToTeam: DepartmentTeam.UNASSIGNED,
-        ticketType: TicketType.ISSUE,
-        estimatedTime: "",
-        deadline: "",
-        isSubtask: false,
-        parentTask: "",
-      };
+  const formDataShape = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+    company: "",
+    position: "",
+    department: "",
+    avatarUrl: "",
+  };
   const [formData, setFormData] = useState(formDataShape);
 
   const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
@@ -70,149 +44,104 @@ const CreateUser = () => {
       [target.name]: target.value,
     });
 
-    if (target.tagName === "INPUT") {
-      validateField({
-        target,
-        setErrors,
-      });
-    }
+    const changedId =
+      target.id === "confirmPassword" ? "confirmPassword" : "password";
+    const idToCompare =
+      changedId === "confirmPassword" ? "password" : "confirmPassword";
+
+    validateField({
+      target,
+      setErrors,
+      elementToCompare:
+        (target.id === changedId || idToCompare) &&
+        formData.password &&
+        formData.confirmPassword
+          ? { id: idToCompare, value: formData[idToCompare] }
+          : undefined,
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const options = getPostTicketOptions(formData);
-    sendRequest({ url: TICKETS_BASE_API_URL, options });
+    const options = getPostOptions(formData);
+    sendRequest({ url: USERS_BASE_API_URL, options });
   };
 
   useEffect(() => {
     if (data && !loading && !error) {
       console.log(data);
-      // TODO: Redirect to ticket details
+      // TODO: Redirect to user details
     }
   }, [data, error, loading]);
 
   return (
     <Form onSubmit={handleSubmit} className="ml-0">
-      <Heading text="Create ticket" level={1} />
-      <Input
-        label="Title:"
-        id="title"
+      <Heading text="Create user" level={1} />
+      <TextInput
+        label="First name:"
+        id="firstName"
         onChange={handleChange}
-        value={formData.title}
+        value={formData.firstName}
+        minLength={2}
+        errors={errors}
+        setErrors={setErrors}
+        required
+      />
+      <TextInput
+        label="Last name:"
+        id="lastName"
+        onChange={handleChange}
+        value={formData.lastName}
+        minLength={2}
+        errors={errors}
+        setErrors={setErrors}
+        required
+      />
+      <EmailInput
+        label="Email:"
+        id="email"
+        onChange={handleChange}
+        value={formData.email}
         required
         errors={errors}
         setErrors={setErrors}
       />
-      <TextArea
-        label="Description:"
-        id="description"
+      <TextInput
+        label="Company"
+        id="company"
         onChange={handleChange}
-        value={formData.description}
+        value={formData.company}
         required
         errors={errors}
         setErrors={setErrors}
       />
-      <Select
-        label={isClient ? "Reporter:" : "External reporter:"}
-        id="externalReporter"
-        value={formData.externalReporter}
-        options={isClient ? getUserDataOptions([user!]) : []}
+      <TextInput
+        label="Position"
+        id="position"
         onChange={handleChange}
+        value={formData.position}
+        errors={errors}
+        setErrors={setErrors}
+      />
+      <PasswordInput
+        label="Password"
+        id="password"
+        onChange={handleChange}
+        value={formData.password}
         required
         errors={errors}
         setErrors={setErrors}
-        disabled
       />
-      {!isClient && (
-        <>
-          <Input
-            label="Assignee:"
-            id="assignee"
-            onChange={handleChange}
-            value={formData.assignee}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <Input
-            label="Reporter:"
-            id="reporter"
-            onChange={handleChange}
-            value={formData.reporter}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <Select
-            label="Status:"
-            id="status"
-            value={formData?.status}
-            options={getStatusOptions()}
-            onChange={handleChange}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <Select
-            label="Priority:"
-            id="priority"
-            value={formData?.priority}
-            options={getPriorityOptions()}
-            onChange={handleChange}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <Select
-            label="Assign to team:"
-            id="assignToTeam"
-            value={formData?.assignToTeam}
-            options={getAssignableDepartmentTeamOptions()}
-            onChange={handleChange}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <Select
-            label="Type:"
-            id="ticketType"
-            value={formData?.ticketType}
-            options={getTicketTypeOptions()}
-            onChange={handleChange}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <Input
-            label="Estimated time:"
-            id="estimatedTime"
-            onChange={handleChange}
-            value={formData?.estimatedTime ?? ""}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <Input
-            label="Deadline:"
-            id="deadline"
-            onChange={handleChange}
-            value={formData?.deadline}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <Input
-            label="Parent task:"
-            id="parentTask"
-            onChange={handleChange}
-            value={formData?.parentTask ?? ""}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-        </>
-      )}
+      <PasswordInput
+        label="Confirm password"
+        id="confirmPassword"
+        onChange={handleChange}
+        value={formData.confirmPassword}
+        required
+        errors={errors}
+        setErrors={setErrors}
+      />
       <Button type="submit">Submit</Button>
     </Form>
   );

@@ -1,14 +1,26 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ICompany, ICompanyDocument } from "../../../../shared/interfaces";
 import Button from "../../components/Button";
 import Form from "../../components/Form";
 import Heading from "../../components/Heading";
-import Input from "../../components/Input";
+import { EmailInput, PasswordInput, TextInput } from "../../components/Input";
+import SelectWithFetch from "../../components/Select/SelectWithFetch";
 import useAuth from "../../hooks/useAuth";
+import useFetch from "../../hooks/useFetch";
 import useValidation from "../../hooks/useValidation";
-import { USERS_BASE_API_URL, getRegisterUserOptions } from "../../routes";
+import {
+  COMPANIES_BASE_API_URL,
+  USERS_BASE_API_URL,
+  getPostOptions,
+  getRegisterUserOptions,
+} from "../../routes";
+import { getCompanyDataOptions } from "../../utils";
 
 const Register = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const companyParam = searchParams.get("company");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -33,8 +45,18 @@ const Register = () => {
   const { validateField } = useValidation();
   const { user, error, loading, authUserReq } = useAuth();
   const navigate = useNavigate();
+  const {
+    data: newCompany,
+    error: newCompanyError,
+    loading: newCompanyLoading,
+    sendRequest,
+  } = useFetch<ICompanyDocument>();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const target = e.target;
 
     setFormData({
@@ -42,6 +64,7 @@ const Register = () => {
       [target.name]: target.value,
     });
 
+    // TODO: Fix validation bug due to password and confirm password
     const changedId =
       target.id === "confirmPassword" ? "confirmPassword" : "password";
     const idToCompare =
@@ -57,12 +80,49 @@ const Register = () => {
     });
   };
 
+  const createUser = useCallback(
+    (companyId: string) => {
+      const options = getRegisterUserOptions({
+        ...formData,
+        company: companyId,
+      });
+      authUserReq(USERS_BASE_API_URL, options);
+    },
+    [authUserReq, formData]
+  );
+
+  const createCompany = () => {
+    const options = getPostOptions<ICompany>({ name: formData.company });
+    sendRequest({ url: COMPANIES_BASE_API_URL, options });
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const options = getRegisterUserOptions(formData);
 
-    authUserReq(USERS_BASE_API_URL, options);
+    if (!companyParam) {
+      return createCompany();
+    }
+    createUser(companyParam);
   };
+
+  useEffect(() => {
+    if (
+      !user &&
+      !companyParam &&
+      newCompany &&
+      !newCompanyLoading &&
+      !newCompanyError
+    ) {
+      createUser(newCompany._id);
+    }
+  }, [
+    companyParam,
+    createUser,
+    newCompany,
+    newCompanyError,
+    newCompanyLoading,
+    user,
+  ]);
 
   useEffect(() => {
     if (user && !loading && !error) {
@@ -73,9 +133,8 @@ const Register = () => {
   return (
     <Form onSubmit={handleSubmit}>
       <Heading text="Register" level={1} />
-      <Input
+      <TextInput
         label="First name:"
-        type="text"
         id="firstName"
         onChange={handleChange}
         value={firstName}
@@ -84,9 +143,8 @@ const Register = () => {
         setErrors={setErrors}
         required
       />
-      <Input
+      <TextInput
         label="Last name:"
-        type="text"
         id="lastName"
         onChange={handleChange}
         value={lastName}
@@ -95,9 +153,8 @@ const Register = () => {
         setErrors={setErrors}
         required
       />
-      <Input
+      <EmailInput
         label="Email:"
-        type="email"
         id="email"
         onChange={handleChange}
         value={email}
@@ -105,29 +162,38 @@ const Register = () => {
         errors={errors}
         setErrors={setErrors}
       />
-      <Input
-        label="Company"
-        type="text"
-        id="company"
-        onChange={handleChange}
-        value={company}
-        required
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <Input
+      {!companyParam ? (
+        <TextInput
+          label="Company"
+          id="company"
+          onChange={handleChange}
+          value={company}
+          required
+          errors={errors}
+          setErrors={setErrors}
+        />
+      ) : (
+        <SelectWithFetch
+          label="Company"
+          id="company"
+          value={companyParam}
+          onChange={handleChange}
+          errors={errors}
+          url={COMPANIES_BASE_API_URL}
+          getFormattedOptions={getCompanyDataOptions}
+          disabled
+        />
+      )}
+      <TextInput
         label="Position"
-        type="text"
         id="position"
         onChange={handleChange}
         value={position}
-        required
         errors={errors}
         setErrors={setErrors}
       />
-      <Input
+      <PasswordInput
         label="Password"
-        type="password"
         id="password"
         onChange={handleChange}
         value={password}
@@ -135,9 +201,8 @@ const Register = () => {
         errors={errors}
         setErrors={setErrors}
       />
-      <Input
+      <PasswordInput
         label="Confirm password"
-        type="password"
         id="confirmPassword"
         onChange={handleChange}
         value={confirmPassword}

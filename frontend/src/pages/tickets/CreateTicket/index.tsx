@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DepartmentTeam,
   Priority,
@@ -9,17 +9,24 @@ import {
 import Button from "../../../components/Button";
 import Form from "../../../components/Form";
 import Heading from "../../../components/Heading";
-import Input from "../../../components/Input";
+import Input, { TextInput } from "../../../components/Input";
 import Select from "../../../components/Select";
+import SelectWithFetch from "../../../components/Select/SelectWithFetch";
 import TextArea from "../../../components/TextArea";
+import Toggle from "../../../components/Toggle";
 import useAuth from "../../../hooks/useAuth";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
-import { TICKETS_BASE_API_URL, getPostTicketOptions } from "../../../routes";
+import {
+  TICKETS_BASE_API_URL,
+  USERS_BASE_API_URL,
+  getPostTicketOptions,
+} from "../../../routes";
 import {
   getAssignableDepartmentTeamOptions,
   getPriorityOptions,
   getStatusOptions,
+  getTicketDataOptions,
   getTicketTypeOptions,
   getUserDataOptions,
 } from "../../../utils";
@@ -57,6 +64,12 @@ const CreateTicket = () => {
   );
   const { validateField } = useValidation();
   const { data, error, loading, sendRequest } = useFetch();
+  const assignToTeam = formData?.assignToTeam || DepartmentTeam.UNASSIGNED;
+  const departmentQuery = useMemo(() => {
+    return assignToTeam && assignToTeam !== DepartmentTeam.UNASSIGNED
+      ? `?department=${assignToTeam}`
+      : "";
+  }, [assignToTeam]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -70,12 +83,10 @@ const CreateTicket = () => {
       [target.name]: target.value,
     });
 
-    if (target.tagName === "INPUT") {
-      validateField({
-        target,
-        setErrors,
-      });
-    }
+    validateField({
+      target,
+      setErrors,
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -126,23 +137,37 @@ const CreateTicket = () => {
       />
       {!isClient && (
         <>
-          <Input
-            label="Assignee:"
-            id="assignee"
+          <Select
+            label="Assign to team:"
+            id="assignToTeam"
+            value={formData?.assignToTeam}
+            options={getAssignableDepartmentTeamOptions()}
             onChange={handleChange}
-            value={formData.assignee}
             required
             errors={errors}
             setErrors={setErrors}
           />
-          <Input
+          <SelectWithFetch
+            label="Assignee:"
+            id="assignee"
+            value={formData.assignee || ""}
+            onChange={handleChange}
+            disabled={isClient}
+            errors={errors}
+            url={USERS_BASE_API_URL}
+            query={departmentQuery}
+            getFormattedOptions={getUserDataOptions}
+          />
+          <SelectWithFetch
             label="Reporter:"
             id="reporter"
-            onChange={handleChange}
             value={formData.reporter}
-            required
+            onChange={handleChange}
+            disabled={isClient}
             errors={errors}
-            setErrors={setErrors}
+            url={USERS_BASE_API_URL}
+            query={departmentQuery}
+            getFormattedOptions={getUserDataOptions}
           />
           <Select
             label="Status:"
@@ -165,16 +190,6 @@ const CreateTicket = () => {
             setErrors={setErrors}
           />
           <Select
-            label="Assign to team:"
-            id="assignToTeam"
-            value={formData?.assignToTeam}
-            options={getAssignableDepartmentTeamOptions()}
-            onChange={handleChange}
-            required
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <Select
             label="Type:"
             id="ticketType"
             value={formData?.ticketType}
@@ -184,7 +199,7 @@ const CreateTicket = () => {
             errors={errors}
             setErrors={setErrors}
           />
-          <Input
+          <TextInput
             label="Estimated time:"
             id="estimatedTime"
             onChange={handleChange}
@@ -193,7 +208,7 @@ const CreateTicket = () => {
             errors={errors}
             setErrors={setErrors}
           />
-          <Input
+          <TextInput
             label="Deadline:"
             id="deadline"
             onChange={handleChange}
@@ -202,14 +217,27 @@ const CreateTicket = () => {
             errors={errors}
             setErrors={setErrors}
           />
-          <Input
-            label="Parent task:"
-            id="parentTask"
+          <Toggle
+            label="Is subtask:"
+            id="isSubtask"
             onChange={handleChange}
-            value={formData?.parentTask ?? ""}
-            required
+            checked={formData?.isSubtask || false}
             errors={errors}
             setErrors={setErrors}
+          />
+          <SelectWithFetch
+            label="Parent task:"
+            id="parentTask"
+            value={
+              !formData?.isSubtask || !formData?.parentTask
+                ? ""
+                : formData?.parentTask?.toString()
+            }
+            onChange={handleChange}
+            disabled={isClient || !formData?.isSubtask}
+            errors={errors}
+            url={TICKETS_BASE_API_URL}
+            getFormattedOptions={getTicketDataOptions}
           />
         </>
       )}

@@ -66,12 +66,10 @@ const CreateTicket = () => {
       [target.name]: target.value,
     });
 
-    if (target.tagName === "INPUT") {
-      validateField({
-        target,
-        setErrors,
-      });
-    }
+    validateField({
+      target,
+      setErrors,
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
