@@ -14,7 +14,6 @@ const companySchema = new mongoose.Schema(
     },
     url: {
       type: String,
-      required: true,
       validate: {
         validator: function (value: string) {
           const urlRegex =
@@ -103,7 +102,6 @@ companySchema.pre("findOneAndUpdate", async function (next) {
     const authUserId = authUser?._id.toString();
     const isAdmin = authUser?.role === UserRole.ADMIN;
 
-    console.log(this.getQuery(), this.getOptions());
     if (employeeId) {
       const newEmployeeId = employeeId;
 
@@ -118,7 +116,6 @@ companySchema.pre("findOneAndUpdate", async function (next) {
         throw new Error("Company not found");
       }
 
-      console.log("employees", company.employees);
       const authUserIsEmployee = idIsInIdsArray(company.employees, authUserId);
 
       // Handle authenticated user not authorized for request

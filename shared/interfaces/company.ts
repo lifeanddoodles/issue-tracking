@@ -33,7 +33,7 @@ export interface IAddressInfo {
 
 export interface ICompany {
   name: string;
-  url: string;
+  url?: string;
   subscriptionStatus: SubscriptionStatus;
   email?: string;
   phone?: string;

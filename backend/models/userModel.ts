@@ -34,12 +34,12 @@ const userSchema = new mongoose.Schema(
       default: "CLIENT",
     },
     company: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
       required: true,
     },
     position: {
       type: String,
-      required: true,
     },
     department: {
       type: String,

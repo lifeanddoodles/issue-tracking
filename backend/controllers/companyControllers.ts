@@ -71,13 +71,13 @@ export const addCompany = asyncHandler(async (req: Request, res: Response) => {
     employees: { $in: authUserId },
   });
 
-  if (!isAdmin && companiesWithAuthUserAsEmployee.length > 0) {
+  if (authUser && !isAdmin && companiesWithAuthUserAsEmployee.length > 0) {
     res.status(401);
     throw new Error("Not Authorized");
   }
 
   // Handle request with missing fields
-  const missingFields = !newCompanyDataBody.name || !newCompanyDataBody.url;
+  const missingFields = !newCompanyDataBody.name;
 
   if (missingFields) {
     res.status(400);

@@ -1,6 +1,7 @@
 import { ObjectId } from "mongoose";
 import {
   DepartmentTeam,
+  ICompanyDocument,
   ITicketPopulatedDocument,
   IUser,
   IUserDocument,
@@ -99,7 +100,13 @@ export function getStatusText<Status>(status: Status): string {
   }
 }
 
-export function getSubscriptionStatusText(status: SubscriptionStatus) {
+export function getStatusOptions(noSelectionText?: string) {
+  return getOptionsFromEnum(Status, getStatusText, noSelectionText);
+}
+
+export function getSubscriptionStatusText<SubscriptionStatus>(
+  status: SubscriptionStatus
+): string {
   switch (status) {
     case SubscriptionStatus.ACTIVE:
       return "Active";
@@ -125,8 +132,12 @@ export function getSubscriptionStatusText(status: SubscriptionStatus) {
   }
 }
 
-export function getStatusOptions(noSelectionText?: string) {
-  return getOptionsFromEnum(Status, getStatusText, noSelectionText);
+export function getSubscriptionStatusOptions(noSelectionText?: string) {
+  return getOptionsFromEnum(
+    SubscriptionStatus,
+    getSubscriptionStatusText,
+    noSelectionText
+  );
 }
 
 export function getPriorityClasses<Priority>(priority: Priority): string {
@@ -214,47 +225,6 @@ export function getDepartmentTeamOptions(noSelectionText?: string) {
   return options;
 }
 
-export function getAssignableDepartmentTeamOptions(noSelectionText?: string) {
-  const options = getOptionsFromEnum(
-    DepartmentTeam,
-    getDepartmentTeamText,
-    noSelectionText
-  );
-  return options.filter((item) => {
-    return (
-      item.value !== DepartmentTeam.MANAGEMENT &&
-      item.value !== DepartmentTeam.CUSTOMER_SUCCESS
-    );
-  });
-}
-
-type FetchedData =
-  | Partial<ITicketPopulatedDocument>[]
-  | Partial<IUserDocument>[];
-
-export function getUserDataOptions(users: FetchedData) {
-  return users
-    .filter(
-      (user): user is Partial<IUserDocument> =>
-        "role" in user && user?.role !== UserRole.CLIENT
-    )
-    .map((user) => ({
-      value: user._id as string,
-      label: getFullName(user.firstName!, user.lastName!),
-    }));
-}
-
-export function getTicketDataOptions(tickets: FetchedData) {
-  return tickets
-    .filter(
-      (ticket): ticket is Partial<ITicketPopulatedDocument> => "title" in ticket
-    )
-    .map((ticket) => ({
-      value: ticket._id as string,
-      label: ticket.title || (ticket._id as string),
-    }));
-}
-
 export function getIndustryText<Industry>(enumName: Industry): string {
   switch (enumName) {
     case Industry.HEALTHCARE:
@@ -306,6 +276,59 @@ export function getUserRoleOptions(noSelectionText?: string) {
     noSelectionText
   );
   return options;
+}
+
+export function getAssignableDepartmentTeamOptions(noSelectionText?: string) {
+  const options = getOptionsFromEnum(
+    DepartmentTeam,
+    getDepartmentTeamText,
+    noSelectionText
+  );
+  return options.filter((item) => {
+    return (
+      item.value !== DepartmentTeam.MANAGEMENT &&
+      item.value !== DepartmentTeam.CUSTOMER_SUCCESS
+    );
+  });
+}
+
+type FetchedData =
+  | Partial<ITicketPopulatedDocument>[]
+  | Partial<IUserDocument>[]
+  | Partial<ICompanyDocument>[];
+
+export function getUserDataOptions(users: FetchedData) {
+  return users
+    .filter(
+      (user): user is Partial<IUserDocument> =>
+        "role" in user && user?.role !== UserRole.CLIENT
+    )
+    .map((user) => ({
+      value: user._id as string,
+      label: getFullName(user.firstName!, user.lastName!),
+    }));
+}
+
+export function getTicketDataOptions(tickets: FetchedData) {
+  return tickets
+    .filter(
+      (ticket): ticket is Partial<ITicketPopulatedDocument> => "title" in ticket
+    )
+    .map((ticket) => ({
+      value: ticket._id as string,
+      label: ticket.title || (ticket._id as string),
+    }));
+}
+
+export function getCompanyDataOptions(companies: FetchedData) {
+  return companies
+    .filter(
+      (company): company is Partial<ICompanyDocument> => "name" in company
+    )
+    .map((company) => ({
+      value: company._id as string,
+      label: company.name || (company._id as string),
+    }));
 }
 
 export type ButtonVariant =

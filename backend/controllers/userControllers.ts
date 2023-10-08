@@ -32,13 +32,7 @@ export const addUser = asyncHandler(
 
     // Handle request with missing fields
     const missingFields =
-      !firstName ||
-      !lastName ||
-      !email ||
-      !password ||
-      !role ||
-      !company ||
-      !position;
+      !firstName || !lastName || !email || !password || !role || !company;
 
     if (missingFields) {
       res.status(400);
@@ -235,7 +229,13 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
 
   // Validation
   // Get authenticated user
+  // const authUser = req.user;
+
   // Handle authenticated user not authorized for request
+  // if(authUser.role !== "ADMIN" && authUser._id !== user._id) {
+  //   res.status(401)
+  //   throw new Error("Not Authorized")
+  // }
 
   // Request user deletion
   const deletedUser = await User.findByIdAndDelete(userId);

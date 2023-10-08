@@ -17,7 +17,7 @@ export interface IUser {
   password?: string;
   role: UserRole | string;
   company: string;
-  position: string;
+  position?: string;
   department?: DepartmentTeam;
   avatarUrl?: string;
 }
