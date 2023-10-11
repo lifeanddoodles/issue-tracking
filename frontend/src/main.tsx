@@ -19,6 +19,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import AllCompanies from "./pages/companies/AllCompanies/index.tsx";
+import CompanyDetails from "./pages/companies/CompanyDetails/index.tsx";
 import CreateCompany from "./pages/companies/CreateCompany/index.tsx";
 import AllTickets from "./pages/tickets/AllTickets/index.tsx";
 import CreateTicket from "./pages/tickets/CreateTicket/index.tsx";
@@ -49,6 +50,10 @@ const router = createBrowserRouter(
           <Route path="/dashboard/users/:userId" element={<UserDetails />} />
           <Route path="/dashboard/profile/" element={<Profile />} />
           <Route path="/dashboard/companies" element={<AllCompanies />} />
+          <Route
+            path="/dashboard/companies/:companyId"
+            element={<CompanyDetails />}
+          />
           {/* TODO:Add Admin users' routes */}
           <Route path="" element={<AdminRoute />}>
             <Route

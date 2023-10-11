@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  DepartmentTeam,
   Priority,
   Status,
   TicketType,
@@ -50,7 +49,7 @@ const CreateTicket = () => {
         reporter: user!._id,
         status: Status.OPEN,
         priority: Priority.MEDIUM,
-        assignToTeam: DepartmentTeam.UNASSIGNED,
+        assignToTeam: "",
         ticketType: TicketType.ISSUE,
         estimatedTime: "",
         deadline: "",
@@ -64,11 +63,9 @@ const CreateTicket = () => {
   );
   const { validateField } = useValidation();
   const { data, error, loading, sendRequest } = useFetch();
-  const assignToTeam = formData?.assignToTeam || DepartmentTeam.UNASSIGNED;
+  const assignToTeam = formData?.assignToTeam || "";
   const departmentQuery = useMemo(() => {
-    return assignToTeam && assignToTeam !== DepartmentTeam.UNASSIGNED
-      ? `?department=${assignToTeam}`
-      : "";
+    return assignToTeam && assignToTeam ? `?department=${assignToTeam}` : "";
   }, [assignToTeam]);
 
   const handleChange = (

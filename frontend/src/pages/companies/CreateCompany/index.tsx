@@ -8,7 +8,7 @@ import {
 import Button from "../../../components/Button";
 import Form from "../../../components/Form";
 import Heading from "../../../components/Heading";
-import Input, { EmailInput, TextInput } from "../../../components/Input";
+import { EmailInput, TextInput, UrlInput } from "../../../components/Input";
 import Select from "../../../components/Select";
 import TextArea from "../../../components/TextArea";
 import useAuth from "../../../hooks/useAuth";
@@ -26,7 +26,7 @@ const CreateTicket = () => {
     url: "",
     phone: "",
     description: "",
-    industry: Industry.UNASSIGNED,
+    industry: "" as Industry,
     subscriptionStatus: SubscriptionStatus.ONBOARDING,
     email: "",
     street: "",
@@ -110,7 +110,7 @@ const CreateTicket = () => {
         errors={errors}
         setErrors={setErrors}
       />
-      <Input
+      <UrlInput
         label="Website:"
         id="url"
         type="url"

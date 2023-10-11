@@ -7,9 +7,11 @@ import {
   PasswordInput,
   TextInput,
 } from "../../../components/Input";
+import Select from "../../../components/Select";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
 import { USERS_BASE_API_URL, getPostOptions } from "../../../routes";
+import { getDepartmentTeamOptions, getUserRoleOptions } from "../../../utils";
 
 const CreateUser = () => {
   const formDataShape = {
@@ -106,6 +108,24 @@ const CreateUser = () => {
         required
         errors={errors}
         setErrors={setErrors}
+      />
+      <Select
+        label="Department:"
+        id="department"
+        value={formData.department || ""}
+        required
+        options={getDepartmentTeamOptions()}
+        onChange={handleChange}
+        direction="col"
+      />
+      <Select
+        label="Role:"
+        id="role"
+        value={formData.role || ""}
+        required
+        options={getUserRoleOptions()}
+        onChange={handleChange}
+        direction="col"
       />
       <TextInput
         label="Company"

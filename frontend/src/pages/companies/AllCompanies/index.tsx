@@ -100,32 +100,30 @@ const AllCompanies = () => {
 
   return (
     <>
-      {filters && (
-        <div className="filters mb-8">
-          <Row className="gap-2">
-            <Select
-              id="subscriptionStatus"
-              value={filters?.subscriptionStatus || ""}
-              options={getSubscriptionStatusOptions("Status")}
-              onChange={handleChangeFilters}
-              direction="col"
-              className="shrink-0 grow max-w-[10rem]"
-            />
-            <Select
-              id="industry"
-              value={filters?.industry || ""}
-              options={getIndustryOptions("Industry")}
-              onChange={handleChangeFilters}
-              direction="col"
-              className="shrink-0 grow max-w-[10rem]"
-            />
-          </Row>
-          <Row className="gap-2">
-            <Button onClick={applyFilters}>Apply filters</Button>
-            <Button onClick={clearFilters}>Clear filters</Button>
-          </Row>
-        </div>
-      )}
+      <div className="filters mb-8">
+        <Row className="gap-2">
+          <Select
+            id="subscriptionStatus"
+            value={filters?.subscriptionStatus || ""}
+            options={getSubscriptionStatusOptions("Status")}
+            onChange={handleChangeFilters}
+            direction="col"
+            className="shrink-0 grow max-w-[10rem]"
+          />
+          <Select
+            id="industry"
+            value={filters?.industry || ""}
+            options={getIndustryOptions("Industry")}
+            onChange={handleChangeFilters}
+            direction="col"
+            className="shrink-0 grow max-w-[10rem]"
+          />
+        </Row>
+        <Row className="gap-2">
+          <Button onClick={applyFilters}>Apply filters</Button>
+          <Button onClick={clearFilters}>Clear filters</Button>
+        </Row>
+      </div>
       {loading && <h3 role="status">Loading companies...</h3>}
       {!loading && formattedCompanies && formattedCompanies?.length === 0 && (
         <h3 role="status">No companies found</h3>
