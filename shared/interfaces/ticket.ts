@@ -19,7 +19,6 @@ export enum TicketType {
 }
 
 export enum DepartmentTeam {
-  UNASSIGNED = "UNASSIGNED",
   DEVELOPMENT = "DEVELOPMENT",
   TESTING = "TESTING",
   PRODUCT = "PRODUCT",

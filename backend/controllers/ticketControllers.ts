@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
+import { RootQuerySelector } from "mongoose";
 import {
-  DepartmentTeam,
   IPersonInfo,
   ITicket,
   ITicketDocument,
@@ -41,7 +41,7 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
     originalTicket,
     status = Status.OPEN,
     priority = Priority.LOW,
-    assignToTeam = DepartmentTeam.UNASSIGNED,
+    assignToTeam,
     ticketType = TicketType.ISSUE,
     estimatedTime,
     deadline,
@@ -99,7 +99,13 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getTickets = asyncHandler(async (req: Request, res: Response) => {
   // Find tickets
-  const tickets = await Ticket.find()
+  const query: RootQuerySelector<ITicketDocument> = {};
+
+  for (const key in req.query) {
+    query[key as keyof ITicketDocument] = req.query[key];
+  }
+
+  const tickets = await Ticket.find(query)
     .populate("assignee", "_id firstName lastName")
     .populate("reporter", "_id firstName lastName")
     .populate("externalReporter", "_id firstName lastName");
@@ -203,8 +209,7 @@ export const updateTicket = asyncHandler(
     // Handle authenticated user not authorized for request
     if (
       isClient &&
-      (authUserId !== externalReporterId ||
-        ticket?.assignToTeam !== DepartmentTeam.UNASSIGNED)
+      (authUserId !== externalReporterId || ticket?.assignToTeam)
     ) {
       res.status(401);
       throw new Error("Not Authorized");

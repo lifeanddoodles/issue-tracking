@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import {
-  DepartmentTeam,
   ITicketPopulatedDocument,
   UserRole,
 } from "../../../../shared/interfaces";
@@ -58,11 +57,9 @@ const TicketSidebar = ({
         formData?.externalReporter?.lastName
       )
     : null;
-  const assignToTeam = formData?.assignToTeam || DepartmentTeam.UNASSIGNED;
+  const assignToTeam = formData?.assignToTeam || "";
   const departmentQuery = useMemo(() => {
-    return assignToTeam && assignToTeam !== DepartmentTeam.UNASSIGNED
-      ? `?department=${assignToTeam}`
-      : "";
+    return assignToTeam && assignToTeam ? `?department=${assignToTeam}` : "";
   }, [assignToTeam]);
 
   const handleChange = (

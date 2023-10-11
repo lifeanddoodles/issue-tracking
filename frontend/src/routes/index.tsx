@@ -93,6 +93,11 @@ export const getDeleteOptions = () => ({
  */
 export const COMPANIES_BASE_API_URL = "/api/companies";
 
+/*
+ * Projects
+ */
+export const PROJECTS_BASE_API_URL = "/api/projects";
+
 export const getPostOptions: <T>(reqBody: Partial<T>) => RequestInit = (
   reqBody
 ) => ({

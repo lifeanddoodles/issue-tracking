@@ -54,7 +54,7 @@ const SelectWithFetch = ({
   };
 
   const getOptionsList = useCallback(() => {
-    sendRequest({ url: `${url}/${query}` });
+    sendRequest({ url: `${url}${query}` });
   }, [url, query, sendRequest]);
 
   useEffect(() => {

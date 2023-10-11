@@ -87,7 +87,7 @@ export const addCompany = asyncHandler(async (req: Request, res: Response) => {
   // Prepare new company data
   const newCompanyData: Partial<ICompany> = {
     ...newCompanyDataBody,
-    subscriptionStatus: SubscriptionStatus.ONBOARDING,
+    subscriptionStatus: SubscriptionStatus.TRIAL,
     employees: isClient
       ? getEmployees(newCompanyDataBody.employees, authUserId)
       : newCompanyDataBody.employees,

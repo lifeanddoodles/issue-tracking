@@ -127,8 +127,11 @@ export function getSubscriptionStatusText<SubscriptionStatus>(
     case SubscriptionStatus.CHURNED:
       return "Churned";
     case SubscriptionStatus.ONBOARDING:
-    default:
       return "Onboarding";
+    case SubscriptionStatus.TRIAL:
+      return "Trial";
+    default:
+      return "Unassigned";
   }
 }
 
@@ -210,7 +213,6 @@ export function getDepartmentTeamText<DepartmentTeam>(
       return "Management";
     case DepartmentTeam.CUSTOMER_SUCCESS:
       return "Customer success";
-    case DepartmentTeam.UNASSIGNED:
     default:
       return "Unassigned";
   }
@@ -239,7 +241,6 @@ export function getIndustryText<Industry>(enumName: Industry): string {
       return "Manufacturing";
     case Industry.HOSPITALITY:
       return "Hospitality";
-    case Industry.UNASSIGNED:
     default:
       return "Unassigned";
   }
@@ -302,6 +303,18 @@ export function getUserDataOptions(users: FetchedData) {
     .filter(
       (user): user is Partial<IUserDocument> =>
         "role" in user && user?.role !== UserRole.CLIENT
+    )
+    .map((user) => ({
+      value: user._id as string,
+      label: getFullName(user.firstName!, user.lastName!),
+    }));
+}
+
+export function getClientDataOptions(users: FetchedData) {
+  return users
+    .filter(
+      (user): user is Partial<IUserDocument> =>
+        "role" in user && user?.role === UserRole.CLIENT
     )
     .map((user) => ({
       value: user._id as string,
@@ -388,3 +401,31 @@ export const objectToQueryString: <
 
   return queryParams.join("&");
 };
+
+export function shallowEqual<T extends Record<string, unknown> | undefined>(
+  objA: T,
+  objB: T
+): boolean {
+  if (objA === objB) {
+    return true;
+  }
+
+  if (typeof objA !== "object" || typeof objB !== "object" || !objA || !objB) {
+    return false;
+  }
+
+  const keysA = Object.keys(objA);
+  const keysB = Object.keys(objB);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  for (let i = 0; i < keysA.length; i++) {
+    if (objA[keysA[i]] !== objB[keysA[i]]) {
+      return false;
+    }
+  }
+
+  return true;
+}

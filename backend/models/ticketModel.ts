@@ -49,8 +49,7 @@ const ticketSchema = new mongoose.Schema(
     },
     assignToTeam: {
       type: String,
-      default: "UNASSIGNED",
-      enum: ["UNASSIGNED", "DEV", "TESTING", "PRODUCT"],
+      enum: ["DEV", "TESTING", "PRODUCT"],
     },
     ticketType: {
       type: String,

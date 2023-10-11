@@ -3,10 +3,22 @@ import Company from "../models/companyModel.js";
 
 export const getEmployees = (
   employees: (ObjectId | Record<string, unknown>)[],
-  authUserId: ObjectId | Record<string, unknown>
+  newEmployeeId: ObjectId | Record<string, unknown>
 ) => {
-  const employeesSet = new Set([...(employees || []), authUserId]);
-  return [...employeesSet];
+  if (!employees && !newEmployeeId) {
+    return [];
+  }
+  if (!employees && newEmployeeId) {
+    return [newEmployeeId];
+  }
+  if (employees && !newEmployeeId) {
+    return [...employees];
+  }
+  const employeesSet = new Set([
+    ...(employees !== undefined && employees !== null ? employees : []),
+    newEmployeeId,
+  ]);
+  return employeesSet ? [...employeesSet] : [];
 };
 
 export const idIsInIdsArray = (

@@ -24,8 +24,9 @@ const companySchema = new mongoose.Schema(
     },
     subscriptionStatus: {
       type: String,
-      default: "ONBOARDING",
+      default: "TRIAL",
       enum: [
+        "TRIAL",
         "ONBOARDING",
         "ACTIVE",
         "PENDING_DOWNGRADE",
@@ -78,7 +79,6 @@ const companySchema = new mongoose.Schema(
     },
     industry: {
       type: String,
-      default: "UNASSIGNED",
       enum: [
         "HEALTHCARE",
         "EDUCATION",
@@ -86,7 +86,6 @@ const companySchema = new mongoose.Schema(
         "E_COMMERCE",
         "MANUFACTURING",
         "HOSPITALITY",
-        "UNASSIGNED",
       ],
     },
   },

@@ -64,7 +64,11 @@ const Input = forwardRef(
 
     return (
       <div role={label && "group"} className="flex flex-col mb-4">
-        {label && <label htmlFor={id}>{label}</label>}
+        {label && (
+          <label htmlFor={id} className="font-semibold">
+            {label}
+          </label>
+        )}
         <input
           type={type || "text"}
           id={id}
@@ -111,6 +115,12 @@ export const EmailInput = forwardRef(
 export const PasswordInput = forwardRef(
   (props: IPasswordInputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
     return <Input {...props} type="password" ref={ref} />;
+  }
+);
+
+export const UrlInput = forwardRef(
+  (props: IBaseInputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+    return <Input {...props} type="url" ref={ref} />;
   }
 );
 
