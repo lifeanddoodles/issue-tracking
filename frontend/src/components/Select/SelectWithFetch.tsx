@@ -1,16 +1,8 @@
 import { useCallback, useEffect } from "react";
 import Select from ".";
-import {
-  ITicketPopulatedDocument,
-  IUserDocument,
-} from "../../../../shared/interfaces";
 import useFetch from "../../hooks/useFetch";
 
-export type FetchedData =
-  | Partial<ITicketPopulatedDocument>[]
-  | Partial<IUserDocument>[];
-
-export interface ISelectWithFetchProps {
+export interface ISelectWithFetchProps<T> {
   label?: string;
   id: string;
   value: string;
@@ -26,12 +18,10 @@ export interface ISelectWithFetchProps {
   >;
   url: string;
   query?: string;
-  getFormattedOptions: (
-    data: FetchedData
-  ) => { value: string; label: string }[];
+  getFormattedOptions: (data: T[]) => { value: string; label: string }[];
 }
 
-const SelectWithFetch = ({
+const SelectWithFetch = <T extends object>({
   value,
   label,
   id,
@@ -42,8 +32,8 @@ const SelectWithFetch = ({
   url,
   query = "",
   getFormattedOptions,
-}: ISelectWithFetchProps) => {
-  const { data, loading, error, sendRequest } = useFetch<FetchedData>();
+}: ISelectWithFetchProps<T>): React.ReactElement => {
+  const { data, loading, error, sendRequest } = useFetch<T[] | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -54,7 +44,7 @@ const SelectWithFetch = ({
   };
 
   const getOptionsList = useCallback(() => {
-    sendRequest({ url: `${url}${query}` });
+    sendRequest({ url: `${url}${query ? `?${query}` : ""}` });
   }, [url, query, sendRequest]);
 
   useEffect(() => {

@@ -59,7 +59,7 @@ const TicketSidebar = ({
     : null;
   const assignToTeam = formData?.assignToTeam || "";
   const departmentQuery = useMemo(() => {
-    return assignToTeam && assignToTeam ? `?department=${assignToTeam}` : "";
+    return assignToTeam && assignToTeam ? `department=${assignToTeam}` : "";
   }, [assignToTeam]);
 
   const handleChange = (

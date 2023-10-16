@@ -293,55 +293,36 @@ export function getAssignableDepartmentTeamOptions(noSelectionText?: string) {
   });
 }
 
-type FetchedData =
-  | Partial<ITicketPopulatedDocument>[]
-  | Partial<IUserDocument>[]
-  | Partial<ICompanyDocument>[];
+export function getUserDataOptions(users: Partial<IUserDocument>[]) {
+  return users.map((user) => ({
+    value: user._id as string,
+    label: getFullName(user.firstName!, user.lastName!),
+  }));
+}
 
-export function getUserDataOptions(users: FetchedData) {
+export function getClientDataOptions(users: Partial<IUserDocument>[]) {
   return users
-    .filter(
-      (user): user is Partial<IUserDocument> =>
-        "role" in user && user?.role !== UserRole.CLIENT
-    )
+    .filter((user) => user?.role === UserRole.CLIENT)
     .map((user) => ({
       value: user._id as string,
       label: getFullName(user.firstName!, user.lastName!),
     }));
 }
 
-export function getClientDataOptions(users: FetchedData) {
-  return users
-    .filter(
-      (user): user is Partial<IUserDocument> =>
-        "role" in user && user?.role === UserRole.CLIENT
-    )
-    .map((user) => ({
-      value: user._id as string,
-      label: getFullName(user.firstName!, user.lastName!),
-    }));
+export function getTicketDataOptions(
+  tickets: Partial<ITicketPopulatedDocument>[]
+) {
+  return tickets.map((ticket) => ({
+    value: ticket._id as string,
+    label: ticket.title || (ticket._id as string),
+  }));
 }
 
-export function getTicketDataOptions(tickets: FetchedData) {
-  return tickets
-    .filter(
-      (ticket): ticket is Partial<ITicketPopulatedDocument> => "title" in ticket
-    )
-    .map((ticket) => ({
-      value: ticket._id as string,
-      label: ticket.title || (ticket._id as string),
-    }));
-}
-
-export function getCompanyDataOptions(companies: FetchedData) {
-  return companies
-    .filter(
-      (company): company is Partial<ICompanyDocument> => "name" in company
-    )
-    .map((company) => ({
-      value: company._id as string,
-      label: company.name || (company._id as string),
-    }));
+export function getCompanyDataOptions(companies: Partial<ICompanyDocument>[]) {
+  return companies.map((company) => ({
+    value: company._id as string,
+    label: company.name || (company._id as string),
+  }));
 }
 
 export type ButtonVariant =
@@ -382,7 +363,7 @@ export const getColumnTitles: <T>(
 };
 
 export const objectToQueryString: <
-  T extends Record<string, string | number | boolean>
+  T extends Record<string, string | number | boolean | string[]>
 >(
   obj: Partial<T>
 ) => string = (obj) => {

@@ -254,7 +254,33 @@ export const deleteCompany = asyncHandler(
   }
 );
 
-// @desc Create company
+// @desc Get company employees
+// @route GET /api/companies/employees
+// @access Private
+export const getCompanyEmployees = asyncHandler(
+  async (req: Request, res: Response) => {
+    const companyId = req.params.companyId;
+
+    // Get authenticated user
+    const authUser: Partial<IUserDocument> | undefined = req.user;
+
+    // Find company
+    const employees = await Company.findById(companyId)
+      .select("employees")
+      .populate("employees", "_id firstName lastName position");
+
+    // Handle company not found
+    if (!employees) {
+      res.status(404);
+      throw new Error("Company not found");
+    }
+
+    // Handle success
+    res.status(200).send(employees);
+  }
+);
+
+// @desc Create new employee
 // @route PATCH /api/companies/employees
 // @access Private
 export const addEmployee = asyncHandler(async (req: Request, res: Response) => {
@@ -295,3 +321,26 @@ export const addEmployee = asyncHandler(async (req: Request, res: Response) => {
   // Handle success
   res.status(200).send(updatedCompany);
 });
+
+// @desc Show user's company
+// @route GET /api/companies/:userId
+// @access Private
+export const getUserCompany = asyncHandler(
+  async (req: Request, res: Response) => {
+    // Prepare request variables (body, params, user, etc.)
+    const reqUser = req?.user as Partial<IUserDocument>;
+    const authUserId = reqUser._id;
+
+    // Find user in database
+    const company = await Company.find({ employees: { $in: authUserId } });
+
+    // Handle user not found
+    if (!company) {
+      res.status(404);
+      throw new Error("Company not found");
+    }
+
+    // Handle success
+    res.status(200).send(company);
+  }
+);

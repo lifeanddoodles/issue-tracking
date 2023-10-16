@@ -129,7 +129,7 @@ const useValidation = () => {
         [key: string]: string[];
       } | null>
     >;
-    elementToCompare?: { id: string; value: string };
+    elementToCompare?: { id: string; value: string | undefined } | undefined;
   }) {
     const { id, value } = target;
     const errorPatternText = getErrorMessage({
@@ -156,7 +156,7 @@ const useValidation = () => {
         [key: string]: string[];
       } | null>
     >;
-    elementToCompare?: { id: string; value: string };
+    elementToCompare?: { id: string; value: string | undefined } | undefined;
   }) {
     const { id, value, minLength } = target;
     const errorMinLengthText = getErrorMessage({
@@ -185,7 +185,7 @@ const useValidation = () => {
         [key: string]: string[];
       } | null>
     >;
-    elementToCompare?: { id: string; value: string };
+    elementToCompare?: { id: string; value: string | undefined } | undefined;
   }) {
     const isTextArea = target.tagName === "TEXTAREA";
     const isSelect = target.tagName === "SELECT";

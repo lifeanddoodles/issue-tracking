@@ -10,7 +10,6 @@ const serviceSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
     },
     url: {
       type: String,
@@ -21,7 +20,7 @@ const serviceSchema = new mongoose.Schema(
     },
     tier: {
       type: String,
-      trim: true,
+      enum: ["FREE", "PRO", "ENTERPRISE"],
     },
   },
   { timestamps: true }

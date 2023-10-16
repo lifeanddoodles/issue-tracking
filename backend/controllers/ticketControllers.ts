@@ -167,18 +167,25 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
 // @access Private
 export const getTicketsByUser = asyncHandler(
   async (req: Request, res: Response) => {
-    // Prepare request variables (body, params, user, etc.)
-
     // Find user
-
-    // Handle user not found
+    const authUser: Partial<IUserDocument> | undefined = req.user;
+    const authUserId = authUser?._id.toString();
+    const isClient = authUser?.role === UserRole.CLIENT;
+    const query = isClient
+      ? { externalReporter: authUserId }
+      : { reporter: authUserId };
 
     // Request tickets by user
+    const ticketsByUser = await Ticket.find(query);
 
     // Handle tickets not found
+    if (!ticketsByUser) {
+      res.status(404);
+      throw new Error("Tickets not found");
+    }
 
     // Handle success
-    res.status(200).json({ message: "Tickets found successfully" });
+    res.status(200).send(ticketsByUser);
   }
 );
 

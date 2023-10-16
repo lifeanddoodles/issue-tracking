@@ -5,6 +5,7 @@ import {
   deleteCompany,
   getCompanies,
   getCompany,
+  getCompanyEmployees,
   updateCompany,
 } from "../controllers/companyControllers.js";
 import { ensureAuth, isAdmin } from "../middleware/authMiddleware.ts";
@@ -37,6 +38,11 @@ router.patch("/:companyId", ensureAuth, updateCompany);
 // @route DELETE /api/companies/:companyId
 // @access Private
 router.delete("/:companyId", ensureAuth, isAdmin, deleteCompany);
+
+// @desc Get company employees
+// @route GET /api/companies/:companyId/employees
+// @access Private
+router.get("/:companyId/employees", ensureAuth, getCompanyEmployees);
 
 // @desc Add employee to company
 // @route PATCH /api/companies/:companyId/employees

@@ -1,5 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
+  ITicket,
+  ITicketBase,
+  ITicketDocument,
   Priority,
   Status,
   TicketType,
@@ -14,12 +18,12 @@ import SelectWithFetch from "../../../components/Select/SelectWithFetch";
 import TextArea from "../../../components/TextArea";
 import Toggle from "../../../components/Toggle";
 import useAuth from "../../../hooks/useAuth";
-import useFetch from "../../../hooks/useFetch";
+import useForm from "../../../hooks/useForm";
 import useValidation from "../../../hooks/useValidation";
 import {
   TICKETS_BASE_API_URL,
   USERS_BASE_API_URL,
-  getPostTicketOptions,
+  getPostOptions,
 } from "../../../routes";
 import {
   getAssignableDepartmentTeamOptions,
@@ -31,6 +35,7 @@ import {
 } from "../../../utils";
 
 const CreateTicket = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const role = user?.role;
   const isClient = role === UserRole.CLIENT;
@@ -56,14 +61,18 @@ const CreateTicket = () => {
         isSubtask: false,
         parentTask: "",
       };
-  const [formData, setFormData] = useState(formDataShape);
-
-  const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
-    null
-  );
+  const { formData, setFormData, errors, setErrors, onSubmit, data } = useForm<
+    (ITicketBase | ITicket) & { teamMember: string },
+    ITicketDocument
+  >({
+    formShape: formDataShape as Partial<ITicketBase | ITicket>,
+    url: TICKETS_BASE_API_URL,
+    onSuccess: () => {
+      navigate(`/dashboard/tickets/${data?._id}`);
+    },
+  });
   const { validateField } = useValidation();
-  const { data, error, loading, sendRequest } = useFetch();
-  const assignToTeam = formData?.assignToTeam || "";
+  const assignToTeam = (formData as Partial<ITicket>)?.assignToTeam || "";
   const departmentQuery = useMemo(() => {
     return assignToTeam && assignToTeam ? `?department=${assignToTeam}` : "";
   }, [assignToTeam]);
@@ -89,16 +98,9 @@ const CreateTicket = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const options = getPostTicketOptions(formData);
-    sendRequest({ url: TICKETS_BASE_API_URL, options });
+    const options = getPostOptions(formData);
+    onSubmit(options);
   };
-
-  useEffect(() => {
-    if (data && !loading && !error) {
-      console.log(data);
-      // TODO: Redirect to ticket details
-    }
-  }, [data, error, loading]);
 
   return (
     <Form onSubmit={handleSubmit} className="ml-0">
@@ -124,7 +126,7 @@ const CreateTicket = () => {
       <Select
         label={isClient ? "Reporter:" : "External reporter:"}
         id="externalReporter"
-        value={formData.externalReporter}
+        value={formData.externalReporter?.toString()}
         options={isClient ? getUserDataOptions([user!]) : []}
         onChange={handleChange}
         required
@@ -137,7 +139,7 @@ const CreateTicket = () => {
           <Select
             label="Assign to team:"
             id="assignToTeam"
-            value={formData?.assignToTeam}
+            value={(formData as Partial<ITicket>)?.assignToTeam}
             options={getAssignableDepartmentTeamOptions()}
             onChange={handleChange}
             required
@@ -147,7 +149,7 @@ const CreateTicket = () => {
           <SelectWithFetch
             label="Assignee:"
             id="assignee"
-            value={formData.assignee || ""}
+            value={(formData as Partial<ITicket>)?.assignee?.toString() || ""}
             onChange={handleChange}
             disabled={isClient}
             errors={errors}
@@ -158,7 +160,7 @@ const CreateTicket = () => {
           <SelectWithFetch
             label="Reporter:"
             id="reporter"
-            value={formData.reporter}
+            value={(formData as Partial<ITicket>).reporter?.toString() || ""}
             onChange={handleChange}
             disabled={isClient}
             errors={errors}
@@ -169,7 +171,7 @@ const CreateTicket = () => {
           <Select
             label="Status:"
             id="status"
-            value={formData?.status}
+            value={(formData as Partial<ITicket>)?.status}
             options={getStatusOptions()}
             onChange={handleChange}
             required
@@ -179,7 +181,7 @@ const CreateTicket = () => {
           <Select
             label="Priority:"
             id="priority"
-            value={formData?.priority}
+            value={(formData as Partial<ITicket>)?.priority}
             options={getPriorityOptions()}
             onChange={handleChange}
             required
@@ -189,7 +191,7 @@ const CreateTicket = () => {
           <Select
             label="Type:"
             id="ticketType"
-            value={formData?.ticketType}
+            value={(formData as Partial<ITicket>)?.ticketType}
             options={getTicketTypeOptions()}
             onChange={handleChange}
             required
@@ -200,7 +202,7 @@ const CreateTicket = () => {
             label="Estimated time:"
             id="estimatedTime"
             onChange={handleChange}
-            value={formData?.estimatedTime ?? ""}
+            value={(formData as Partial<ITicket>)?.estimatedTime ?? ""}
             required
             errors={errors}
             setErrors={setErrors}
@@ -209,7 +211,7 @@ const CreateTicket = () => {
             label="Deadline:"
             id="deadline"
             onChange={handleChange}
-            value={formData?.deadline}
+            value={(formData as Partial<ITicket>)?.deadline as string}
             required
             errors={errors}
             setErrors={setErrors}
@@ -218,7 +220,7 @@ const CreateTicket = () => {
             label="Is subtask:"
             id="isSubtask"
             onChange={handleChange}
-            checked={formData?.isSubtask || false}
+            checked={(formData as Partial<ITicket>)?.isSubtask || false}
             errors={errors}
             setErrors={setErrors}
           />
@@ -226,12 +228,13 @@ const CreateTicket = () => {
             label="Parent task:"
             id="parentTask"
             value={
-              !formData?.isSubtask || !formData?.parentTask
+              !(formData as Partial<ITicket>)?.isSubtask ||
+              !(formData as Partial<ITicket>)?.parentTask
                 ? ""
-                : formData?.parentTask?.toString()
+                : (formData as Partial<ITicket>)?.parentTask?.toString() || ""
             }
             onChange={handleChange}
-            disabled={isClient || !formData?.isSubtask}
+            disabled={isClient || !(formData as Partial<ITicket>)?.isSubtask}
             errors={errors}
             url={TICKETS_BASE_API_URL}
             getFormattedOptions={getTicketDataOptions}

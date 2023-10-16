@@ -1,6 +1,8 @@
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
+import { UserRole } from "../../../../shared/interfaces";
 import Heading from "../../components/Heading";
+import useAuth from "../../hooks/useAuth";
 import { getVariantClasses } from "../../utils";
 
 const menuItems = {
@@ -21,8 +23,13 @@ const menuItems = {
     title: "Users",
     items: [
       {
+        title: "My Team",
+        link: "/dashboard/my-team",
+      },
+      {
         title: "All Users",
         link: "/dashboard/users",
+        restrictAccess: true,
       },
       {
         title: "Add User",
@@ -34,12 +41,18 @@ const menuItems = {
     title: "Companies",
     items: [
       {
+        title: "My Company",
+        link: "/dashboard/my-company",
+      },
+      {
         title: "All Companies",
         link: "/dashboard/companies",
+        restrictAccess: true,
       },
       {
         title: "Add Company",
         link: "/dashboard/companies/create",
+        restrictAccess: true,
       },
     ],
   },
@@ -47,8 +60,13 @@ const menuItems = {
     title: "Projects",
     items: [
       {
+        title: "My Projects",
+        link: "/dashboard/my-projects",
+      },
+      {
         title: "All Projects",
         link: "/dashboard/projects",
+        restrictAccess: true,
       },
       {
         title: "Add Project",
@@ -60,8 +78,13 @@ const menuItems = {
     title: "Tickets",
     items: [
       {
+        title: "My Tickets",
+        link: "/dashboard/my-tickets",
+      },
+      {
         title: "All Tickets",
         link: "/dashboard/tickets",
+        restrictAccess: true,
       },
       {
         title: "Add Ticket",
@@ -73,6 +96,8 @@ const menuItems = {
 
 const DashboardSidebar = () => {
   const variantClasses = getVariantClasses("transparent");
+  const { user } = useAuth();
+  const isClient = user?.role === UserRole.CLIENT;
 
   return (
     <nav className="dashboard-sidebar__nav flex flex-col">
@@ -80,17 +105,25 @@ const DashboardSidebar = () => {
         return (
           <Fragment key={key}>
             <Heading text={value.title} className="text-lg" marginBottom={2} />
-            {value.items.map((item) => {
-              return (
-                <Link
-                  key={item.title}
-                  to={item.link}
-                  className={`dashboard-sidebar__link mb-2 rounded-lg ${variantClasses}`}
-                >
-                  {item.title}
-                </Link>
-              );
-            })}
+            {value.items.map(
+              (item: {
+                title: string;
+                link: string;
+                restrictAccess?: boolean;
+              }) => {
+                return (
+                  (!isClient || !item?.restrictAccess) && (
+                    <Link
+                      key={item.title}
+                      to={item.link}
+                      className={`dashboard-sidebar__link mb-2 rounded-lg ${variantClasses}`}
+                    >
+                      {item.title}
+                    </Link>
+                  )
+                );
+              }
+            )}
           </Fragment>
         );
       })}

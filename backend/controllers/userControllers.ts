@@ -1,8 +1,12 @@
 import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { RootQuerySelector } from "mongoose";
-import { IUserDocument, UserRole } from "../../shared/interfaces/index.js";
+import { RootQuerySelector, Types } from "mongoose";
+import {
+  IUser,
+  IUserDocument,
+  UserRole,
+} from "../../shared/interfaces/index.js";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
 
@@ -104,11 +108,17 @@ export const getUsers = asyncHandler(async (req: Request, res: Response) => {
   }
 
   // Find users
-  const query: RootQuerySelector<IUserDocument> = {};
+  const query: RootQuerySelector<IUser> = {};
 
   for (const key in req.query) {
-    query[key as keyof IUserDocument] = req.query[key];
+    if (key === "company" && Types.ObjectId.isValid(req.query[key] as string)) {
+      // If the query parameter for 'company' is a valid ObjectId, convert it
+      query[key as keyof IUser] = new Types.ObjectId(req.query[key] as string);
+    } else {
+      query[key as keyof IUser] = req.query[key];
+    }
   }
+
   const users: IUserDocument[] = await User.find(query).select("-password");
 
   // Handle users not found

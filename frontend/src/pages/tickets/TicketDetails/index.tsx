@@ -4,6 +4,7 @@ import {
   ICommentPopulatedDocument,
   ITicketPopulatedDocument,
 } from "../../../../../shared/interfaces";
+import Heading from "../../../components/Heading";
 import TicketComments from "../../../components/TicketComments";
 import TicketMain from "../../../components/TicketMain";
 import TicketSidebar from "../../../components/TicketSidebar";
@@ -125,15 +126,15 @@ const TicketDetails = () => {
   }, [formData, initialFormData]);
 
   if (loading) {
-    return <h1 role="status">Loading...</h1>;
+    return <Heading text="Loading..." level={1} role="status" />;
   }
 
   if (error) {
-    return <h1 role="status">{error.message}</h1>;
+    return <Heading text={error.message} level={1} role="status" />;
   }
 
   if (!ticketInfo) {
-    return <h1 role="status">Ticket not found</h1>;
+    return <Heading text="Ticket not found" level={1} role="status" />;
   }
 
   return (

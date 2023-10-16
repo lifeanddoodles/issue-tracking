@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, ObjectId } from "mongoose";
 import { DepartmentTeam } from "./ticket.ts";
 
 export enum UserRole {
@@ -16,7 +16,7 @@ export interface IUser {
   email: string;
   password?: string;
   role: UserRole | string;
-  company: string;
+  company: ObjectId | Record<string, unknown>;
   position?: string;
   department?: DepartmentTeam;
   avatarUrl?: string;

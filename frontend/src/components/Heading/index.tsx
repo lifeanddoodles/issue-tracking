@@ -19,11 +19,13 @@ const Heading = ({
   level = 2,
   marginBottom = 4,
   className,
+  role,
 }: {
   text: string;
   level?: 1 | 2 | 3 | 4;
   marginBottom?: number;
   className?: string;
+  role?: string;
 }) => {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
   const mergedClasses = twMerge(
@@ -33,7 +35,11 @@ const Heading = ({
     className
   );
 
-  return <Tag className={mergedClasses}>{text}</Tag>;
+  return (
+    <Tag className={mergedClasses} role={role}>
+      {text}
+    </Tag>
+  );
 };
 
 export default Heading;

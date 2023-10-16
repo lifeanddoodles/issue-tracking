@@ -15,7 +15,7 @@ interface ITicketsListProps {
   tickets: (ITicket & { _id: string })[] | ITicketPopulatedDocument[] | [];
 }
 const TicketsList = ({ tickets }: ITicketsListProps) => {
-  if (tickets.length === 0) return <h1>No tickets</h1>;
+  if (tickets.length === 0) return <Heading text="No tickets" level={1} />;
 
   const variantClasses = getVariantClasses("transparent");
 

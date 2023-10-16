@@ -7,9 +7,11 @@ import {
 } from "../../../../../shared/interfaces";
 import Button from "../../../components/Button";
 import FormControlWithActions from "../../../components/FormControlWithActions";
+import Heading from "../../../components/Heading";
 import { EmailInput, TextInput, UrlInput } from "../../../components/Input";
 import Select from "../../../components/Select";
 import TextArea from "../../../components/TextArea";
+import useAuth from "../../../hooks/useAuth";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
 import {
@@ -24,9 +26,10 @@ import {
 
 type PartialDocument = Partial<ICompanyDocument>;
 
-const TicketDetails = () => {
+const CompanyDetails = () => {
   const params = useParams();
-  const companyId = params.companyId;
+  const { user } = useAuth();
+  const companyId = params.companyId || user?.company;
   const {
     data: company,
     loading,
@@ -184,15 +187,15 @@ const TicketDetails = () => {
   }, [formData, initialFormData]);
 
   if (loading) {
-    return <h1 role="status">Loading...</h1>;
+    return <Heading text="Loading..." level={1} role="status" />;
   }
 
   if (error) {
-    return <h1 role="status">{error.message}</h1>;
+    return <Heading text={error.message} level={1} role="status" />;
   }
 
   if (!company) {
-    return <h1 role="status">Ticket not found</h1>;
+    return <Heading text="Company not found" level={1} role="status" />;
   }
 
   return (
@@ -203,7 +206,7 @@ const TicketDetails = () => {
         <div className="company-details__actions self-end flex gap-4">
           <Button onClick={handleDelete}>Delete</Button>
         </div>
-        <h1>Company Details</h1>
+        <Heading text="Company Details" level={1} />
         <FormControlWithActions
           label="Name:"
           id="name"
@@ -365,4 +368,4 @@ const TicketDetails = () => {
   );
 };
 
-export default TicketDetails;
+export default CompanyDetails;

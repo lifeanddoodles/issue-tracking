@@ -6,6 +6,7 @@ import {
 } from "../../../../../shared/interfaces";
 import Button from "../../../components/Button";
 import FormControlWithActions from "../../../components/FormControlWithActions";
+import Heading from "../../../components/Heading";
 import { TextInput } from "../../../components/Input";
 import Select from "../../../components/Select";
 import useFetch from "../../../hooks/useFetch";
@@ -19,7 +20,7 @@ import { getDepartmentTeamOptions } from "../../../utils";
 
 type PartialDocument = Partial<IUserDocument>;
 
-const TicketDetails = () => {
+const UserDetails = () => {
   const params = useParams();
   const userId = params.userId;
   const {
@@ -125,15 +126,15 @@ const TicketDetails = () => {
   }, [formData, initialFormData]);
 
   if (loading) {
-    return <h1 role="status">Loading...</h1>;
+    return <Heading text="Loading..." level={1} role="status" />;
   }
 
   if (error) {
-    return <h1 role="status">{error.message}</h1>;
+    return <Heading text={error.message} level={1} role="status" />;
   }
 
   if (!user) {
-    return <h1 role="status">Ticket not found</h1>;
+    return <Heading text="Ticket not found" level={1} role="status" />;
   }
 
   return (
@@ -144,7 +145,7 @@ const TicketDetails = () => {
         <div className="user-details__actions self-end flex gap-4">
           <Button onClick={handleDelete}>Delete</Button>
         </div>
-        <h1>Profile</h1>
+        <Heading text="User details" level={1} />
         <FormControlWithActions
           label="First name:"
           id="firstName"
@@ -215,7 +216,7 @@ const TicketDetails = () => {
           onChange={handleChange}
           onCancel={handleCancel}
           onSave={handleSave}
-          value={formData?.company}
+          value={formData?.company!.toString()}
           required
           errors={errors}
           setErrors={setErrors}
@@ -226,4 +227,4 @@ const TicketDetails = () => {
   );
 };
 
-export default TicketDetails;
+export default UserDetails;

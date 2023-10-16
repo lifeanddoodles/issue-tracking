@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { DepartmentTeam, IUserDocument } from "../../../../shared/interfaces";
 import Button from "../../components/Button";
 import FormControlWithActions from "../../components/FormControlWithActions";
+import Heading from "../../components/Heading";
 import { TextInput } from "../../components/Input";
 import Select from "../../components/Select";
 import useAuth from "../../hooks/useAuth";
@@ -114,15 +115,15 @@ const Profile = () => {
   }, [formData, initialFormData]);
 
   if (loading) {
-    return <h1 role="status">Loading...</h1>;
+    return <Heading text="Loading..." level={1} role="status" />;
   }
 
   if (error) {
-    return <h1 role="status">{error.message}</h1>;
+    return <Heading text={error.message} level={1} role="status" />;
   }
 
   if (!userInfo) {
-    return <h1 role="status">User not found</h1>;
+    return <Heading text="User not found" level={1} role="status" />;
   }
 
   return (
@@ -133,7 +134,7 @@ const Profile = () => {
         <div className="user-details__actions self-end flex gap-4">
           <Button onClick={handleDelete}>Delete</Button>
         </div>
-        <h1>Profile</h1>
+        <Heading text="Profile" level={1} />
         <FormControlWithActions
           label="First name:"
           id="firstName"
@@ -204,7 +205,7 @@ const Profile = () => {
           onChange={handleChange}
           onCancel={handleCancel}
           onSave={handleSave}
-          value={formData?.company}
+          value={formData?.company!.toString()}
           required
           errors={errors}
           setErrors={setErrors}
