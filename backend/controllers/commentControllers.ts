@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { IComment, ICommentDocument } from "../../shared/interfaces/index.js";
+import {
+  IComment,
+  ICommentDocument,
+  IUserDocument,
+} from "../../shared/interfaces/index.js";
 import Comment from "../models/commentModel.js";
 
 // @desc Create comment
@@ -9,8 +13,6 @@ import Comment from "../models/commentModel.js";
 export const addComment = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
   const { ticketId, author, message, isEdited = false } = req.body;
-
-  // Validation
 
   // Handle request with missing fields
   const missingFields = !ticketId || !author || !message;
@@ -77,11 +79,31 @@ export const getComment = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Comment not found");
   }
 
-  // Validation
-
   // Handle success
   res.status(200).send(comment);
 });
+
+// @desc  Get all comments by user
+// @route GET /api/comments/:userId
+// @access Private
+export const getCommentsByUser = asyncHandler(
+  async (req: Request, res: Response) => {
+    const authUser: Partial<IUserDocument> | undefined = req.user;
+    const authUserId = authUser?._id.toString();
+
+    // Request comments by user
+    const comments = await Comment.find({ author: authUserId });
+
+    // Handle comments not found
+    if (!comments) {
+      res.status(404);
+      throw new Error("Comments not found");
+    }
+
+    // Handle success
+    res.status(200).send(comments);
+  }
+);
 
 // @desc Update comment
 // @route UPDATE /api/comments/:commentId
@@ -93,6 +115,17 @@ export const updateComment = asyncHandler(
     const commentId = req.params.commentId;
 
     // Validation
+    // Get authenticated user
+    // const authUser: Partial<IUserDocument> | undefined = req.user;
+    // const authUserId = authUser?._id.toString();
+    // const isAdmin = authUser?.role === UserRole.ADMIN;
+
+    // Handle authenticated user not authorized for request
+    // TODO: Add as middleware?
+    // if(!isAdmin && authUserId !== comment.author.toString()) {
+    //   res.status(401)
+    //   throw new Error ("Not Authorized")
+    // }
 
     // Handle request with missing fields
     const missingFields = !message;
@@ -133,6 +166,17 @@ export const deleteComment = asyncHandler(
     const commentId = req.params.commentId;
 
     // Validation
+    // Get authenticated user
+    // const authUser: Partial<IUserDocument> | undefined = req.user;
+    // const authUserId = authUser?._id.toString();
+    // const isAdmin = authUser?.role === UserRole.ADMIN;
+
+    // Handle authenticated user not authorized for request
+    // TODO: Add as middleware?
+    // if(!isAdmin && authUserId !== comment.author.toString()) {
+    //   res.status(401)
+    //   throw new Error ("Not Authorized")
+    // }
 
     // Request comment deletion
     const deletedComment = await Comment.findByIdAndDelete(commentId);
