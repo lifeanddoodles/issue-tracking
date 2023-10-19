@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { IProjectDocument } from "../../../../../shared/interfaces";
 import Button from "../../../components/Button";
+import Select from "../../../components/Select";
 import TableFromDocuments from "../../../components/TableFromDocuments";
 import useAuth from "../../../hooks/useAuth";
 import useFetch from "../../../hooks/useFetch";
@@ -28,7 +29,7 @@ const ProjectsByCompany = () => {
     Partial<{
       name: string;
       url?: string;
-      services?: string[];
+      service?: string;
     }>
   >({});
   const [query, setQuery] = useState(``);
@@ -38,7 +39,7 @@ const ProjectsByCompany = () => {
       Partial<{
         name: string;
         url?: string;
-        services?: string[];
+        service?: string;
       }>
     >(filters);
     setQuery(queryString);
@@ -57,6 +58,17 @@ const ProjectsByCompany = () => {
       }`,
     });
   }, [companyId, query, sendRequest]);
+
+  const handleChangeFilters = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   useEffect(() => {
     getRows();
@@ -82,6 +94,14 @@ const ProjectsByCompany = () => {
     <>
       <div className="filters mb-8">
         <Row className="gap-2">
+          <Select
+            id="services"
+            value={filters?.service}
+            options={[
+              { value: "652df330ae65f850e576202e", label: "Website Builder" },
+            ]}
+            onChange={handleChangeFilters}
+          />
         </Row>
         <Row className="gap-2">
           <Button onClick={applyFilters}>Apply filters</Button>

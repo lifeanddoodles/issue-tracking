@@ -26,6 +26,7 @@ import AllProjects from "./pages/projects/AllProjects/index.tsx";
 import CreateProject from "./pages/projects/CreateProject/index.tsx";
 import ProjectDetails from "./pages/projects/ProjectDetails/index.tsx";
 import ProjectsByCompany from "./pages/projects/ProjectsByCompany/index.tsx";
+import CreateService from "./pages/services/CreateService/index.tsx";
 import AllTickets from "./pages/tickets/AllTickets/index.tsx";
 import CreateTicket from "./pages/tickets/CreateTicket/index.tsx";
 import TicketDetails from "./pages/tickets/TicketDetails/index.tsx";
@@ -81,6 +82,10 @@ const router = createBrowserRouter(
             <Route
               path="/dashboard/companies/create"
               element={<CreateCompany />}
+            />
+            <Route
+              path="/dashboard/services/create"
+              element={<CreateService />}
             />
             <Route path="/dashboard/users/create" element={<CreateUser />} />
           </Route>

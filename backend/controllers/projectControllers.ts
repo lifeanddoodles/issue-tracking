@@ -55,7 +55,13 @@ export const getProjects = asyncHandler(async (req: Request, res: Response) => {
   const query: RootQuerySelector<IProjectDocument> = {};
 
   for (const key in req.query) {
-    query[key as keyof IProjectDocument] = req.query[key];
+    if (key === "services") {
+      query[key as keyof IProjectDocument] = {
+        services: { $in: req.query[key] },
+      };
+    } else {
+      query[key as keyof IProjectDocument] = req.query[key];
+    }
   }
 
   const projects = await Project.find(query);

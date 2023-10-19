@@ -98,6 +98,11 @@ export const COMPANIES_BASE_API_URL = "/api/companies";
  */
 export const PROJECTS_BASE_API_URL = "/api/projects";
 
+/*
+ * Services
+ */
+export const SERVICES_BASE_API_URL = "/api/services";
+
 export const getPostOptions: <T>(reqBody: Partial<T>) => RequestInit = (
   reqBody
 ) => ({
