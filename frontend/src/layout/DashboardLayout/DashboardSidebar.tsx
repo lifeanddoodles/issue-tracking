@@ -92,6 +92,21 @@ const menuItems = {
       },
     ],
   },
+  services: {
+    title: "Services",
+    items: [
+      {
+        title: "All Services",
+        link: "/dashboard/services",
+        restrictAccess: true,
+      },
+      {
+        title: "Add Service",
+        link: "/dashboard/services/create",
+        restrictAccess: true,
+      },
+    ],
+  },
 };
 
 const DashboardSidebar = () => {

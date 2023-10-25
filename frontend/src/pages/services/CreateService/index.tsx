@@ -8,10 +8,12 @@ import Button from "../../../components/Button";
 import Form from "../../../components/Form";
 import Heading from "../../../components/Heading";
 import { TextInput } from "../../../components/Input";
+import Select from "../../../components/Select";
 import TextArea from "../../../components/TextArea";
 import useForm from "../../../hooks/useForm";
 import useValidation from "../../../hooks/useValidation";
 import { SERVICES_BASE_API_URL, getPostOptions } from "../../../routes";
+import { getTierOptions } from "../../../utils";
 
 const CreateProject = () => {
   const navigate = useNavigate();
@@ -99,13 +101,13 @@ const CreateProject = () => {
         placeholder="1.0.0"
         pattern="^\d\.\d\.\d$"
       />
-      <TextInput
+      <Select
         label="Tier:"
         id="tier"
-        onChange={handleChange}
         value={formData.tier}
-        errors={errors}
-        setErrors={setErrors}
+        options={getTierOptions()}
+        onChange={handleChange}
+        direction="col"
       />
       <Button type="submit">Submit</Button>
     </Form>

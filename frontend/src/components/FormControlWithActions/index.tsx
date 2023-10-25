@@ -1,4 +1,5 @@
 import { CheckIcon, PencilIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { ObjectId } from "mongoose";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ControllerType,
@@ -8,22 +9,37 @@ import {
 } from "../../interfaces";
 import IconButton from "../Button/IconButton";
 
-interface IFormControlWithActionsProps<T, U>
+interface IFormControlWithActionsProps<T, U, V>
   extends IFormControlProps<U>,
     IFormStateProps {
   component: React.JSXElementConstructor<T>;
-  value?: string | number | readonly string[];
+  value?:
+    | string
+    | number
+    | readonly string[]
+    | ObjectId
+    | Record<string, unknown>;
   checked?: boolean;
   options?: IOption[];
   type?: ControllerType;
   onCancel: (
     target: U,
-    initialValue: string | number | readonly string[] | boolean
+    initialValue:
+      | string
+      | number
+      | readonly string[]
+      | boolean
+      | ObjectId
+      | Record<string, unknown>
   ) => void;
   onSave: () => void;
+  url?: string;
+  getFormattedOptions?: (data: V[]) => { value: string; label: string }[];
+  showList?: boolean;
+  currentList?: string[] | (ObjectId | Record<string, unknown>)[];
 }
 
-function FormControlWithActions<T, U extends HTMLElement>({
+function FormControlWithActions<T, U extends HTMLElement, V>({
   component,
   value,
   checked,
@@ -33,18 +49,18 @@ function FormControlWithActions<T, U extends HTMLElement>({
   onSave,
   options,
   ...props
-}: IFormControlWithActionsProps<T, U>) {
+}: IFormControlWithActionsProps<T, U, V>) {
   const Component = component as JSX.ElementType;
   const fieldRef = useRef<U | null>(null);
   const [fieldValue, setFieldValue] = useState<
     string | number | readonly string[]
-  >(!checked && value ? value : type === "number" ? 0 : "");
+  >(!checked && value ? value.toString() : type === "number" ? 0 : "");
   const [checkedValue, setCheckedValue] = useState<boolean>(
     (!value && checked) || false
   );
   const [initialValue, setInitialValue] = useState<
     string | number | readonly string[] | boolean
-  >(value ? value : checked || false);
+  >(value ? value.toString() : checked || false);
   const [isEditable, setIsEditable] = useState(false);
   const [resetFieldValue, setResetFieldValue] = useState(false);
 

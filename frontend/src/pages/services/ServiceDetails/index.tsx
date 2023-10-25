@@ -1,41 +1,33 @@
 import { ObjectId } from "mongoose";
 import { useCallback, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { IProjectDocument, UserRole } from "../../../../../shared/interfaces";
+import { useParams } from "react-router-dom";
+import { IServiceDocument } from "../../../../../shared/interfaces";
 import Button from "../../../components/Button";
 import FormControlWithActions from "../../../components/FormControlWithActions";
 import Heading from "../../../components/Heading";
-import { TextInput, UrlInput } from "../../../components/Input";
-import SelectWithFetch from "../../../components/Select/SelectWithFetch";
+import { TextInput } from "../../../components/Input";
+import Select from "../../../components/Select";
 import TextArea from "../../../components/TextArea";
-import useAuth from "../../../hooks/useAuth";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
 import {
-  PROJECTS_BASE_API_URL,
   SERVICES_BASE_API_URL,
-  USERS_BASE_API_URL,
   getDeleteOptions,
   getUpdateOptions,
 } from "../../../routes";
-import { getServiceDataOptions, getUserDataOptions } from "../../../utils";
+import { getTierOptions } from "../../../utils";
 
-type PartialDocument = Partial<IProjectDocument> & {
-  newService?: ObjectId | Record<string, unknown>;
-  newTeamMember?: ObjectId | Record<string, unknown>;
-};
+type PartialDocument = Partial<IServiceDocument>;
 
-const ProjectDetails = () => {
-  const { user } = useAuth();
-  const isAdmin = user?.role === UserRole.ADMIN;
+const ServiceDetails = () => {
   const params = useParams();
-  const projectId = params.projectId;
+  const serviceId = params.serviceId;
   const {
-    data: project,
+    data: service,
     loading,
     error,
     sendRequest,
-  } = useFetch<IProjectDocument | null>();
+  } = useFetch<IServiceDocument | null>();
 
   const [initialFormData, setInitialFormData] =
     useState<PartialDocument | null>(null);
@@ -46,13 +38,13 @@ const ProjectDetails = () => {
   );
   const { validateField } = useValidation();
 
-  const getProjectInfo = useCallback(() => {
-    sendRequest({ url: `${PROJECTS_BASE_API_URL}/${projectId}` });
-  }, [projectId, sendRequest]);
+  const getServiceInfo = useCallback(() => {
+    sendRequest({ url: `${SERVICES_BASE_API_URL}/${serviceId}` });
+  }, [serviceId, sendRequest]);
 
   const requestDelete = () => {
     sendRequest({
-      url: `${PROJECTS_BASE_API_URL}/${projectId}`,
+      url: `${SERVICES_BASE_API_URL}/${serviceId}`,
       options: getDeleteOptions(),
     });
   };
@@ -91,7 +83,7 @@ const ProjectDetails = () => {
       | Record<string, unknown>
   ) => {
     setFormData({
-      ...formData!,
+      ...formData,
       [target.id]: initialValue,
     });
   };
@@ -99,32 +91,31 @@ const ProjectDetails = () => {
   const handleSave = async () => {
     const options = getUpdateOptions(changedFormData);
     await sendRequest({
-      url: `${PROJECTS_BASE_API_URL}/${projectId}`,
+      url: `${SERVICES_BASE_API_URL}/${serviceId}`,
       options,
     });
-    getProjectInfo();
+    getServiceInfo();
   };
 
   const handleDelete = () => {
     requestDelete();
   };
 
-  useEffect(() => getProjectInfo(), [getProjectInfo]);
+  useEffect(() => getServiceInfo(), [getServiceInfo]);
 
   useEffect(() => {
-    if (project && !loading) {
+    if (service && !loading) {
       const formDataShape: PartialDocument = {
-        name: project.name,
-        description: project.description,
-        url: project.url,
-        newService: undefined,
-        newTeamMember: undefined,
-        services: project.services,
+        name: service.name,
+        description: service.description,
+        url: service.url,
+        version: service.version,
+        tier: service.tier,
       };
       setInitialFormData(formDataShape);
       setFormData(formDataShape);
     }
-  }, [loading, project]);
+  }, [loading, service]);
 
   useEffect(() => {
     const changes: PartialDocument = {};
@@ -132,27 +123,15 @@ const ProjectDetails = () => {
     for (const key in formData) {
       if (
         initialFormData &&
-        formData[key as keyof IProjectDocument] !==
-          initialFormData[key as keyof IProjectDocument]
+        formData[key as keyof IServiceDocument] !==
+          initialFormData[key as keyof IServiceDocument]
       ) {
-        if (key === "newService" && formData[key] !== undefined) {
-          changes.services = [
-            ...(project?.services || []),
-            formData.newService as ObjectId | Record<string, unknown>,
-          ];
-        } else if (key === "newTeamMember" && formData[key] !== undefined) {
-          changes.team = [
-            ...(project?.team || []),
-            formData.newTeamMember as ObjectId | Record<string, unknown>,
-          ];
-        } else {
-          changes[key as keyof IProjectDocument] =
-            formData[key as keyof IProjectDocument];
-        }
+        changes[key as keyof IServiceDocument] =
+          formData[key as keyof IServiceDocument];
       }
     }
     setChangedFormData(changes);
-  }, [formData, initialFormData, project]);
+  }, [formData, initialFormData]);
 
   if (loading) {
     return <Heading text="Loading..." level={1} role="status" />;
@@ -162,19 +141,19 @@ const ProjectDetails = () => {
     return <Heading text={error.message} level={1} role="status" />;
   }
 
-  if (!project) {
-    return <Heading text="Project not found" level={1} role="status" />;
+  if (!service) {
+    return <Heading text="Service not found" level={1} role="status" />;
   }
 
   return (
-    project &&
+    service &&
     !loading &&
     formData && (
-      <div className="project-details flex flex-col align-stretch">
-        <div className="project-details__actions self-end flex gap-4">
+      <div className="service-details flex flex-col align-stretch">
+        <div className="service-details__actions self-end flex gap-4">
           <Button onClick={handleDelete}>Delete</Button>
         </div>
-        <Heading text="Project details" level={1} />
+        <Heading text="Service details" level={1} />
         <FormControlWithActions
           label="Name:"
           id="name"
@@ -188,64 +167,57 @@ const ProjectDetails = () => {
           component={TextInput}
         />
         <FormControlWithActions
-          label="URL:"
-          id="url"
-          onChange={handleChange}
-          onCancel={handleCancel}
-          onSave={handleSave}
-          value={formData?.url}
-          errors={errors}
-          setErrors={setErrors}
-          component={UrlInput}
-        />
-        <FormControlWithActions
           label="Description:"
           id="description"
           onChange={handleChange}
           onCancel={handleCancel}
           onSave={handleSave}
           value={formData?.description}
+          required
           errors={errors}
           setErrors={setErrors}
           component={TextArea}
         />
         <FormControlWithActions
-          label="Add service:"
-          id="newService"
+          label="URL:"
+          id="url"
           onChange={handleChange}
           onCancel={handleCancel}
           onSave={handleSave}
-          value={formData?.newService}
-          url={SERVICES_BASE_API_URL}
-          getFormattedOptions={getServiceDataOptions}
+          value={formData?.url}
+          required
           errors={errors}
           setErrors={setErrors}
-          component={SelectWithFetch}
-          showList={true}
-          currentList={formData.services}
+          component={TextInput}
         />
-        {isAdmin ? (
-          <FormControlWithActions
-            label="Add team member:"
-            id="newTeamMember"
-            onChange={handleChange}
-            onCancel={handleCancel}
-            onSave={handleSave}
-            value={formData?.newTeamMember}
-            url={USERS_BASE_API_URL}
-            getFormattedOptions={getUserDataOptions}
-            errors={errors}
-            setErrors={setErrors}
-            component={SelectWithFetch}
-            showList={true}
-            currentList={formData.team}
-          />
-        ) : (
-          <Link to="/dashboard/users/create">Add team member</Link>
-        )}
+        <FormControlWithActions
+          label="Version:"
+          id="version"
+          onChange={handleChange}
+          onCancel={handleCancel}
+          onSave={handleSave}
+          value={formData?.version}
+          required
+          errors={errors}
+          setErrors={setErrors}
+          component={TextInput}
+        />
+        <FormControlWithActions
+          label="Tier:"
+          id="tier"
+          onChange={handleChange}
+          onCancel={handleCancel}
+          onSave={handleSave}
+          value={formData?.tier}
+          options={getTierOptions()}
+          required
+          errors={errors}
+          setErrors={setErrors}
+          component={Select}
+        />
       </div>
     )
   );
 };
 
-export default ProjectDetails;
+export default ServiceDetails;

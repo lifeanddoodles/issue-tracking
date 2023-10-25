@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -75,7 +76,13 @@ const UserDetails = () => {
 
   const handleCancel = (
     target: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
-    initialValue: string | number | boolean | readonly string[]
+    initialValue:
+      | string
+      | number
+      | boolean
+      | readonly string[]
+      | ObjectId
+      | Record<string, unknown>
   ) => {
     setFormData({
       ...formData!,

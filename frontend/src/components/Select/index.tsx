@@ -67,9 +67,7 @@ const Select = forwardRef(
         {label && (
           <label
             className={`${
-              direction === "row"
-                ? " basis-full max-w-1/3 shrink-0 sm:basis-1/3 md:basis-full lg:basis-1/3"
-                : ""
+              direction === "row" ? " basis-full max-w-xs shrink-0" : ""
             }`}
             htmlFor={id}
           >

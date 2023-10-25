@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -10,21 +11,26 @@ import FormControlWithActions from "../../../components/FormControlWithActions";
 import Heading from "../../../components/Heading";
 import { EmailInput, TextInput, UrlInput } from "../../../components/Input";
 import Select from "../../../components/Select";
+import SelectWithFetch from "../../../components/Select/SelectWithFetch";
 import TextArea from "../../../components/TextArea";
 import useAuth from "../../../hooks/useAuth";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
 import {
   COMPANIES_BASE_API_URL,
+  USERS_BASE_API_URL,
   getDeleteOptions,
   getUpdateOptions,
 } from "../../../routes";
 import {
   getIndustryOptions,
   getSubscriptionStatusOptions,
+  getUserDataOptions,
 } from "../../../utils";
 
-type PartialDocument = Partial<ICompanyDocument>;
+type PartialDocument = Partial<ICompanyDocument> & {
+  newEmployee?: ObjectId | Record<string, unknown>;
+};
 
 const CompanyDetails = () => {
   const params = useParams();
@@ -68,6 +74,7 @@ const CompanyDetails = () => {
             industry: company.industry,
             description: company.description,
             employees: company.employees,
+            newEmployee: undefined,
           }
         : {},
     [company, loading]
@@ -136,7 +143,13 @@ const CompanyDetails = () => {
 
   const handleCancel = (
     target: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
-    initialValue: string | number | boolean | readonly string[]
+    initialValue:
+      | string
+      | number
+      | boolean
+      | readonly string[]
+      | ObjectId
+      | Record<string, unknown>
   ) => {
     setFormData({
       ...formData!,
@@ -178,13 +191,20 @@ const CompanyDetails = () => {
         formData[key as keyof ICompanyDocument] !==
           initialFormData[key as keyof ICompanyDocument]
       ) {
-        changes[key as keyof ICompanyDocument] =
-          formData[key as keyof ICompanyDocument];
+        if (key === "newEmployee" && formData[key] !== undefined) {
+          changes.employees = [
+            ...(company?.employees || []),
+            formData.newEmployee as ObjectId | Record<string, unknown>,
+          ];
+        } else {
+          changes[key as keyof ICompanyDocument] =
+            formData[key as keyof ICompanyDocument];
+        }
       }
     }
 
     setChangedFormData(changes);
-  }, [formData, initialFormData]);
+  }, [company?.employees, formData, initialFormData]);
 
   if (loading) {
     return <Heading text="Loading..." level={1} role="status" />;
@@ -356,13 +376,21 @@ const CompanyDetails = () => {
           setErrors={setErrors}
           component={TextArea}
         />
-        {formData.employees && (
-          <ul>
-            {formData.employees.map((employee) => (
-              <li key={String(employee)}>{String(employee)}</li>
-            ))}
-          </ul>
-        )}
+        <FormControlWithActions
+          label="Add employee:"
+          id="newEmployee"
+          onChange={handleChange}
+          onCancel={handleCancel}
+          onSave={handleSave}
+          value={formData?.newEmployee}
+          url={USERS_BASE_API_URL}
+          getFormattedOptions={getUserDataOptions}
+          errors={errors}
+          setErrors={setErrors}
+          component={SelectWithFetch}
+          showList={true}
+          currentList={formData?.employees}
+        />
       </div>
     )
   );

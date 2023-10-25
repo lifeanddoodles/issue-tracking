@@ -26,7 +26,9 @@ import AllProjects from "./pages/projects/AllProjects/index.tsx";
 import CreateProject from "./pages/projects/CreateProject/index.tsx";
 import ProjectDetails from "./pages/projects/ProjectDetails/index.tsx";
 import ProjectsByCompany from "./pages/projects/ProjectsByCompany/index.tsx";
+import AllServices from "./pages/services/AllServices/index.tsx";
 import CreateService from "./pages/services/CreateService/index.tsx";
+import ServiceDetails from "./pages/services/ServiceDetails/index.tsx";
 import AllTickets from "./pages/tickets/AllTickets/index.tsx";
 import CreateTicket from "./pages/tickets/CreateTicket/index.tsx";
 import TicketDetails from "./pages/tickets/TicketDetails/index.tsx";
@@ -76,6 +78,11 @@ const router = createBrowserRouter(
             <Route path="/dashboard/companies" element={<AllCompanies />} />
             <Route path="/dashboard/projects" element={<AllProjects />} />
             <Route path="/dashboard/tickets/" element={<AllTickets />} />
+            <Route path="/dashboard/services/" element={<AllServices />} />
+            <Route
+              path="/dashboard/services/:serviceId"
+              element={<ServiceDetails />}
+            />
           </Route>
           {/* TODO:Add Admin users' routes */}
           <Route path="" element={<AdminRoute />}>

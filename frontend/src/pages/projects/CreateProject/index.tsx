@@ -15,15 +15,22 @@ import useAuth from "../../../hooks/useAuth";
 import useForm from "../../../hooks/useForm";
 import useValidation from "../../../hooks/useValidation";
 import {
+  COMPANIES_BASE_API_URL,
   PROJECTS_BASE_API_URL,
+  SERVICES_BASE_API_URL,
   USERS_BASE_API_URL,
   getPostOptions,
 } from "../../../routes";
-import { getUserDataOptions } from "../../../utils";
+import {
+  getCompanyDataOptions,
+  getServiceDataOptions,
+  getUserDataOptions,
+} from "../../../utils";
 
 const CreateProject = () => {
   const { user } = useAuth();
   const isClient = user?.role === UserRole.CLIENT;
+  const isAdmin = user?.role === UserRole.ADMIN;
   const navigate = useNavigate();
   const formDataShape = {
     name: "",
@@ -31,12 +38,13 @@ const CreateProject = () => {
     url: "",
     description: "",
     teamMember: "",
+    newService: "",
     team: [],
     services: [],
     tickets: [],
   };
   const { formData, setFormData, errors, setErrors, onSubmit } = useForm<
-    IProjectBase & { teamMember: string },
+    IProjectBase & { teamMember: string; newService: string },
     IProjectDocument
   >({
     formShape: formDataShape as Partial<IProjectBase>,
@@ -99,7 +107,17 @@ const CreateProject = () => {
         errors={errors}
         setErrors={setErrors}
       />
-      {/* TODO: If admin, add Company select */}
+      {isAdmin && (
+        <SelectWithFetch
+          label="Add company:"
+          id="company"
+          value={String(formData.company)}
+          onChange={handleChange}
+          errors={errors}
+          url={COMPANIES_BASE_API_URL}
+          getFormattedOptions={getCompanyDataOptions}
+        />
+      )}
       <SelectWithFetch
         label="Add team member:"
         id="teamMember"
@@ -109,6 +127,15 @@ const CreateProject = () => {
         url={USERS_BASE_API_URL}
         query={companyQuery}
         getFormattedOptions={getUserDataOptions}
+      />
+      <SelectWithFetch
+        label="Add service:"
+        id="newService"
+        value={formData.newService || ""}
+        onChange={handleChange}
+        errors={errors}
+        url={SERVICES_BASE_API_URL}
+        getFormattedOptions={getServiceDataOptions}
       />
       <Button type="submit">Submit</Button>
     </Form>

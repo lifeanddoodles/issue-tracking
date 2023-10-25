@@ -25,9 +25,9 @@ router.get("/", getProjects);
 router.get("/:projectId", getProject);
 
 // @desc Update project
-// @route UPDATE /api/projects/:projectId
+// @route PATCH /api/projects/:projectId
 // @access Private
-router.put("/:projectId", updateProject);
+router.patch("/:projectId", updateProject);
 
 // @desc Delete project
 // @route DELETE /api/projects/:projectId

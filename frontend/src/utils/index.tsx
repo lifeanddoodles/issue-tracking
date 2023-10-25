@@ -2,6 +2,7 @@ import { ObjectId } from "mongoose";
 import {
   DepartmentTeam,
   ICompanyDocument,
+  IServiceDocument,
   ITicketPopulatedDocument,
   IUser,
   IUserDocument,
@@ -10,6 +11,7 @@ import {
   Status,
   SubscriptionStatus,
   TicketType,
+  Tier,
   UserRole,
 } from "../../../shared/interfaces";
 
@@ -255,6 +257,24 @@ export function getIndustryOptions(noSelectionText?: string) {
   return options;
 }
 
+export function getTierText<Tier>(enumName: Tier): string {
+  switch (enumName) {
+    case Tier.ENTERPRISE:
+      return "Enterprise";
+    case Tier.PRO:
+      return "Pro";
+    case Tier.FREE:
+      return "Free";
+    default:
+      return "Unassigned";
+  }
+}
+
+export function getTierOptions(noSelectionText?: string) {
+  const options = getOptionsFromEnum(Tier, getTierText, noSelectionText);
+  return options;
+}
+
 export function getUserRoleText<UserRole>(enumName: UserRole): string {
   switch (enumName) {
     case UserRole.ADMIN:
@@ -325,6 +345,13 @@ export function getCompanyDataOptions(companies: Partial<ICompanyDocument>[]) {
   }));
 }
 
+export function getServiceDataOptions(services: Partial<IServiceDocument>[]) {
+  return services.map((service) => ({
+    value: service._id as string,
+    label: service.name || (service._id as string),
+  }));
+}
+
 export type ButtonVariant =
   | "accent"
   | "primary"
@@ -363,7 +390,16 @@ export const getColumnTitles: <T>(
 };
 
 export const objectToQueryString: <
-  T extends Record<string, string | number | boolean | string[]>
+  T extends Record<
+    string,
+    | string
+    | number
+    | boolean
+    | string[]
+    | ObjectId
+    | Record<string, unknown>
+    | (ObjectId | Record<string, unknown>)[]
+  >
 >(
   obj: Partial<T>
 ) => string = (obj) => {
