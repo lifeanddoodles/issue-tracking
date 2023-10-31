@@ -14,14 +14,14 @@ import {
   TextInput,
 } from "../../../components/Input";
 import Select from "../../../components/Select";
-import useAuth from "../../../hooks/useAuth";
+import { useAuthContext } from "../../../context/AuthProvider";
 import useForm from "../../../hooks/useForm";
 import useValidation from "../../../hooks/useValidation";
 import { USERS_BASE_API_URL, getPostOptions } from "../../../routes";
 import { getDepartmentTeamOptions, getUserRoleOptions } from "../../../utils";
 
 const CreateUser = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const isClient = user?.role === UserRole.CLIENT;
   const navigate = useNavigate();
   const formDataShape = {

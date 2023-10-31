@@ -3,7 +3,7 @@ import { IProjectDocument } from "../../../../../shared/interfaces";
 import Button from "../../../components/Button";
 import Select from "../../../components/Select";
 import TableFromDocuments from "../../../components/TableFromDocuments";
-import useAuth from "../../../hooks/useAuth";
+import { useAuthContext } from "../../../context/AuthProvider";
 import useFetch from "../../../hooks/useFetch";
 import Row from "../../../layout/Row";
 import { PROJECTS_BASE_API_URL } from "../../../routes";
@@ -17,7 +17,7 @@ enum TableColumns {
 }
 
 const ProjectsByCompany = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const companyId = user?.company!.toString();
   const {
     data: projects,

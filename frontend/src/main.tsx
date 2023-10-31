@@ -11,6 +11,7 @@ import App from "./App.tsx";
 import AdminRoute from "./components/AdminRoute";
 import NotClientRoute from "./components/NotClientRoute";
 import PrivateRoute from "./components/PrivateRoute";
+import AuthProvider from "./context/AuthProvider.tsx";
 import "./index.css";
 import DashboardLayout from "./layout/DashboardLayout";
 import GuestPageWrapper from "./layout/GuestPageWrapper";
@@ -38,7 +39,14 @@ import UserDetails from "./pages/users/UserDetails/index.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />}>
+    <Route
+      path="/"
+      element={
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      }
+    >
       <Route path="" element={<GuestPageWrapper />}>
         <Route index path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />

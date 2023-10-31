@@ -17,7 +17,7 @@ import Select from "../../../components/Select";
 import SelectWithFetch from "../../../components/Select/SelectWithFetch";
 import TextArea from "../../../components/TextArea";
 import Toggle from "../../../components/Toggle";
-import useAuth from "../../../hooks/useAuth";
+import { useAuthContext } from "../../../context/AuthProvider";
 import useForm from "../../../hooks/useForm";
 import useValidation from "../../../hooks/useValidation";
 import {
@@ -36,7 +36,7 @@ import {
 
 const CreateTicket = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const role = user?.role;
   const isClient = role === UserRole.CLIENT;
   const formDataShape = isClient

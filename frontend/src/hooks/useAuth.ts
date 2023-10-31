@@ -14,7 +14,7 @@ const useAuth = () => {
   const navigate = useNavigate();
 
   const authUserReq = useCallback(
-    (url: string, options: RequestInit) => {
+    (url: string, options?: RequestInit) => {
       sendRequest({ url, options });
     },
     [sendRequest]

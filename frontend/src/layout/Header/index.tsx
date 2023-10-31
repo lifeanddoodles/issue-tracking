@@ -1,6 +1,7 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/Button";
-import useAuth from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthProvider";
 import { getVariantClasses } from "../../utils";
 
 const guestMenuItems = [
@@ -27,8 +28,11 @@ const userMenuItems = [
 ];
 
 const Header = () => {
-  const { user, logoutUserReq } = useAuth();
-  const menuItems = user ? userMenuItems : guestMenuItems;
+  const { user, logoutUserReq } = useAuthContext();
+  const menuItems = useMemo(
+    () => (user ? userMenuItems : guestMenuItems),
+    [user]
+  );
   const variantClasses = getVariantClasses("transparent");
 
   return (

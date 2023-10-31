@@ -13,7 +13,7 @@ import { EmailInput, TextInput, UrlInput } from "../../../components/Input";
 import Select from "../../../components/Select";
 import SelectWithFetch from "../../../components/Select/SelectWithFetch";
 import TextArea from "../../../components/TextArea";
-import useAuth from "../../../hooks/useAuth";
+import { useAuthContext } from "../../../context/AuthProvider";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
 import {
@@ -34,7 +34,7 @@ type PartialDocument = Partial<ICompanyDocument> & {
 
 const CompanyDetails = () => {
   const params = useParams();
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const companyId = params.companyId || user?.company;
   const {
     data: company,

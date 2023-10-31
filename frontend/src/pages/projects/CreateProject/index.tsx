@@ -11,7 +11,7 @@ import Heading from "../../../components/Heading";
 import { TextInput } from "../../../components/Input";
 import SelectWithFetch from "../../../components/Select/SelectWithFetch";
 import TextArea from "../../../components/TextArea";
-import useAuth from "../../../hooks/useAuth";
+import { useAuthContext } from "../../../context/AuthProvider";
 import useForm from "../../../hooks/useForm";
 import useValidation from "../../../hooks/useValidation";
 import {
@@ -28,7 +28,7 @@ import {
 } from "../../../utils";
 
 const CreateProject = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const isClient = user?.role === UserRole.CLIENT;
   const isAdmin = user?.role === UserRole.ADMIN;
   const navigate = useNavigate();

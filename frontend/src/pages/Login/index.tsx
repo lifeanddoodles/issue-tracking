@@ -4,7 +4,7 @@ import Button from "../../components/Button";
 import Form from "../../components/Form";
 import Heading from "../../components/Heading";
 import Input from "../../components/Input";
-import useAuth from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthProvider";
 import useValidation from "../../hooks/useValidation";
 import { LOGIN_API_URL, getLoginUserOptions } from "../../routes";
 import GoogleLoginButton from "./GoogleLoginButton";
@@ -19,7 +19,7 @@ const Login = () => {
     null
   );
   const { validateField } = useValidation();
-  const { user, error, loading, authUserReq } = useAuth();
+  const { user, error, loading, authUserReq } = useAuthContext();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +40,7 @@ const Login = () => {
     e.preventDefault();
 
     const options = getLoginUserOptions(formData);
-    authUserReq(LOGIN_API_URL, options);
+    authUserReq!(LOGIN_API_URL, options);
   };
 
   useEffect(() => {

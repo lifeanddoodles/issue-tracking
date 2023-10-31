@@ -5,7 +5,7 @@ import FormControlWithActions from "../../components/FormControlWithActions";
 import Heading from "../../components/Heading";
 import { TextInput } from "../../components/Input";
 import Select from "../../components/Select";
-import useAuth from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthProvider";
 import useFetch from "../../hooks/useFetch";
 import useValidation from "../../hooks/useValidation";
 import {
@@ -17,7 +17,7 @@ import {
 import { getDepartmentTeamOptions } from "../../utils";
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const userId = user?._id;
   const {
     data: userInfo,
@@ -80,7 +80,6 @@ const Profile = () => {
 
   const handleSave = async () => {
     const options = getUpdateUserOptions(changedFormData);
-    // await sendRequest({ url: `${USERS_BASE_API_URL}/${userId}`, options });
     await sendRequest({ url: `${PROFILE_API_URL}`, options });
     getUserInfo();
   };

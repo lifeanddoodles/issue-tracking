@@ -11,14 +11,14 @@ import Heading from "../../../components/Heading";
 import { EmailInput, TextInput, UrlInput } from "../../../components/Input";
 import Select from "../../../components/Select";
 import TextArea from "../../../components/TextArea";
-import useAuth from "../../../hooks/useAuth";
+import { useAuthContext } from "../../../context/AuthProvider";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
 import { COMPANIES_BASE_API_URL, getPostOptions } from "../../../routes";
 import { getIndustryOptions } from "../../../utils";
 
 const CreateTicket = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const role = user?.role;
   const isClient = role === UserRole.CLIENT;
   const formDataShape = {

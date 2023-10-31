@@ -1,9 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { UserRole } from "../../../../shared/interfaces";
-import useAuth from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthProvider";
 
 const NotClientRoute = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const isNotClient = user?.role !== UserRole.CLIENT;
 
   return isNotClient ? <Outlet /> : <Navigate to="/login" replace />;

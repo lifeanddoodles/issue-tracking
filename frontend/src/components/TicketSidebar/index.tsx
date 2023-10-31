@@ -3,7 +3,7 @@ import {
   ITicketPopulatedDocument,
   UserRole,
 } from "../../../../shared/interfaces";
-import useAuth from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthProvider";
 import { TICKETS_BASE_API_URL, USERS_BASE_API_URL } from "../../routes";
 import {
   getDepartmentTeamOptions,
@@ -46,7 +46,7 @@ const TicketSidebar = ({
   errors,
   setErrors,
 }: ITicketSidebarProps) => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const isClient = user?.role === UserRole.CLIENT;
   const reporterFullName = formData?.reporter
     ? getFullName(formData?.reporter?.firstName, formData?.reporter?.lastName)

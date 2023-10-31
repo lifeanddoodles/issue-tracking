@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthProvider";
 
 const GuestPageWrapper = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
 
   return !user ? (
     <main>

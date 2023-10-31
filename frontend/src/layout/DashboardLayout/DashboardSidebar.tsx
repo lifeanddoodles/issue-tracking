@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { UserRole } from "../../../../shared/interfaces";
 import Heading from "../../components/Heading";
-import useAuth from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthProvider";
 import { getVariantClasses } from "../../utils";
 
 const menuItems = {
@@ -111,7 +111,7 @@ const menuItems = {
 
 const DashboardSidebar = () => {
   const variantClasses = getVariantClasses("transparent");
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const isClient = user?.role === UserRole.CLIENT;
 
   return (

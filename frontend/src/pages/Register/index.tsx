@@ -6,7 +6,7 @@ import Form from "../../components/Form";
 import Heading from "../../components/Heading";
 import { EmailInput, PasswordInput, TextInput } from "../../components/Input";
 import SelectWithFetch from "../../components/Select/SelectWithFetch";
-import useAuth from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthProvider";
 import useFetch from "../../hooks/useFetch";
 import useValidation from "../../hooks/useValidation";
 import {
@@ -43,7 +43,7 @@ const Register = () => {
     null
   );
   const { validateField } = useValidation();
-  const { user, error, loading, authUserReq } = useAuth();
+  const { user, error, loading, authUserReq } = useAuthContext();
   const navigate = useNavigate();
   const {
     data: newCompany,
@@ -86,7 +86,7 @@ const Register = () => {
         ...formData,
         company: companyId,
       });
-      authUserReq(USERS_BASE_API_URL, options);
+      authUserReq!(USERS_BASE_API_URL, options);
     },
     [authUserReq, formData]
   );

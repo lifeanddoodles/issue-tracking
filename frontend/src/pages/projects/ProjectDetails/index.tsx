@@ -8,7 +8,7 @@ import Heading from "../../../components/Heading";
 import { TextInput, UrlInput } from "../../../components/Input";
 import SelectWithFetch from "../../../components/Select/SelectWithFetch";
 import TextArea from "../../../components/TextArea";
-import useAuth from "../../../hooks/useAuth";
+import { useAuthContext } from "../../../context/AuthProvider";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
 import {
@@ -26,7 +26,7 @@ type PartialDocument = Partial<IProjectDocument> & {
 };
 
 const ProjectDetails = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const isAdmin = user?.role === UserRole.ADMIN;
   const params = useParams();
   const projectId = params.projectId;
