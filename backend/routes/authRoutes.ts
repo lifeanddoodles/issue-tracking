@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getGoogleLoginCallback,
+  loginSuccess,
   loginWithEmailAndPassword,
   loginWithGoogle,
   logoutUser,
@@ -24,6 +25,12 @@ router.get("/google", ensureGuest, loginWithGoogle);
 // @route GET /api/auth/google/callback
 // @access Public
 router.get("/google/callback", getGoogleLoginCallback);
+
+// REDIRECT AFTER SUCCESSFUL LOGIN
+// @desc Redirect user
+// @route GET /api/auth/success
+// @access Private
+router.get("/success", loginSuccess);
 
 // LOGOUT
 // @desc Logout user

@@ -18,6 +18,7 @@ import GuestPageWrapper from "./layout/GuestPageWrapper";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import LoginSuccess from "./pages/Login/LoginSuccess.tsx";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import AllCompanies from "./pages/companies/AllCompanies/index.tsx";
@@ -51,6 +52,7 @@ const router = createBrowserRouter(
         <Route index path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/login/success" element={<LoginSuccess />} />
       </Route>
       {/* Registered users */}
       <Route path="" element={<PrivateRoute />}>

@@ -60,6 +60,7 @@ export default function (passport: PassportStatic) {
         const newUser = {
           googleId: profile.id,
           displayName: profile.displayName,
+          email: profile.emails !== undefined && profile?.emails[0].value,
           firstName: profile?.name?.givenName,
           lastName: profile?.name?.familyName,
           imageUrl: profile.photos !== undefined && profile?.photos[0].value,
@@ -70,10 +71,10 @@ export default function (passport: PassportStatic) {
         }).select("-password")) as IUserDocument;
 
         if (user) {
-          done(null, user);
+          done(null, user, { statusCode: 200 });
         } else {
           user = await User.create(newUser);
-          done(null, user);
+          done(null, user, { statusCode: 201 });
         }
       }
     )

@@ -8,7 +8,7 @@ import {
   UserRole,
 } from "../../shared/interfaces/index.js";
 import User from "../models/userModel.js";
-import generateToken from "../utils/generateToken.js";
+import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.ts";
 
 // @desc    Create user
 // @route   POST /api/users/
@@ -70,7 +70,7 @@ export const addUser = asyncHandler(
     // Handle success
 
     // Generate JWT token
-    generateToken(res, createdUser._id);
+    generateTokenAndSetCookie(res, createdUser._id);
 
     req.login(createdUser, function (err) {
       if (err) {
