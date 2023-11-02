@@ -21,10 +21,7 @@ const Button = ({
   disabled,
   className,
 }: IButtonProps) => {
-  const mergedClassName = twMerge(
-    `rounded-lg text-base border-0 ${getVariantClasses(variant)}`,
-    className
-  );
+  const mergedClassName = twMerge(`${getVariantClasses(variant)}`, className);
 
   return (
     <button

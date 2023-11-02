@@ -1,20 +1,34 @@
-import { useCallback, useEffect, useState } from "react";
-import { DepartmentTeam, IUserDocument } from "../../../../shared/interfaces";
+import { RefAttributes, useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  DepartmentTeam,
+  IUserDocument,
+  UserRole,
+} from "../../../../shared/interfaces";
 import Button from "../../components/Button";
-import FormControlWithActions from "../../components/FormControlWithActions";
+import FormControlWithActions, {
+  nonBooleanValueType,
+} from "../../components/FormControlWithActions";
 import Heading from "../../components/Heading";
 import { TextInput } from "../../components/Input";
 import Select from "../../components/Select";
+import SelectWithFetch from "../../components/Select/SelectWithFetch";
 import { useAuthContext } from "../../context/AuthProvider";
 import useFetch from "../../hooks/useFetch";
 import useValidation from "../../hooks/useValidation";
+import { ITextInputProps } from "../../interfaces";
 import {
+  COMPANIES_BASE_API_URL,
   PROFILE_API_URL,
   USERS_BASE_API_URL,
   getDeleteOptions,
   getUpdateUserOptions,
 } from "../../routes";
-import { getDepartmentTeamOptions } from "../../utils";
+import {
+  getCompanyDataOptions,
+  getDepartmentTeamOptions,
+  getVariantClasses,
+} from "../../utils";
 
 const Profile = () => {
   const { user } = useAuthContext();
@@ -68,10 +82,10 @@ const Profile = () => {
     });
   };
 
-  const handleCancel = (
+  const handleCancel: (
     target: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
-    initialValue: string | number | boolean | readonly string[]
-  ) => {
+    initialValue: nonBooleanValueType | boolean
+  ) => void = (target, initialValue) => {
     setFormData({
       ...formData!,
       [target.id]: initialValue,
@@ -134,7 +148,11 @@ const Profile = () => {
           <Button onClick={handleDelete}>Delete</Button>
         </div>
         <Heading text="Profile" level={1} />
-        <FormControlWithActions
+        <FormControlWithActions<
+          ITextInputProps & RefAttributes<HTMLInputElement>,
+          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+          unknown
+        >
           label="First name:"
           id="firstName"
           onChange={handleChange}
@@ -197,19 +215,37 @@ const Profile = () => {
           setErrors={setErrors}
           component={TextInput}
         />
-
-        <FormControlWithActions
-          label="Company:"
-          id="company"
-          onChange={handleChange}
-          onCancel={handleCancel}
-          onSave={handleSave}
-          value={formData?.company!.toString()}
-          required
-          errors={errors}
-          setErrors={setErrors}
-          component={TextInput}
-        />
+        {formData?.company ? (
+          <>
+            <FormControlWithActions
+              label="Company:"
+              id="company"
+              onChange={handleChange}
+              onCancel={handleCancel}
+              onSave={handleSave}
+              value={formData?.company.toString()}
+              errors={errors}
+              setErrors={setErrors}
+              component={SelectWithFetch}
+              url={COMPANIES_BASE_API_URL}
+              getFormattedOptions={getCompanyDataOptions}
+              disabled={user?.role === UserRole.CLIENT}
+            />
+            <Link
+              className={`${getVariantClasses("link")}`}
+              to={`/dashboard/companies/${formData?.company.toString()}`}
+            >
+              Edit company details
+            </Link>
+          </>
+        ) : (
+          <Link
+            className={`${getVariantClasses("link")}`}
+            to={`/dashboard/companies/create`}
+          >
+            Add company
+          </Link>
+        )}
       </div>
     )
   );

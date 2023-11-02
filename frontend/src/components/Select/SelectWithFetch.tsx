@@ -1,22 +1,22 @@
 import { Fragment, forwardRef, useCallback, useEffect } from "react";
 import Select from ".";
 import useFetch from "../../hooks/useFetch";
+import {
+  Direction,
+  IFormControlProps,
+  IFormStateProps,
+} from "../../interfaces";
 
-export interface ISelectWithFetchProps<T> {
-  label?: string;
-  id: string;
+export interface ISelectWithFetchProps<T>
+  extends IFormControlProps<HTMLSelectElement>,
+    IFormStateProps {
   value: string;
+  direction?: Direction;
   onChange?: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => void;
-  disabled?: boolean;
-  required?: boolean;
-  errors?: { [key: string]: string[] } | null;
-  setErrors?: React.Dispatch<
-    React.SetStateAction<{ [key: string]: string[] } | null>
-  >;
   url: string;
   query?: string;
   getFormattedOptions: (data: T[]) => { value: string; label: string }[];
@@ -35,6 +35,7 @@ const SelectWithFetch = forwardRef(
       required,
       errors,
       setErrors,
+      direction = "row",
       url,
       query = "",
       getFormattedOptions,
@@ -110,7 +111,7 @@ const SelectWithFetch = forwardRef(
             required={required}
             errors={errors}
             setErrors={setErrors}
-            direction="row"
+            direction={direction}
             disabled={disabled}
             ref={ref}
           />

@@ -9,29 +9,27 @@ import {
 } from "../../interfaces";
 import IconButton from "../Button/IconButton";
 
+export type FormElement =
+  | HTMLInputElement
+  | HTMLSelectElement
+  | HTMLTextAreaElement;
+
+export type nonBooleanValueType =
+  | string
+  | number
+  | readonly string[]
+  | ObjectId
+  | Record<string, unknown>;
+
 interface IFormControlWithActionsProps<T, U, V>
   extends IFormControlProps<U>,
     IFormStateProps {
   component: React.JSXElementConstructor<T>;
-  value?:
-    | string
-    | number
-    | readonly string[]
-    | ObjectId
-    | Record<string, unknown>;
+  value?: nonBooleanValueType;
   checked?: boolean;
   options?: IOption[];
   type?: ControllerType;
-  onCancel: (
-    target: U,
-    initialValue:
-      | string
-      | number
-      | readonly string[]
-      | boolean
-      | ObjectId
-      | Record<string, unknown>
-  ) => void;
+  onCancel: (target: U, initialValue: nonBooleanValueType | boolean) => void;
   onSave: () => void;
   url?: string;
   getFormattedOptions?: (data: V[]) => { value: string; label: string }[];
@@ -39,7 +37,7 @@ interface IFormControlWithActionsProps<T, U, V>
   currentList?: string[] | (ObjectId | Record<string, unknown>)[];
 }
 
-function FormControlWithActions<T, U extends HTMLElement, V>({
+function FormControlWithActions<T, U extends FormElement, V>({
   component,
   value,
   checked,
@@ -52,14 +50,14 @@ function FormControlWithActions<T, U extends HTMLElement, V>({
 }: IFormControlWithActionsProps<T, U, V>) {
   const Component = component as JSX.ElementType;
   const fieldRef = useRef<U | null>(null);
-  const [fieldValue, setFieldValue] = useState<
-    string | number | readonly string[]
-  >(!checked && value ? value.toString() : type === "number" ? 0 : "");
+  const [fieldValue, setFieldValue] = useState<nonBooleanValueType>(
+    !checked && value ? value.toString() : type === "number" ? 0 : ""
+  );
   const [checkedValue, setCheckedValue] = useState<boolean>(
     (!value && checked) || false
   );
   const [initialValue, setInitialValue] = useState<
-    string | number | readonly string[] | boolean
+    nonBooleanValueType | boolean
   >(value ? value.toString() : checked || false);
   const [isEditable, setIsEditable] = useState(false);
   const [resetFieldValue, setResetFieldValue] = useState(false);
