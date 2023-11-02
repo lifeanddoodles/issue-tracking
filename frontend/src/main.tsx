@@ -65,6 +65,10 @@ const router = createBrowserRouter(
           <Route path="/dashboard/profile/" element={<Profile />} />
           <Route path="/dashboard/my-company/" element={<CompanyDetails />} />
           <Route
+            path="/dashboard/companies/create"
+            element={<CreateCompany />}
+          />
+          <Route
             path="/dashboard/companies/:companyId"
             element={<CompanyDetails />}
           />
@@ -94,10 +98,6 @@ const router = createBrowserRouter(
           </Route>
           {/* TODO:Add Admin users' routes */}
           <Route path="" element={<AdminRoute />}>
-            <Route
-              path="/dashboard/companies/create"
-              element={<CreateCompany />}
-            />
             <Route
               path="/dashboard/services/create"
               element={<CreateService />}

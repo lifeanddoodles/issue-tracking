@@ -168,7 +168,6 @@ const Register = () => {
           id="company"
           onChange={handleChange}
           value={company}
-          required
           errors={errors}
           setErrors={setErrors}
         />

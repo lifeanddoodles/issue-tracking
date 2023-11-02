@@ -1,9 +1,10 @@
 import { ObjectId } from "mongoose";
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   DepartmentTeam,
   IUserDocument,
+  UserRole,
 } from "../../../../../shared/interfaces";
 import Button from "../../../components/Button";
 import FormControlWithActions from "../../../components/FormControlWithActions";
@@ -216,19 +217,27 @@ const UserDetails = () => {
           setErrors={setErrors}
           component={TextInput}
         />
-
-        <FormControlWithActions
-          label="Company:"
-          id="company"
-          onChange={handleChange}
-          onCancel={handleCancel}
-          onSave={handleSave}
-          value={formData?.company!.toString()}
-          required
-          errors={errors}
-          setErrors={setErrors}
-          component={TextInput}
-        />
+        {formData?.company ? (
+          <>
+            <FormControlWithActions
+              label="Company:"
+              id="company"
+              onChange={handleChange}
+              onCancel={handleCancel}
+              onSave={handleSave}
+              value={formData?.company.toString()}
+              errors={errors}
+              setErrors={setErrors}
+              component={TextInput}
+              disabled={user.role === UserRole.CLIENT}
+            />
+            <Link to={`/dashboard/companies/${formData?.company.toString()}`}>
+              Edit company details
+            </Link>
+          </>
+        ) : (
+          <Link to={`/dashboard/companies/create`}>Add company</Link>
+        )}
       </div>
     )
   );

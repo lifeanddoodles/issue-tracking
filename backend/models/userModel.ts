@@ -14,12 +14,10 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, "Please add an email"],
       unique: true,
     },
     password: {
       type: String,
-      required: [true, "Please add a password"],
     },
     username: {
       type: String,
@@ -36,7 +34,6 @@ const userSchema = new mongoose.Schema(
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
-      required: true,
     },
     position: {
       type: String,
@@ -65,8 +62,10 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  if (this.password) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
 });
 
 export default mongoose.model<IUserDocument>("User", userSchema);

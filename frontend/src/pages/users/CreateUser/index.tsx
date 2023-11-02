@@ -141,7 +141,6 @@ const CreateUser = () => {
         id="company"
         onChange={handleChange}
         value={formData.company?.toString()}
-        required
         errors={errors}
         setErrors={setErrors}
       />

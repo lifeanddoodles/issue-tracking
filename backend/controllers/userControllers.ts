@@ -36,7 +36,7 @@ export const addUser = asyncHandler(
 
     // Handle request with missing fields
     const missingFields =
-      !firstName || !lastName || !email || !password || !role || !company;
+      !firstName || !lastName || !email || !password || !role;
 
     if (missingFields) {
       res.status(400);
