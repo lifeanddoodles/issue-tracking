@@ -9,8 +9,10 @@ import {
   UserRole,
 } from "../../../shared/interfaces";
 
-// TODO: Fix errors
-export const fakeTickets: ITicketDocument[] = [
+export const baseUrl =
+  process.env.NODE_ENV === "test" ? "http://localhost:5173" : "";
+
+export const fakeTickets: Partial<ITicketDocument>[] = [
   {
     _id: "ticket-001",
     title: "Fix login page alignment",
@@ -58,29 +60,33 @@ export const fakeTickets: ITicketDocument[] = [
   },
 ];
 
-export const fakePopulatedTickets: ITicketPopulatedDocument[] = [
+export const fakePopulatedTickets: (
+  | Partial<ITicketPopulatedDocument>
+  | ITicketPopulatedDocument
+)[] = [
   {
     _id: "ticket-001",
     title: "Fix login page alignment",
     description:
       "The login page elements are misaligned. Adjust the CSS to align them properly.",
     assignee: {
-      _id: "staff-001",
-      firstName: "John",
+      _id: "dev-001",
+      firstName: "Jane",
       lastName: "Doe",
     },
     status: Status.IN_PROGRESS,
     ticketType: TicketType.ISSUE,
     priority: Priority.LOW,
     reporter: {
-      _id: "dev-001",
-      firstName: "Jane",
+      _id: "staff-001",
+      firstName: "John",
       lastName: "Doe",
     },
     moveToDevSprint: true,
     assignToTeam: DepartmentTeam.DEVELOPMENT,
     deadline: "2023-08-30T22:22:30.440Z",
     isSubtask: false,
+    createdAt: "2023-08-29T00:21:32.520+00:00",
   },
   {
     _id: "ticket-002",
@@ -209,6 +215,86 @@ export const fakeComments: ICommentPopulatedDocument[] = [
     createdAt: "2023-08-31T22:22:30.440Z",
     lastModifiedAt: "2023-08-31T22:22:30.440Z",
     isEdited: false,
+  },
+];
+
+export const fakeServices = [
+  {
+    _id: "service-000",
+    name: "Website Builder",
+    description: "Drag n' Drop website builder.",
+    url: "https://webbuilder.sampleagency.com",
+    version: "1.0.0",
+    tier: "FREE",
+  },
+  {
+    _id: "service-002",
+    name: "Email Builder",
+    description: "Drag n' Drop email builder.",
+    url: "https://emailbuilder.sampleagency.com",
+    version: "1.0.0",
+    tier: "FREE",
+  },
+];
+
+export const fakeProjects = [
+  {
+    _id: "project-000",
+    name: "Website",
+    url: "",
+    description: "Landing page",
+    company: "company-000",
+    services: ["service-000"],
+    team: [],
+    tickets: [],
+  },
+  {
+    _id: "project-001",
+    name: "Website",
+    url: "",
+    description: "Landing page",
+    company: "company-001",
+    services: ["service-000", "service-001"],
+    team: [],
+    tickets: [],
+  },
+];
+
+export const fakeCompanies = [
+  {
+    _id: "company-000",
+    name: "SaaS Company",
+    url: "saascompany.com",
+    subscriptionStatus: "ONBOARDING",
+    employees: [],
+    projects: [],
+    dba: "SaaS LLC",
+    description: "Lorem ipsum dolor.",
+    address: {
+      street: "Sesame",
+      city: "Test City",
+      state: "",
+      zip: "",
+      country: "",
+    },
+  },
+  {
+    _id: "company-001",
+    name: "Client Company",
+    url: "clientcompany.com",
+    subscriptionStatus: "ONBOARDING",
+    employees: [],
+    projects: [],
+    industry: "FINANCE",
+    dba: "Client Company LLC",
+    description: "Lorem ipsum dolor.",
+    address: {
+      street: "Sesame",
+      city: "Test City",
+      state: "",
+      zip: "",
+      country: "",
+    },
   },
 ];
 
