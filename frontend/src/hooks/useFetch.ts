@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { baseUrl } from "../__mocks__";
 
-interface RequestProps {
+export interface RequestProps {
   url: string;
   options?: RequestInit;
 }
 
-interface FetchState<T> {
+export interface FetchState<T> {
   data: T | null;
   loading: boolean;
   error: Error | null;
@@ -22,7 +23,9 @@ const useFetch = <T>(reqProps?: RequestProps | null): FetchState<T> => {
       try {
         setLoading(true);
 
-        const url = props?.url || reqProps?.url;
+        const reqUrl = props?.url || reqProps?.url;
+        const isRelativeUrl = reqUrl?.startsWith("/");
+        const url = `${isRelativeUrl ? baseUrl : ""}${reqUrl}`;
         const options = props?.options || reqProps?.options;
         if (!url) return;
 

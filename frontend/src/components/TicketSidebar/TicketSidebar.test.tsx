@@ -1,48 +1,97 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect } from "vitest";
+import { describe, expect, vi } from "vitest";
 import TicketSidebar from ".";
-import {
-  fakeDevUser,
-  fakePopulatedTickets,
-  fakeStaffUser,
-} from "../../__mocks__";
+import { fakePopulatedTickets, fakeUsers } from "../../__mocks__";
 import { getStatusText } from "../../utils";
 
 const fakeTicket = fakePopulatedTickets[0];
+const formData = { ...fakeTicket };
 
 describe("TicketSidebar", () => {
   test("renders correctly", () => {
+    const formData = { ...fakeTicket };
+    const errors = {};
+    const setErrors = vi.fn();
+    const mockOnChange = vi.fn();
+    const mockOnSave = vi.fn();
+    const mockOnDelete = vi.fn();
+
     render(
       <MemoryRouter>
-        <TicketSidebar ticket={fakeTicket} />
+        <TicketSidebar
+          formData={formData}
+          onChange={mockOnChange}
+          onSave={mockOnSave}
+          onDelete={mockOnDelete}
+          errors={errors}
+          setErrors={setErrors}
+        />
       </MemoryRouter>
     );
-    const element = screen.getByText(getStatusText(fakeTicket.status));
+    const element = screen.queryByText(getStatusText(fakeTicket.status));
     expect(element).toBeInTheDocument();
   });
 
-  test("renders assignee info", () => {
-    render(
-      <MemoryRouter>
-        <TicketSidebar ticket={fakeTicket} />
-      </MemoryRouter>
+  test("has correct assignee value", async () => {
+    const errors = {};
+    const setErrors = vi.fn();
+    const mockOnChange = vi.fn();
+    const mockOnSave = vi.fn();
+    const mockOnDelete = vi.fn();
+    const fakeAssignee = fakeUsers.find(
+      (user) => user._id === formData.assignee?._id
     );
-    const element = screen.getByText(
-      `${fakeDevUser.firstName} ${fakeDevUser.lastName}`
+
+    act(() =>
+      render(
+        <MemoryRouter>
+          <TicketSidebar
+            formData={formData}
+            onChange={mockOnChange}
+            onSave={mockOnSave}
+            onDelete={mockOnDelete}
+            errors={errors}
+            setErrors={setErrors}
+          />
+        </MemoryRouter>
+      )
     );
-    expect(element).toBeInTheDocument();
+
+    const element = (await screen.findByLabelText(
+      /assignee/i
+    )) as HTMLSelectElement;
+    expect(element.value).toEqual(fakeAssignee?._id);
   });
 
-  test("renders reporter info", () => {
-    render(
-      <MemoryRouter>
-        <TicketSidebar ticket={fakeTicket} />
-      </MemoryRouter>
+  test("has correct reporter value", async () => {
+    const errors = {};
+    const setErrors = vi.fn();
+    const mockOnChange = vi.fn();
+    const mockOnSave = vi.fn();
+    const mockOnDelete = vi.fn();
+    const fakeReporter = fakeUsers.find(
+      (user) => user._id === formData.reporter?._id
     );
-    const element = screen.getByText(
-      `${fakeStaffUser.firstName} ${fakeStaffUser.lastName}`
+
+    act(() =>
+      render(
+        <MemoryRouter>
+          <TicketSidebar
+            formData={formData}
+            onChange={mockOnChange}
+            onSave={mockOnSave}
+            onDelete={mockOnDelete}
+            errors={errors}
+            setErrors={setErrors}
+          />
+        </MemoryRouter>
+      )
     );
-    expect(element).toBeInTheDocument();
+
+    const element = (await screen.findByLabelText(
+      /reporter/i
+    )) as HTMLSelectElement;
+    expect(element.value).toEqual(fakeReporter?._id);
   });
 });

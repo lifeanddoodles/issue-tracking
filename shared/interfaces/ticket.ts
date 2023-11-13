@@ -40,7 +40,7 @@ export interface ITicketBase {
 }
 
 export interface ITicket extends ITicketBase {
-  assignee?: ObjectId | Record<string, unknown>;
+  assignee?: ObjectId | Record<string, unknown> | string;
   reporter?: ObjectId | Record<string, unknown> | string;
   status: Status;
   priority: Priority;

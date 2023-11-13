@@ -18,7 +18,7 @@ describe("Form", () => {
 
   test("handles submit event", async () => {
     user.setup();
-    const mockOnSubmit = vi.fn();
+    const mockOnSubmit = vi.fn((e) => e.preventDefault());
     render(
       <Form onSubmit={mockOnSubmit}>
         <h1>Form tile</h1>

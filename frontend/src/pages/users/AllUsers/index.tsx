@@ -45,7 +45,9 @@ const AllUsers = () => {
   }, []);
 
   const getRows = useCallback(() => {
-    sendRequest({ url: `${USERS_BASE_API_URL}${query ? `?${query}` : ""}` });
+    sendRequest({
+      url: `${USERS_BASE_API_URL}${query ? `?${query}` : ""}`,
+    });
   }, [query, sendRequest]);
 
   useEffect(() => {
@@ -81,7 +83,7 @@ const AllUsers = () => {
       };
     });
 
-  if (error) return <h3 role="status">{error.message}</h3>;
+  if (error) return <h1 role="status">{error.message}</h1>;
 
   return (
     <>
@@ -109,9 +111,9 @@ const AllUsers = () => {
           <Button onClick={clearFilters}>Clear filters</Button>
         </Row>
       </div>
-      {loading && <h3 role="status">Loading users...</h3>}
+      {loading && <h1 role="status">Loading users...</h1>}
       {!loading && formattedUsers && formattedUsers?.length === 0 && (
-        <h3 role="status">No users found</h3>
+        <h1 role="status">No users found</h1>
       )}
       {!loading && formattedUsers && formattedUsers?.length > 0 && (
         <TableFromDocuments

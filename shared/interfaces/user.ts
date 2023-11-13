@@ -16,7 +16,7 @@ export interface IUser {
   email: string;
   password?: string;
   role: UserRole | string;
-  company?: ObjectId | Record<string, unknown>;
+  company?: ObjectId | Record<string, unknown> | string;
   position?: string;
   department?: DepartmentTeam;
   avatarUrl?: string;
