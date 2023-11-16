@@ -1,16 +1,213 @@
 import {
   DepartmentTeam,
   ICommentPopulatedDocument,
+  ITicket,
   ITicketDocument,
   ITicketPopulatedDocument,
+  Industry,
   Priority,
   Status,
+  SubscriptionStatus,
   TicketType,
+  Tier,
   UserRole,
 } from "../../../shared/interfaces";
 
 export const baseUrl =
   process.env.NODE_ENV === "test" ? "http://localhost:5173" : "";
+
+export const fakeUsers = [
+  {
+    _id: "staff-001",
+    firstName: "John",
+    lastName: "Doe",
+    position: "Lead Graphic Designer",
+    email: "jane.doe@saascompany.com",
+    password: "bETj6uCOI",
+    role: UserRole.STAFF,
+    company: "company-000",
+  },
+  {
+    _id: "dev-001",
+    firstName: "Jane",
+    lastName: "Doe",
+    position: "Fullstack Developer",
+    email: "jane.doe@saascompany.com",
+    password: "esTkitT1r",
+    role: UserRole.DEVELOPER,
+    company: "company-000",
+  },
+  {
+    _id: "staff-002",
+    firstName: "Mary",
+    lastName: "Smith",
+    position: "Project Manager",
+    email: "mary.smith@saascompany.com",
+    password: "bETj6uCOI",
+    role: UserRole.STAFF,
+    company: "company-000",
+  },
+  {
+    _id: "dev-002",
+    firstName: "Mark",
+    lastName: "Holmes",
+    position: "Fullstack Developer",
+    email: "mark.holmes@saascompany.com",
+    password: "VYaG1Ew",
+    role: UserRole.DEVELOPER,
+    company: "company-000",
+  },
+  {
+    _id: "client-001",
+    firstName: "Bob",
+    lastName: "Smith",
+    position: "Marketing Coordinator",
+    email: "bob.smith@clientcompany.com",
+    password: "bETj6uCOI",
+    role: UserRole.CLIENT,
+    company: "company-001",
+  },
+];
+
+export const newFakeUser = {
+  _id: "staff-003",
+  firstName: "Beth",
+  lastName: "Parker",
+  position: "Sales Representative",
+  email: "beth.parker@saascompany.com",
+  password: "j6u9EwT1r",
+  role: UserRole.STAFF,
+  company: "company-000",
+};
+
+export const fakeDevUsers = () =>
+  fakeUsers.filter((user) => user.role === "DEVELOPER");
+
+export const fakeStaffUsers = () =>
+  fakeUsers.filter((user) => user.role === "STAFF");
+
+export const fakeStaffUser = fakeStaffUsers()[0];
+
+export const fakeDevUser = fakeDevUsers()[0];
+
+export const fakeServices = [
+  {
+    _id: "service-000",
+    name: "Website Builder",
+    description: "Drag n' Drop website builder.",
+    url: "https://webbuilder.saascompany.com",
+    version: "1.0.0",
+    tier: Tier.FREE,
+  },
+  {
+    _id: "service-002",
+    name: "Email Builder",
+    description: "Drag n' Drop email builder.",
+    url: "https://emailbuilder.saascompany.com",
+    version: "1.0.0",
+    tier: Tier.FREE,
+  },
+];
+
+export const newFakeService = {
+  _id: "service-002",
+  name: "Analytics Dashboard",
+  description: "Analytics dashboard.",
+  url: "https://dashboard.saascompany.com",
+  version: "1.0.0",
+  tier: Tier.PRO,
+};
+
+export const fakeCompanies = [
+  {
+    _id: "company-000",
+    name: "SaaS Company",
+    url: "saascompany.com",
+    subscriptionStatus: SubscriptionStatus.ACTIVE,
+    employees: [],
+    projects: [],
+    dba: "SaaS LLC",
+    description: "Lorem ipsum dolor.",
+    address: {
+      street: "Sesame",
+      city: "Test City",
+      state: "",
+      zip: "",
+      country: "",
+    },
+  },
+  {
+    _id: "company-001",
+    name: "Client Company",
+    url: "clientcompany.com",
+    subscriptionStatus: SubscriptionStatus.ONBOARDING,
+    employees: [],
+    projects: [],
+    industry: "FINANCE",
+    dba: "Client Company LLC",
+    description: "Lorem ipsum dolor.",
+    address: {
+      street: "Sesame",
+      city: "Test City",
+      state: "",
+      zip: "",
+      country: "",
+    },
+  },
+];
+
+export const newFakeCompany = {
+  _id: "company-002",
+  name: "New Client",
+  url: "newclient.com",
+  subscriptionStatus: SubscriptionStatus.ONBOARDING,
+  employees: [],
+  projects: [],
+  industry: Industry.HEALTHCARE,
+  dba: "New Client LLC",
+  description: "Lorem ipsum dolor.",
+  address: {
+    street: "Sesame",
+    city: "Test City",
+    state: "",
+    zip: "",
+    country: "",
+  },
+};
+
+export const fakeProjects = [
+  {
+    _id: "project-000",
+    name: "Website",
+    url: "",
+    description: "Landing page",
+    company: "company-000",
+    services: ["service-000"],
+    team: [],
+    tickets: [],
+  },
+  {
+    _id: "project-001",
+    name: "Website",
+    url: "",
+    description: "Landing page",
+    company: "company-001",
+    services: ["service-000", "service-001"],
+    team: [],
+    tickets: [],
+  },
+];
+
+export const newFakeProject = {
+  _id: "project-002",
+  name: "Another Website",
+  url: "",
+  description: "Another Website",
+  company: "company-001",
+  services: ["service-000"],
+  team: [],
+  tickets: [],
+};
 
 export const fakeTickets: Partial<ITicketDocument>[] = [
   {
@@ -59,6 +256,23 @@ export const fakeTickets: Partial<ITicketDocument>[] = [
     isSubtask: false,
   },
 ];
+
+export const newFakeClientTicket: Partial<ITicket> = {
+  title: "Fix broken links in documentation",
+  description:
+    "Several links in the documentation are broken. Update the links to the correct URLs.",
+  externalReporter: "client-001",
+};
+
+export const newFakeTicket: Partial<ITicketDocument> = {
+  _id: "ticket-004",
+  ...newFakeClientTicket,
+  status: Status.OPEN,
+  ticketType: TicketType.ISSUE,
+  priority: Priority.HIGH,
+  isSubtask: false,
+  assignToTeam: DepartmentTeam.DEVELOPMENT,
+};
 
 export const fakePopulatedTickets: (
   | Partial<ITicketPopulatedDocument>
@@ -136,59 +350,6 @@ export const fakePopulatedTickets: (
   },
 ];
 
-export const fakeUsers = [
-  {
-    _id: "staff-001",
-    firstName: "John",
-    lastName: "Doe",
-    position: "Lead Graphic Designer",
-    email: "jane.doe@someagency.com",
-    password: "bETj6uCOI",
-    role: UserRole.STAFF,
-    company: "000",
-  },
-  {
-    _id: "dev-001",
-    firstName: "Jane",
-    lastName: "Doe",
-    position: "Fullstack Developer",
-    email: "jane.doe@someagency.com",
-    password: "esTkitT1r",
-    role: UserRole.DEVELOPER,
-    company: "000",
-  },
-  {
-    _id: "staff-002",
-    firstName: "Mary",
-    lastName: "Smith",
-    position: "Project Manager",
-    email: "mary.smith@someagency.com",
-    password: "bETj6uCOI",
-    role: UserRole.STAFF,
-    company: "000",
-  },
-  {
-    _id: "dev-002",
-    firstName: "Mark",
-    lastName: "Holmes",
-    position: "Fullstack Developer",
-    email: "mark.holmes@someagency.com",
-    password: "VYaG1Ew",
-    role: UserRole.DEVELOPER,
-    company: "000",
-  },
-];
-
-export const fakeDevUsers = () =>
-  fakeUsers.filter((user) => user.role === "DEVELOPER");
-
-export const fakeStaffUsers = () =>
-  fakeUsers.filter((user) => user.role === "STAFF");
-
-export const fakeStaffUser = fakeStaffUsers()[0];
-
-export const fakeDevUser = fakeDevUsers()[0];
-
 export const fakeComments: ICommentPopulatedDocument[] = [
   {
     _id: "ticket-001-001",
@@ -218,85 +379,19 @@ export const fakeComments: ICommentPopulatedDocument[] = [
   },
 ];
 
-export const fakeServices = [
-  {
-    _id: "service-000",
-    name: "Website Builder",
-    description: "Drag n' Drop website builder.",
-    url: "https://webbuilder.sampleagency.com",
-    version: "1.0.0",
-    tier: "FREE",
+export const newFakeComment = {
+  _id: "ticket-001-003",
+  ticketId: "ticket-001",
+  author: {
+    _id: "staff-001",
+    firstName: "John",
+    lastName: "Doe",
   },
-  {
-    _id: "service-002",
-    name: "Email Builder",
-    description: "Drag n' Drop email builder.",
-    url: "https://emailbuilder.sampleagency.com",
-    version: "1.0.0",
-    tier: "FREE",
-  },
-];
-
-export const fakeProjects = [
-  {
-    _id: "project-000",
-    name: "Website",
-    url: "",
-    description: "Landing page",
-    company: "company-000",
-    services: ["service-000"],
-    team: [],
-    tickets: [],
-  },
-  {
-    _id: "project-001",
-    name: "Website",
-    url: "",
-    description: "Landing page",
-    company: "company-001",
-    services: ["service-000", "service-001"],
-    team: [],
-    tickets: [],
-  },
-];
-
-export const fakeCompanies = [
-  {
-    _id: "company-000",
-    name: "SaaS Company",
-    url: "saascompany.com",
-    subscriptionStatus: "ONBOARDING",
-    employees: [],
-    projects: [],
-    dba: "SaaS LLC",
-    description: "Lorem ipsum dolor.",
-    address: {
-      street: "Sesame",
-      city: "Test City",
-      state: "",
-      zip: "",
-      country: "",
-    },
-  },
-  {
-    _id: "company-001",
-    name: "Client Company",
-    url: "clientcompany.com",
-    subscriptionStatus: "ONBOARDING",
-    employees: [],
-    projects: [],
-    industry: "FINANCE",
-    dba: "Client Company LLC",
-    description: "Lorem ipsum dolor.",
-    address: {
-      street: "Sesame",
-      city: "Test City",
-      state: "",
-      zip: "",
-      country: "",
-    },
-  },
-];
+  message: "Thanks for your help!",
+  createdAt: "2023-09-01T22:22:30.440Z",
+  lastModifiedAt: "2023-09-01T22:22:30.440Z",
+  isEdited: false,
+};
 
 export const fakeOptions = [
   {
