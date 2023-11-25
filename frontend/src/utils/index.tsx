@@ -14,6 +14,7 @@ import {
   Tier,
   UserRole,
 } from "../../../shared/interfaces";
+import { ErrorType, IInputErrorProps } from "../interfaces";
 
 export const getAuthorInfo: (
   author: string | ObjectId | Record<string, unknown>
@@ -49,6 +50,16 @@ export function paragraphsFromMultiLineText(text: string) {
     .split("\n")
     .map((paragraph, index) => <p key={index}>{paragraph}</p>);
 }
+
+export const omit = (obj: Record<string, unknown>, arr: (string | number)[]) =>
+  Object.keys(obj)
+    .filter((k: string) => !arr.includes(k))
+    .reduce(
+      (acc: Record<string, unknown>, key: string) => (
+        (acc[key] = obj[key]), acc
+      ),
+      {}
+    );
 
 export function getOptionsFromEnum<E extends { [key: string]: string }>(
   enumName: E,
@@ -445,4 +456,46 @@ export function shallowEqual<T extends Record<string, unknown> | undefined>(
   }
 
   return true;
+}
+
+export function getReadableInputName(id: string) {
+  switch (id) {
+    case "firstName":
+      return "First name";
+    case "lastName":
+      return "Last name";
+    case "email":
+      return "Email";
+    case "password":
+      return "Password";
+    case "confirmPassword":
+      return "Confirm password";
+    case "company":
+      return "Company";
+    case "position":
+      return "Position";
+    default:
+      return id;
+  }
+}
+
+export function getFieldErrorMessage({ id, type, options }: IInputErrorProps) {
+  switch (type) {
+    case ErrorType.REQUIRED:
+      return `${getReadableInputName(id)} is required`;
+    case ErrorType.MINLENGTH:
+      return `${getReadableInputName(id)} must be at least ${
+        options?.minLength
+      } characters`;
+    case ErrorType.PATTERN:
+      return `${getReadableInputName(id)} must match the following pattern: ${
+        options?.pattern
+      }`;
+    case ErrorType.MISMATCH:
+      return `${getReadableInputName(id)} must match ${getReadableInputName(
+        options?.idToCompare || "password"
+      )}`;
+    default:
+      return `${getReadableInputName(id)} is not valid`;
+  }
 }
