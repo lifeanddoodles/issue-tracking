@@ -81,3 +81,22 @@ export interface ISelectProps
   value?: string;
   direction?: Direction;
 }
+
+export enum ErrorType {
+  REQUIRED = "REQUIRED",
+  MINLENGTH = "MINLENGTH",
+  PATTERN = "PATTERN",
+  MISMATCH = "MISMATCH",
+}
+
+export interface IInputErrorOptions {
+  minLength?: number;
+  pattern?: string;
+  idToCompare?: string;
+}
+
+export interface IInputErrorProps {
+  id: string;
+  type: ErrorType;
+  options?: IInputErrorOptions;
+}
