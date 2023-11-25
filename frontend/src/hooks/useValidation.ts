@@ -1,42 +1,5 @@
-export enum ErrorType {
-  REQUIRED = "REQUIRED",
-  MINLENGTH = "MINLENGTH",
-  PATTERN = "PATTERN",
-  MISMATCH = "MISMATCH",
-}
-
-interface IInputErrorOptions {
-  minLength?: number;
-  pattern?: string;
-  idToCompare?: string;
-}
-
-interface IInputErrorProps {
-  id: string;
-  type: ErrorType;
-  options?: IInputErrorOptions;
-}
-
-function getReadableInputName(id: string) {
-  switch (id) {
-    case "firstName":
-      return "First name";
-    case "lastName":
-      return "Last name";
-    case "email":
-      return "Email";
-    case "password":
-      return "Password";
-    case "confirmPassword":
-      return "Confirm password";
-    case "company":
-      return "Company";
-    case "position":
-      return "Position";
-    default:
-      return id;
-  }
-}
+import { ErrorType } from "../interfaces";
+import { getFieldErrorMessage } from "../utils";
 
 const addErrors = (
   id: string,
@@ -82,27 +45,6 @@ const removeErrors = (
 };
 
 const useValidation = () => {
-  function getErrorMessage({ id, type, options }: IInputErrorProps) {
-    switch (type) {
-      case ErrorType.REQUIRED:
-        return `${getReadableInputName(id)} is required`;
-      case ErrorType.MINLENGTH:
-        return `${getReadableInputName(id)} must be at least ${
-          options?.minLength
-        } characters`;
-      case ErrorType.PATTERN:
-        return `${getReadableInputName(id)} must match the following pattern: ${
-          options?.pattern
-        }`;
-      case ErrorType.MISMATCH:
-        return `${getReadableInputName(id)} must match ${getReadableInputName(
-          options?.idToCompare || "password"
-        )}`;
-      default:
-        return `${getReadableInputName(id)} is not valid`;
-    }
-  }
-
   const updateErrors = (
     id: string,
     errorText: string,
@@ -132,9 +74,9 @@ const useValidation = () => {
     elementToCompare?: { id: string; value: string | undefined } | undefined;
   }) {
     const { id, value } = target;
-    const errorPatternText = getErrorMessage({
+    const errorPatternText = getFieldErrorMessage({
       id,
-      type: ErrorType.MINLENGTH,
+      type: ErrorType.PATTERN,
       options: { pattern: target?.pattern },
     });
     if (target.pattern && errorPatternText) {
@@ -159,17 +101,16 @@ const useValidation = () => {
     elementToCompare?: { id: string; value: string | undefined } | undefined;
   }) {
     const { id, value, minLength } = target;
-    const errorMinLengthText = getErrorMessage({
+    const errorMinLengthText = getFieldErrorMessage({
       id,
       type: ErrorType.MINLENGTH,
       options: { minLength },
     });
     if (minLength) {
-      const shouldAdd = target.validity.tooShort;
-      const shouldRemove = value.length >= minLength;
+      const shouldAdd = value.length < minLength;
 
       setErrors((errors) =>
-        updateErrors(id, errorMinLengthText, errors, shouldAdd, shouldRemove)
+        updateErrors(id, errorMinLengthText, errors, shouldAdd, !shouldAdd)
       );
     }
   }
@@ -190,9 +131,12 @@ const useValidation = () => {
     const isTextArea = target.tagName === "TEXTAREA";
     const isSelect = target.tagName === "SELECT";
     const { id, value, required } = target;
-    const errorRequiredText = getErrorMessage({ id, type: ErrorType.REQUIRED });
+    const errorRequiredText = getFieldErrorMessage({
+      id,
+      type: ErrorType.REQUIRED,
+    });
 
-    const errorMismatchText = getErrorMessage({
+    const errorMismatchText = getFieldErrorMessage({
       id,
       type: ErrorType.MISMATCH,
       options: { idToCompare: elementToCompare?.id },
@@ -215,7 +159,7 @@ const useValidation = () => {
       );
     }
 
-    if (!isTextArea) {
+    if (!isTextArea && !isSelect) {
       validateInput({ target: target as HTMLInputElement, setErrors });
     }
 
