@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ICompany, ICompanyDocument } from "../../../../shared/interfaces";
+import {
+  ICompany,
+  ICompanyDocument,
+  IUser,
+} from "../../../../shared/interfaces";
 import Button from "../../components/Button";
 import Form from "../../components/Form";
 import Heading from "../../components/Heading";
@@ -13,9 +17,8 @@ import {
   COMPANIES_BASE_API_URL,
   USERS_BASE_API_URL,
   getPostOptions,
-  getRegisterUserOptions,
 } from "../../routes";
-import { getCompanyDataOptions } from "../../utils";
+import { getCompanyDataOptions, omit } from "../../utils";
 
 const Register = () => {
   const location = useLocation();
@@ -81,14 +84,19 @@ const Register = () => {
   };
 
   const createUser = useCallback(
-    (companyId: string) => {
-      const options = getRegisterUserOptions({
-        ...formData,
-        company: companyId,
+    (companyId?: string) => {
+      const keysToOmit = [
+        ...(companyId ? [] : ["company"]),
+        ...(position !== "" ? [] : ["position"]),
+      ];
+      const formattedFormData = omit(formData, keysToOmit);
+      const options = getPostOptions<IUser>({
+        ...formattedFormData,
+        ...(companyId ? { company: companyId } : {}),
       });
       authUserReq!(USERS_BASE_API_URL, options);
     },
-    [authUserReq, formData]
+    [authUserReq, formData, position]
   );
 
   const createCompany = () => {
@@ -99,10 +107,12 @@ const Register = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!companyParam) {
+    if (!companyParam && company) {
       return createCompany();
+    } else if (!companyParam && !company) {
+      return createUser();
     }
-    createUser(companyParam);
+    companyParam && createUser(companyParam);
   };
 
   useEffect(() => {
@@ -209,7 +219,9 @@ const Register = () => {
         errors={errors}
         setErrors={setErrors}
       />
-      <Button type="submit">Submit</Button>
+      <Button id="submit" type="submit">
+        Submit
+      </Button>
     </Form>
   );
 };
