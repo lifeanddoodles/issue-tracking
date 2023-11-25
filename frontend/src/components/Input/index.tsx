@@ -108,7 +108,15 @@ export const TextInput = forwardRef(
 
 export const EmailInput = forwardRef(
   (props: IEmailInputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
-    return <Input {...props} type="email" ref={ref} />;
+    const emailPattern = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$";
+    return (
+      <Input
+        {...props}
+        type="email"
+        pattern={props.pattern || emailPattern}
+        ref={ref}
+      />
+    );
   }
 );
 
