@@ -3,16 +3,12 @@ import { ObjectId } from "mongoose";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ControllerType,
+  FormElement,
   IFormControlProps,
   IFormStateProps,
   IOption,
 } from "../../interfaces";
 import IconButton from "../Button/IconButton";
-
-export type FormElement =
-  | HTMLInputElement
-  | HTMLSelectElement
-  | HTMLTextAreaElement;
 
 export type nonBooleanValueType =
   | string
