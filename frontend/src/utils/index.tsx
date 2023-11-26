@@ -374,11 +374,11 @@ export type ButtonVariant =
 export function getVariantClasses(variant: ButtonVariant) {
   switch (variant) {
     case "accent":
-      return "rounded-lg text-base border-0 text-white bg-accent hover:bg-accent-dark py-1 px-3";
+      return "rounded-lg text-base border-0 text-white bg-accent hover:bg-accent-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
     case "primary":
-      return "rounded-lg text-base border-0 text-white bg-primary hover:bg-primary-dark py-1 px-3";
+      return "rounded-lg text-base border-0 text-white bg-primary hover:bg-primary-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
     case "secondary":
-      return "rounded-lg text-base border-0 text-white bg-secondary hover:bg-secondary-dark py-1 px-3";
+      return "rounded-lg text-base border-0 text-white bg-secondary hover:bg-secondary-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
     case "transparent":
       return "rounded-lg text-base border-0 text-primary hover:bg-neutral-200 py-2 px-3";
     case "icon":
