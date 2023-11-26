@@ -1,5 +1,12 @@
 import { http, HttpHandler, HttpResponse } from "msw";
+import { IUserDocument } from "shared/interfaces";
 import {
+  ErrorResponse,
+  LoginRequestData,
+  SuccessResponse,
+} from "../interfaces";
+import {
+  AUTH_BASE_API_URL,
   COMMENTS_BASE_API_URL,
   COMPANIES_BASE_API_URL,
   PROJECTS_BASE_API_URL,
@@ -16,6 +23,25 @@ import {
 } from "./index";
 
 export const handlers: HttpHandler[] = [
+  http.post<LoginRequestData, SuccessResponse<IUserDocument>>(
+    `${baseUrl}${AUTH_BASE_API_URL}/login`,
+    async ({ request }) => {
+      const loginData = (await request.json()) as LoginRequestData;
+      const fakeUser = fakeUsers.find(
+        (user) =>
+          user.email === loginData.email && user.password === loginData.password
+      );
+      if (!fakeUser) {
+        return HttpResponse.json<ErrorResponse>(
+          { message: "Authentication failed" },
+          { status: 401 }
+        );
+      }
+      return HttpResponse.json<Partial<IUserDocument>>(fakeUser, {
+        status: 200,
+      });
+    }
+  ),
   http.get(`${baseUrl}${USERS_BASE_API_URL}`, () => {
     return HttpResponse.json(fakeUsers, { status: 200 });
   }),
