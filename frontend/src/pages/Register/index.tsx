@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   ICompany,
@@ -13,6 +13,7 @@ import SelectWithFetch from "../../components/Select/SelectWithFetch";
 import { useAuthContext } from "../../context/AuthProvider";
 import useFetch from "../../hooks/useFetch";
 import useValidation from "../../hooks/useValidation";
+import { FormFieldMapItem } from "../../interfaces";
 import {
   COMPANIES_BASE_API_URL,
   USERS_BASE_API_URL,
@@ -33,15 +34,7 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
-  const {
-    firstName,
-    lastName,
-    email,
-    company,
-    position,
-    password,
-    confirmPassword,
-  } = formData;
+
   const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
     null
   );
@@ -54,6 +47,88 @@ const Register = () => {
     loading: newCompanyLoading,
     sendRequest,
   } = useFetch<ICompanyDocument>();
+  const fields: FormFieldMapItem[] = useMemo(
+    () => [
+      {
+        id: "firstName",
+        label: "First name:",
+        component: TextInput,
+        required: true,
+        fieldProps: {
+          minLength: 2,
+        },
+      },
+      {
+        id: "lastName",
+        label: "Last name:",
+        component: TextInput,
+        required: true,
+        fieldProps: {
+          minLength: 2,
+        },
+      },
+      {
+        id: "email",
+        label: "Email:",
+        component: EmailInput,
+        required: true,
+      },
+      {
+        id: "company",
+        label: "Company:",
+        ...(!companyParam
+          ? { component: TextInput }
+          : {
+              component: SelectWithFetch,
+              fieldProps: {
+                url: COMPANIES_BASE_API_URL,
+                getFormattedOptions: getCompanyDataOptions,
+              },
+              customFormProps: {
+                errors: errors,
+              },
+            }),
+      },
+      {
+        id: "position",
+        label: "Position:",
+        component: TextInput,
+      },
+      {
+        id: "password",
+        label: "Password:",
+        component: PasswordInput,
+        required: true,
+      },
+      {
+        id: "confirmPassword",
+        label: "Confirm password:",
+        component: PasswordInput,
+        required: true,
+      },
+    ],
+    [companyParam, errors]
+  );
+  const requiredFields = useMemo(
+    () =>
+      fields
+        .map((field) => {
+          if (field.required) return field.id;
+        })
+        .filter(Boolean),
+    [fields]
+  );
+  const missingFields = useMemo(
+    () =>
+      requiredFields.filter(
+        (field) => formData[field as keyof typeof formData] === ""
+      ).length > 0,
+    [formData, requiredFields]
+  );
+  const disableSubmit = useMemo(
+    () => missingFields || errors !== null,
+    [missingFields, errors]
+  );
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -77,7 +152,9 @@ const Register = () => {
       target,
       setErrors,
       elementToCompare:
-        (target.id === changedId || idToCompare) && password && confirmPassword
+        (target.id === changedId || idToCompare) &&
+        formData.password &&
+        formData.confirmPassword
           ? { id: idToCompare, value: formData[idToCompare] }
           : undefined,
     });
@@ -87,7 +164,7 @@ const Register = () => {
     (companyId?: string) => {
       const keysToOmit = [
         ...(companyId ? [] : ["company"]),
-        ...(position !== "" ? [] : ["position"]),
+        ...(formData.position !== "" ? [] : ["position"]),
       ];
       const formattedFormData = omit(formData, keysToOmit);
       const options = getPostOptions<IUser>({
@@ -96,7 +173,7 @@ const Register = () => {
       });
       authUserReq!(USERS_BASE_API_URL, options);
     },
-    [authUserReq, formData, position]
+    [authUserReq, formData]
   );
 
   const createCompany = () => {
@@ -107,9 +184,9 @@ const Register = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!companyParam && company) {
+    if (!companyParam && formData.company) {
       return createCompany();
-    } else if (!companyParam && !company) {
+    } else if (!companyParam && !formData.company) {
       return createUser();
     }
     companyParam && createUser(companyParam);
@@ -143,83 +220,30 @@ const Register = () => {
   return (
     <Form onSubmit={handleSubmit}>
       <Heading text="Register" level={1} />
-      <TextInput
-        label="First name:"
-        id="firstName"
-        onChange={handleChange}
-        value={firstName}
-        minLength={2}
-        errors={errors}
-        setErrors={setErrors}
-        required
-      />
-      <TextInput
-        label="Last name:"
-        id="lastName"
-        onChange={handleChange}
-        value={lastName}
-        minLength={2}
-        errors={errors}
-        setErrors={setErrors}
-        required
-      />
-      <EmailInput
-        label="Email:"
-        id="email"
-        onChange={handleChange}
-        value={email}
-        required
-        errors={errors}
-        setErrors={setErrors}
-      />
-      {!companyParam ? (
-        <TextInput
-          label="Company"
-          id="company"
-          onChange={handleChange}
-          value={company}
-          errors={errors}
-          setErrors={setErrors}
-        />
-      ) : (
-        <SelectWithFetch
-          label="Company"
-          id="company"
-          value={companyParam}
-          onChange={handleChange}
-          errors={errors}
-          url={COMPANIES_BASE_API_URL}
-          getFormattedOptions={getCompanyDataOptions}
-          disabled
-        />
+      {fields.map(
+        ({
+          id,
+          label,
+          component: Component,
+          required,
+          fieldProps,
+          customFormProps,
+        }) => (
+          <Component
+            key={id}
+            label={label}
+            id={id}
+            onChange={handleChange}
+            value={formData[id as keyof typeof formData]}
+            required={required}
+            {...fieldProps}
+            errors={errors}
+            setErrors={setErrors}
+            {...customFormProps}
+          />
+        )
       )}
-      <TextInput
-        label="Position"
-        id="position"
-        onChange={handleChange}
-        value={position}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <PasswordInput
-        label="Password"
-        id="password"
-        onChange={handleChange}
-        value={password}
-        required
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <PasswordInput
-        label="Confirm password"
-        id="confirmPassword"
-        onChange={handleChange}
-        value={confirmPassword}
-        required
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <Button id="submit" type="submit">
+      <Button type="submit" disabled={disableSubmit}>
         Submit
       </Button>
     </Form>
