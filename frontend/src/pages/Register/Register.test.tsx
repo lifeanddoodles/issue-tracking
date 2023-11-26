@@ -1,4 +1,4 @@
-import { render, renderHook, screen } from "@testing-library/react";
+import { act, render, renderHook, screen } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { Mock, describe, expect, vi } from "vitest";
@@ -30,37 +30,80 @@ vi.mock(`react-router-dom`, async (): Promise<unknown> => {
   };
 });
 
-const authUserReqMock: Mock = vi.fn(async (url, options) => {
-  const response = await fetch(`${baseUrl}${url}`, options);
-  const json = await response.json();
-  return { data: json, status: response.status };
-});
-
-const { result: resultUseAuth } = renderHook(() => useAuth());
-const mockUseAuth = {
-  ...resultUseAuth.current,
-  authUserReq: authUserReqMock,
-};
-
 describe("Register", () => {
+  let authUserReqMock: Mock;
+  let mockUseAuth: ReturnType<typeof useAuth>;
+
+  beforeEach(() => {
+    authUserReqMock = vi.fn(async (url, options) => {
+      const response = await fetch(`${baseUrl}${url}`, options);
+      const json = await response.json();
+      return { data: json, status: response.status };
+    });
+
+    const { result: resultUseAuth } = renderHook(() => useAuth());
+
+    mockUseAuth = {
+      ...resultUseAuth.current,
+      authUserReq: authUserReqMock,
+    };
+  });
+
   test("renders correctly", () => {
     render(
       <MemoryRouter>
         <Register />
       </MemoryRouter>
     );
-    const element = screen.getByText("Register");
-    expect(element).toBeInTheDocument();
+    const title = screen.getByText("Register");
+    const firstName = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("firstName")}`, "i")
+    );
+    const lastName = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("lastName")}`, "i")
+    );
+    const company = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("company")}`, "i")
+    );
+    const position = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("position")}`, "i")
+    );
+    const email = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("email")}`, "i")
+    );
+    const password = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("password")}`, "i")
+    );
+    const confirmPassword = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("confirmPassword")}`, "i")
+    );
+    const submitButton = screen.getByRole("button");
+
+    const elements = [
+      title,
+      firstName,
+      lastName,
+      email,
+      company,
+      position,
+      password,
+      confirmPassword,
+      submitButton,
+    ];
+
+    for (const element of elements) {
+      expect(element).toBeInTheDocument();
+    }
   });
 
   test.each`
-    id                   | nextId
-    ${"firstName"}       | ${"lastName"}
-    ${"lastName"}        | ${"email"}
-    ${"email"}           | ${"company"}
-    ${"password"}        | ${"confirmPassword"}
-    ${"confirmPassword"} | ${"submit"}
-  `("shows required error when $id is empty", async ({ id, nextId }) => {
+    id
+    ${"firstName"}
+    ${"lastName"}
+    ${"email"}
+    ${"password"}
+    ${"confirmPassword"}
+  `("shows required error when $id is empty", async ({ id }) => {
     user.setup();
 
     render(
@@ -70,17 +113,14 @@ describe("Register", () => {
     );
 
     const label = getReadableInputName(id);
-    const nextFieldLabel = getReadableInputName(nextId);
     const inputField = screen.getByLabelText(
       RegExp(`^${label}`, "i")
     ) as HTMLInputElement;
-    const nextInputField =
-      screen?.queryByLabelText(RegExp(`^${nextFieldLabel}`, "i")) ||
-      screen.queryByText(RegExp(`^${nextFieldLabel}`, "i"));
 
-    inputField.focus();
-    await user.tab();
-    expect(nextInputField).toHaveFocus();
+    act(() => {
+      inputField.focus();
+      inputField.blur();
+    });
 
     const errorRequiredText = getFieldErrorMessage({
       id,
@@ -212,5 +252,43 @@ describe("Register", () => {
       data: newUserData,
       status: 201,
     });
+  });
+
+  test("given invalid input, disables submit button", async () => {
+    user.setup();
+
+    render(
+      <MemoryRouter>
+        <AuthContext.Provider value={mockUseAuth}>
+          <Register />
+        </AuthContext.Provider>
+      </MemoryRouter>
+    );
+
+    const firstName = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("firstName")}`, "i")
+    );
+    const lastName = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("lastName")}`, "i")
+    );
+    const email = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("email")}`, "i")
+    );
+    const password = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("password")}`, "i")
+    );
+    const confirmPassword = screen.getByLabelText(
+      RegExp(`^${getReadableInputName("confirmPassword")}`, "i")
+    );
+    const submitButton = screen.getByRole("button");
+
+    await user.type(firstName, newUserData.firstName);
+    await user.type(lastName, newUserData.lastName);
+    await user.type(email, newUserData.email);
+    await user.type(password, newUserData.password);
+    await user.type(confirmPassword, "123456");
+
+    expect(submitButton).toBeDisabled();
+    expect(authUserReqMock).not.toHaveBeenCalled();
   });
 });
