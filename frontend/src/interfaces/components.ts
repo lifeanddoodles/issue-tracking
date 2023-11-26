@@ -8,6 +8,21 @@ export type ControllerType =
   | "checkbox"
   | "radio";
 
+export type FormElement =
+  | HTMLInputElement
+  | HTMLSelectElement
+  | HTMLTextAreaElement;
+
+export interface FormFieldMapItem {
+  id: string;
+  component: React.ElementType;
+  label?: string;
+  placeholder?: string;
+  required?: boolean;
+  fieldProps?: Record<string, unknown>;
+  customFormProps?: Record<string, unknown>;
+}
+
 export interface IFormStateProps {
   errors?: { [key: string]: string[] } | null;
   setErrors?: React.Dispatch<
