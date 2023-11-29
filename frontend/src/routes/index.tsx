@@ -35,7 +35,7 @@ export const getRegisterUserOptions = (reqBody: {
   firstName: string;
   lastName: string;
   email: string;
-  company: string;
+  company?: string;
   position: string;
   password: string;
   confirmPassword: string;

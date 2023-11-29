@@ -9,6 +9,7 @@ import {
   AUTH_BASE_API_URL,
   COMMENTS_BASE_API_URL,
   COMPANIES_BASE_API_URL,
+  PROFILE_API_URL,
   PROJECTS_BASE_API_URL,
   SERVICES_BASE_API_URL,
   TICKETS_BASE_API_URL,
@@ -16,6 +17,7 @@ import {
 } from "../routes";
 import {
   baseUrl,
+  fakeDevUser,
   fakePopulatedTickets,
   fakeProjects,
   fakeServices,
@@ -38,6 +40,14 @@ export const handlers: HttpHandler[] = [
         );
       }
       return HttpResponse.json<Partial<IUserDocument>>(fakeUser, {
+        status: 200,
+      });
+    }
+  ),
+  http.get<NonNullable<unknown>, SuccessResponse<IUserDocument>>(
+    `${baseUrl}${PROFILE_API_URL}`,
+    async () => {
+      return HttpResponse.json<Partial<IUserDocument>>(fakeDevUser, {
         status: 200,
       });
     }
