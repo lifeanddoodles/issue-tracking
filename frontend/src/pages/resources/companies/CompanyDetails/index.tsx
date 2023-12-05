@@ -79,7 +79,11 @@ const CompanyDetails = () => {
         : {},
     [company, loading]
   );
-
+  /* TODO: Refactor and create a custom hook to fetch a resource's information based on the user
+   * based on the user. pass props to name the resource, have an enum or switch for the endpoint
+   */
+  /* TODO: Create a custom hook to handle form logic (validation, setting of errors, etc.)
+   */
   const getCompanyInfo = useCallback(() => {
     sendRequest({ url: `${COMPANIES_BASE_API_URL}/${companyId}` });
   }, [companyId, sendRequest]);
