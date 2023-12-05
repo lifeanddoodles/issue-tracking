@@ -120,14 +120,25 @@ function FormControlWithActions<T, U extends FormElement, V>({
       />
       {/* TODO: Create custom hook for this, something like useFieldControls */}
       <div role="group" className="flex gap-2">
-        <IconButton onClick={handleToggleEdit}>
+        <IconButton
+          onClick={handleToggleEdit}
+          ariaLabel={
+            isEditable
+              ? `Save ${props.label?.replace(":", "")}`
+              : `Edit ${props.label?.replace(":", "")}`
+          }
+        >
           {isEditable ? (
             <CheckIcon title="Save" />
           ) : (
             <PencilIcon title="Edit" />
           )}
         </IconButton>
-        <IconButton onClick={handleCancel} disabled={!isEditable}>
+        <IconButton
+          onClick={handleCancel}
+          disabled={!isEditable}
+          ariaLabel={`Cancel changes to ${props.label?.replace(":", "")}`}
+        >
           <XMarkIcon title="Cancel" />
         </IconButton>
       </div>

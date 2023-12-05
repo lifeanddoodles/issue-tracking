@@ -1,5 +1,11 @@
-import { http, HttpHandler, HttpResponse } from "msw";
-import { IUserDocument } from "shared/interfaces";
+import {
+  DefaultBodyType,
+  http,
+  HttpHandler,
+  HttpResponse,
+  PathParams,
+} from "msw";
+import { ICompany, IUserDocument } from "shared/interfaces";
 import {
   ErrorResponse,
   LoginRequestData,
@@ -17,6 +23,8 @@ import {
 } from "../routes";
 import {
   baseUrl,
+  fakeComments,
+  fakeCompanies,
   fakeDevUser,
   fakePopulatedTickets,
   fakeProjects,
@@ -55,10 +63,13 @@ export const handlers: HttpHandler[] = [
   http.get(`${baseUrl}${USERS_BASE_API_URL}`, () => {
     return HttpResponse.json(fakeUsers, { status: 200 });
   }),
-  http.get(`${baseUrl}${USERS_BASE_API_URL}/:id`, ({ params }) => {
-    const fakeUser = fakeUsers.find((user) => user._id === params.id);
-    return HttpResponse.json(fakeUser, { status: 200 });
-  }),
+  http.get<PathParams, DefaultBodyType | ErrorResponse>(
+    `${baseUrl}${USERS_BASE_API_URL}/:id`,
+    ({ params }) => {
+      const fakeUser = fakeUsers.find((user) => user._id === params.id);
+      return HttpResponse.json(fakeUser, { status: 200 });
+    }
+  ),
   http.post(`${baseUrl}${USERS_BASE_API_URL}`, async ({ request }) => {
     const newUser = await request.json();
     return HttpResponse.json(newUser, { status: 201 });
@@ -66,41 +77,102 @@ export const handlers: HttpHandler[] = [
   http.get(`${baseUrl}${TICKETS_BASE_API_URL}`, () => {
     return HttpResponse.json(fakePopulatedTickets, { status: 200 });
   }),
-  http.get(`${baseUrl}${TICKETS_BASE_API_URL}/:id`, ({ params }) => {
-    const fakeTicket = fakePopulatedTickets.find(
-      (ticket) => ticket._id === params.id
-    );
-    return HttpResponse.json(fakeTicket, { status: 200 });
-  }),
+  http.get<PathParams, DefaultBodyType | ErrorResponse>(
+    `${baseUrl}${TICKETS_BASE_API_URL}/:id`,
+    ({ params }) => {
+      const fakeTicket = fakePopulatedTickets.find(
+        (ticket) => ticket._id === params.id
+      );
+      if (!fakeTicket) {
+        return HttpResponse.json(
+          { message: "Ticket not found" },
+          { status: 404 }
+        );
+      }
+      return HttpResponse.json(fakeTicket, { status: 200 });
+    }
+  ),
   http.post(`${baseUrl}${TICKETS_BASE_API_URL}`, async ({ request }) => {
     const newTicket = await request.json();
     return HttpResponse.json(newTicket, { status: 201 });
   }),
   http.get(`${baseUrl}${COMPANIES_BASE_API_URL}`, () => {
-    return HttpResponse.text(`Requested companies`, { status: 200 });
+    return HttpResponse.json(fakeCompanies, { status: 200 });
   }),
-  http.get(`${baseUrl}${COMPANIES_BASE_API_URL}/:id`, ({ params }) => {
-    return HttpResponse.text(`Company ${params.id}`, { status: 200 });
-  }),
+  http.get<PathParams, DefaultBodyType | ErrorResponse>(
+    `${baseUrl}${COMPANIES_BASE_API_URL}/:id`,
+    ({ params }) => {
+      const fakeCompany = fakeCompanies.find(
+        (company) => company._id === params.id
+      );
+      if (!fakeCompany) {
+        return HttpResponse.json<ErrorResponse>(
+          { message: "Company not found" },
+          { status: 404 }
+        );
+      }
+      return HttpResponse.json(fakeCompany, { status: 200 });
+    }
+  ),
   http.post(`${baseUrl}${COMPANIES_BASE_API_URL}`, async ({ request }) => {
     const newCompany = await request.json();
     return HttpResponse.json(newCompany, { status: 201 });
   }),
+  http.patch<PathParams, Partial<ICompany> | ErrorResponse>(
+    `${baseUrl}${COMPANIES_BASE_API_URL}/:id`,
+    async ({ params, request }) => {
+      const fakeCompany = fakeCompanies.find(
+        (company) => company._id === params.id
+      );
+      if (!fakeCompany) {
+        return HttpResponse.json<ErrorResponse>(
+          { message: "Company not found" },
+          { status: 404 }
+        );
+      }
+      const newCompanyData = (await request.json()) as Partial<ICompany>;
+      return HttpResponse.json(
+        { ...fakeCompany, ...newCompanyData },
+        { status: 200 }
+      );
+    }
+  ),
   http.get(`${baseUrl}${SERVICES_BASE_API_URL}`, () => {
     return HttpResponse.json(fakeServices, { status: 200 });
   }),
-  http.get(`${baseUrl}${SERVICES_BASE_API_URL}/:id`, ({ params }) => {
-    return HttpResponse.text(`Service ${params.id}`, { status: 200 });
-  }),
+  http.get<PathParams, DefaultBodyType | ErrorResponse>(
+    `${baseUrl}${SERVICES_BASE_API_URL}/:id`,
+    ({ params }) => {
+      const fakeService = fakeServices.find(
+        (service) => service._id === params.id
+      );
+      if (!fakeService) {
+        return HttpResponse.json<ErrorResponse>(
+          { message: "Service not found" },
+          { status: 404 }
+        );
+      }
+      return HttpResponse.json(fakeService, { status: 200 });
+    }
+  ),
   http.post(`${baseUrl}${SERVICES_BASE_API_URL}`, async ({ request }) => {
     const newService = await request.json();
     return HttpResponse.json(newService, { status: 201 });
   }),
   http.get(`${baseUrl}${COMMENTS_BASE_API_URL}`, () => {
-    return HttpResponse.text(`Requested comments`, { status: 200 });
+    return HttpResponse.json(fakeComments, { status: 200 });
   }),
   http.get(`${baseUrl}${COMMENTS_BASE_API_URL}/:id`, ({ params }) => {
-    return HttpResponse.text(`Comment ${params.id}`, { status: 200 });
+    const fakeComment = fakeComments.find(
+      (comment) => comment._id === params.id
+    );
+    if (!fakeComment) {
+      return HttpResponse.json<ErrorResponse>(
+        { message: "Comment not found" },
+        { status: 404 }
+      );
+    }
+    return HttpResponse.json(fakeComment, { status: 200 });
   }),
   http.post(`${baseUrl}${COMMENTS_BASE_API_URL}`, async ({ request }) => {
     const newComment = await request.json();
@@ -109,9 +181,21 @@ export const handlers: HttpHandler[] = [
   http.get(`${baseUrl}${PROJECTS_BASE_API_URL}`, () => {
     return HttpResponse.json(fakeProjects, { status: 200 });
   }),
-  http.get(`${baseUrl}${PROJECTS_BASE_API_URL}/:id`, ({ params }) => {
-    return HttpResponse.text(`Project ${params.id}`, { status: 200 });
-  }),
+  http.get<PathParams, DefaultBodyType | ErrorResponse>(
+    `${baseUrl}${PROJECTS_BASE_API_URL}/:id`,
+    ({ params }) => {
+      const fakeProject = fakeProjects.find(
+        (project) => project._id === params.id
+      );
+      if (!fakeProject) {
+        return HttpResponse.json<ErrorResponse>(
+          { message: "Project not found" },
+          { status: 404 }
+        );
+      }
+      return HttpResponse.json(fakeProject, { status: 200 });
+    }
+  ),
   http.post(`${baseUrl}${PROJECTS_BASE_API_URL}`, async ({ request }) => {
     const newProject = await request.json();
     return HttpResponse.json(newProject, { status: 201 });

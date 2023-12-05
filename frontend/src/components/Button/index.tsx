@@ -10,6 +10,7 @@ export interface IButtonProps {
   variant?: ButtonVariant;
   disabled?: boolean;
   className?: string;
+  ariaLabel?: string;
 }
 
 const Button = ({
@@ -20,6 +21,7 @@ const Button = ({
   variant = "primary",
   disabled,
   className,
+  ariaLabel,
 }: IButtonProps) => {
   const mergedClassName = twMerge(`${getVariantClasses(variant)}`, className);
 
@@ -30,6 +32,7 @@ const Button = ({
       onClick={onClick}
       className={mergedClassName}
       disabled={disabled}
+      aria-label={ariaLabel}
     >
       {children}
     </button>

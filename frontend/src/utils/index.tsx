@@ -474,6 +474,32 @@ export function getReadableInputName(id: string) {
       return "Company";
     case "position":
       return "Position";
+    case "name":
+      return "Name";
+    case "subscriptionStatus":
+      return "Status";
+    case "url":
+      return "URL";
+    case "phone":
+      return "Phone";
+    case "address.street":
+      return "Street";
+    case "address.city":
+      return "City";
+    case "address.state":
+      return "State";
+    case "address.zip":
+      return "Zip";
+    case "address.country":
+      return "Country";
+    case "dba":
+      return "DBA";
+    case "industry":
+      return "Industry";
+    case "description":
+      return "Description";
+    case "newEmployee":
+      return "Add employee";
     default:
       return id;
   }

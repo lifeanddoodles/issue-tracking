@@ -104,7 +104,6 @@ export const getGoogleLoginCallback = asyncHandler(
 // @access Private
 export const loginSuccess = asyncHandler(
   async (req: Request, res: Response) => {
-    // console.log("success", req.user, req.cookies);
     res.redirect(`${BASE_URL}/login/success`);
   }
 );
