@@ -1,17 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { baseUrl } from "../__mocks__";
-
-export interface RequestProps {
-  url: string;
-  options?: RequestInit;
-}
-
-export interface FetchState<T> {
-  data: T | null;
-  loading: boolean;
-  error: Error | null;
-  sendRequest: (props: RequestProps | null) => Promise<void>;
-}
+import { FetchState, RequestProps } from "../interfaces";
 
 const useFetch = <T>(reqProps?: RequestProps | null): FetchState<T> => {
   const [data, setData] = useState<T | null>(null);

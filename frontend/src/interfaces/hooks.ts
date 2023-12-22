@@ -3,9 +3,8 @@ export interface RequestProps {
   options?: RequestInit;
 }
 
-export interface ResourceRequestProps<T> extends RequestProps {
+export interface ResourceRequestProps<T> extends Omit<RequestProps, "options"> {
   body?: Partial<T>;
-  callback?: () => void;
 }
 
 export interface FetchState<T> {
