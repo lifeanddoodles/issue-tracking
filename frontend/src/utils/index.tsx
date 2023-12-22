@@ -16,6 +16,22 @@ import {
 } from "../../../shared/interfaces";
 import { ErrorType, IInputErrorProps } from "../interfaces";
 
+export const isEmpty = (item: Record<string, unknown> | unknown[]) => {
+  if (Array.isArray(item)) {
+    return item.length === 0;
+  }
+  return Object.keys(item).length === 0 && item.constructor === Object;
+};
+
+export const isFalsy = (value: unknown) => {
+  return (
+    value === null ||
+    value === undefined ||
+    value === "" ||
+    (typeof value === "object" && isEmpty(value as Record<string, unknown>))
+  );
+};
+
 export const getAuthorInfo: (
   author: string | ObjectId | Record<string, unknown>
 ) => Promise<
