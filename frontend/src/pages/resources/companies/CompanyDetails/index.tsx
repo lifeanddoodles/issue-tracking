@@ -1,5 +1,5 @@
 import { ObjectId } from "mongoose";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import {
   IAddressInfo,
@@ -14,18 +14,15 @@ import Select from "../../../../components/Select";
 import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import TextArea from "../../../../components/TextArea";
 import { useAuthContext } from "../../../../context/AuthProvider";
-import useFetch from "../../../../hooks/useFetch";
+import useForm from "../../../../hooks/useForm";
+import useResourceInfo from "../../../../hooks/useResourceInfo";
 import useValidation from "../../../../hooks/useValidation";
-import {
-  COMPANIES_BASE_API_URL,
-  USERS_BASE_API_URL,
-  getDeleteOptions,
-  getUpdateOptions,
-} from "../../../../routes";
+import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
   getIndustryOptions,
   getSubscriptionStatusOptions,
   getUserDataOptions,
+  isEmpty,
 } from "../../../../utils";
 
 type PartialDocument = Partial<ICompanyDocument> & {
@@ -40,175 +37,178 @@ const CompanyDetails = () => {
     data: company,
     loading,
     error,
-    sendRequest,
-  } = useFetch<ICompanyDocument | null>();
-
-  const [lockInitialFormData, setLockInitialFormData] =
-    useState<boolean>(false);
-
-  const [initialFormData, setInitialFormData] =
-    useState<PartialDocument | null>(null);
-  const [formData, setFormData] = useState<PartialDocument | null>(null);
-  const [changedFormData, setChangedFormData] = useState<PartialDocument>({});
-  const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
-    null
-  );
+    requestGetResource,
+    requestUpdateResource,
+    requestDeleteResource,
+  } = useResourceInfo<ICompanyDocument | null>();
   const { validateField } = useValidation();
   const formDataShape: PartialDocument = useMemo(
     () =>
-      !loading && company
+      company
         ? {
-            name: company.name,
-            subscriptionStatus: company.subscriptionStatus,
-            url: company.url,
-            email: company.email,
-            phone: company.phone,
+            name: company?.name ?? ("" as string),
+            subscriptionStatus:
+              company?.subscriptionStatus || ("" as SubscriptionStatus),
+            url: company?.url,
+            email: company?.email,
+            phone: company?.phone,
             address: {
-              street: company.address?.street || "",
-              city: company.address?.city || "",
-              state: company.address?.state || "",
-              zip: company.address?.zip || "",
-              country: company.address?.country || "",
+              street: company?.address?.street || "",
+              city: company?.address?.city || "",
+              state: company?.address?.state || "",
+              zip: company?.address?.zip || "",
+              country: company?.address?.country || "",
             },
-            dba: company.dba,
-            industry: company.industry,
-            description: company.description,
-            employees: company.employees,
+            dba: company?.dba,
+            industry: company?.industry,
+            description: company?.description,
+            employees: company?.employees,
             newEmployee: undefined,
           }
         : {},
-    [company, loading]
+    [company]
   );
-  /* TODO: Refactor and create a custom hook to fetch a resource's information based on the user
-   * based on the user. pass props to name the resource, have an enum or switch for the endpoint
-   */
-  /* TODO: Create a custom hook to handle form logic (validation, setting of errors, etc.)
-   */
-  const getCompanyInfo = useCallback(() => {
-    sendRequest({ url: `${COMPANIES_BASE_API_URL}/${companyId}` });
-  }, [companyId, sendRequest]);
+  const {
+    formData,
+    setFormData,
+    errors,
+    setErrors,
+    setInitialFormData,
+    changedFormData,
+  } = useForm<PartialDocument, ICompanyDocument>({
+    formShape: formDataShape,
+  });
 
-  const requestDelete = () => {
-    sendRequest({
+  const getCompanyInfo = useCallback(async () => {
+    await requestGetResource({
       url: `${COMPANIES_BASE_API_URL}/${companyId}`,
-      options: getDeleteOptions(),
     });
-  };
+  }, [companyId, requestGetResource]);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const target = e.target;
+  const handleChange = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
+      const target = e.target;
 
-    setFormData((prevFormData) => {
-      // Clone the previous data to avoid mutations
-      const updatedFormData: Partial<
-        ICompanyDocument & { address?: Partial<IAddressInfo> }
-      > = { ...prevFormData };
+      setFormData((prevFormData) => {
+        // Clone the previous data to avoid mutations
+        const updatedFormData: Partial<ICompanyDocument> = { ...prevFormData };
 
-      // Check if the target name starts with 'address.'
-      if (target.name.startsWith("address.")) {
-        // This is an address property
-        // Fix its name, update the correct property inside address
-        const addressKey = target.name.replace("address.", "");
+        // Check if the target name starts with 'address.'
+        if (target.name.startsWith("address.")) {
+          // This is an address property
+          // Fix its name, update the correct property inside address
+          const addressKey = target.name.replace("address.", "");
 
-        if (!updatedFormData.address) {
-          updatedFormData.address = {
-            street: "",
-            city: "",
-            state: "",
-            zip: "",
-            country: "",
-          };
-        }
+          if (!updatedFormData.address) {
+            updatedFormData.address = {
+              street: "",
+              city: "",
+              state: "",
+              zip: "",
+              country: "",
+            };
+          }
 
-        updatedFormData.address[addressKey as keyof IAddressInfo] =
-          target.value;
-      } else {
-        // This is not an address property, update the main object
-        updatedFormData[target.name as keyof ICompanyDocument] =
-          target.type === "checkbox"
-            ? (target as HTMLInputElement).checked
-            : target.value !== "" && target.value
-            ? target.value
-            : null;
-      }
-
-      return updatedFormData;
-    });
-
-    validateField({
-      target,
-      setErrors,
-    });
-  };
-
-  const handleCancel = (
-    target: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
-    initialValue:
-      | string
-      | number
-      | boolean
-      | readonly string[]
-      | ObjectId
-      | Record<string, unknown>
-  ) => {
-    setFormData({
-      ...formData!,
-      [target.id]: initialValue,
-    });
-  };
-
-  const handleSave = async () => {
-    const options = getUpdateOptions(changedFormData);
-    await sendRequest({
-      url: `${COMPANIES_BASE_API_URL}/${companyId}`,
-      options,
-    });
-    getCompanyInfo();
-  };
-
-  const handleDelete = () => {
-    requestDelete();
-  };
-
-  useEffect(() => getCompanyInfo(), [getCompanyInfo]);
-
-  useEffect(() => {
-    if (!loading && company && formDataShape) {
-      if (!lockInitialFormData) {
-        setInitialFormData(formDataShape);
-        setLockInitialFormData(true);
-      }
-      setFormData(formDataShape);
-    }
-  }, [loading, company, lockInitialFormData, formDataShape]);
-
-  useEffect(() => {
-    const changes: PartialDocument = {};
-
-    for (const key in formData) {
-      if (
-        initialFormData &&
-        formData[key as keyof ICompanyDocument] !==
-          initialFormData[key as keyof ICompanyDocument]
-      ) {
-        if (key === "newEmployee" && formData[key] !== undefined) {
-          changes.employees = [
-            ...(company?.employees || []),
-            formData.newEmployee as ObjectId | Record<string, unknown>,
+          updatedFormData.address[addressKey as keyof IAddressInfo] =
+            target.value;
+        } else if (target.name === "newEmployee") {
+          updatedFormData[target.name as keyof ICompanyDocument] = target.value;
+          updatedFormData.employees = [
+            ...(updatedFormData?.employees || []),
+            target.value as unknown as ObjectId | Record<string, unknown>,
           ];
         } else {
-          changes[key as keyof ICompanyDocument] =
-            formData[key as keyof ICompanyDocument];
+          // This is not an address property, update the main object
+          updatedFormData[target.name as keyof ICompanyDocument] =
+            target.type === "checkbox"
+              ? (target as HTMLInputElement).checked
+              : target.value !== "" && target.value
+              ? target.value
+              : null;
         }
-      }
-    }
+        return updatedFormData;
+      });
 
-    setChangedFormData(changes);
-  }, [company?.employees, formData, initialFormData]);
+      validateField({
+        target,
+        setErrors,
+      });
+    },
+    [setErrors, setFormData, validateField]
+  );
+
+  const handleCancel = useCallback(
+    (
+      target: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+      initialValue:
+        | string
+        | number
+        | boolean
+        | readonly string[]
+        | ObjectId
+        | Record<string, unknown>
+    ) => {
+      setFormData({
+        ...formData!,
+        [target.id]: initialValue,
+      });
+    },
+    [formData, setFormData]
+  );
+
+  const handleSave = useCallback(async () => {
+    const options = getUpdateOptions(changedFormData);
+    await requestUpdateResource({
+      url: `${COMPANIES_BASE_API_URL}/${companyId}`,
+      body: changedFormData,
+    });
+    getCompanyInfo();
+  }, [changedFormData, companyId, getCompanyInfo, requestUpdateResource]);
+
+  const handleDelete = useCallback(async () => {
+    await requestDeleteResource({
+      url: `${COMPANIES_BASE_API_URL}/${companyId}`,
+    });
+  }, [companyId, requestDeleteResource]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getCompanyInfo();
+    };
+
+    fetchData();
+  }, [getCompanyInfo]);
+
+  useEffect(() => {
+    // Update initialFormData when company changes
+    if (company) {
+      const updates: PartialDocument = {
+        name: company?.name ?? "",
+        subscriptionStatus: company?.subscriptionStatus || "",
+        url: company?.url,
+        email: company?.email,
+        phone: company?.phone,
+        address: {
+          street: company?.address?.street || "",
+          city: company?.address?.city || "",
+          state: company?.address?.state || "",
+          zip: company?.address?.zip || "",
+          country: company?.address?.country || "",
+        },
+        dba: company?.dba,
+        industry: company?.industry,
+        description: company?.description,
+        employees: company?.employees,
+        newEmployee: undefined,
+      };
+
+      setInitialFormData(updates);
+    }
+  }, [company, setInitialFormData]);
 
   if (loading) {
     return <Heading text="Loading..." level={1} role="status" />;
@@ -223,9 +223,9 @@ const CompanyDetails = () => {
   }
 
   return (
-    company &&
-    !loading &&
-    formData && (
+    formData &&
+    !isEmpty(formData) &&
+    company && (
       <div className="company-details flex flex-col align-stretch">
         <div className="company-details__actions self-end flex gap-4">
           <Button onClick={handleDelete}>Delete</Button>
