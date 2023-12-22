@@ -164,14 +164,16 @@ describe("CompanyDetails", () => {
     });
 
     test.each`
-      fieldId
-      ${"name"}
-      ${"email"}
-      ${"description"}
-      ${"subscriptionStatus"}
+      fieldId                 | newFieldValue
+      ${"name"}               | ${"New name"}
+      ${"email"}              | ${"new@email.com"}
+      ${"description"}        | ${"New description"}
+      ${"subscriptionStatus"} | ${"1"}
+      ${"industry"}           | ${"1"}
+      ${"address.street"}     | ${"New street"}
     `(
       "when on edit mode, can change $fieldId field's value and save",
-      async ({ fieldId }) => {
+      async ({ fieldId, newFieldValue }) => {
         user.setup();
 
         act(() =>
@@ -215,8 +217,8 @@ describe("CompanyDetails", () => {
           expect(field).not.toHaveAttribute("disabled");
 
           await user.clear(field);
-          await user.type(field, "New value");
-          expect(field.value).toBe("New value");
+          await user.type(field, newFieldValue);
+          expect(field.value).toBe(newFieldValue);
           await user.click(fieldSaveButton!);
         }
 
@@ -227,8 +229,12 @@ describe("CompanyDetails", () => {
             (field as HTMLSelectElement).querySelectorAll("option")
           );
 
-          fireEvent.change(field, { target: { value: options[1].value } });
-          expect(field.value).toBe(options[1].value);
+          fireEvent.change(field, {
+            target: { value: options[newFieldValue].value },
+          });
+
+          expect(field.value).toBe(options[newFieldValue].value);
+          await user.click(fieldSaveButton!);
         }
       }
     );
