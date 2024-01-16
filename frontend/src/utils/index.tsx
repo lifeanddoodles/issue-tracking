@@ -396,11 +396,11 @@ export function getVariantClasses(variant: ButtonVariant) {
     case "secondary":
       return "rounded-lg text-base border-0 text-white bg-secondary hover:bg-secondary-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
     case "transparent":
-      return "rounded-lg text-base border-0 text-primary hover:bg-neutral-200 py-2 px-3";
+      return "rounded-lg text-base border-0 text-primary hover:bg-neutral-200 disabled:text-gray-500 disabled:hover:bg-inherit py-2 px-3";
     case "icon":
-      return "rounded-lg text-base border-0 text-primary hover:bg-neutral-200 py-1 px-1 w-8 h-8";
+      return "rounded-lg text-base border-0 text-primary hover:bg-neutral-200 disabled:text-gray-500 disabled:hover:bg-inherit py-1 px-1 w-8 h-8";
     case "link":
-      return "text-primary hover:text-primary-dark hover:underline";
+      return "text-primary hover:text-primary-dark hover:underline disabled:text-gray-500 disabled:hover:no-underline";
   }
 }
 
@@ -541,3 +541,78 @@ export function getFieldErrorMessage({ id, type, options }: IInputErrorProps) {
       return `${getReadableInputName(id)} is not valid`;
   }
 }
+
+export const toCapital = (str: string) =>
+  str.charAt(0).toUpperCase() + str.slice(1);
+
+export const hasPathToIndentedKey = (keyName: string) => {
+  return /(\w\.\w)/.test(keyName);
+};
+
+export const matchPathToIndentedKeyValue = <T extends Record<string, unknown>>(
+  keyName: string,
+  objToMatch: T
+) => {
+  const pathSteps = keyName.split(".").map((step) => step.replace(".", ""));
+
+  let stepValue: T | undefined = objToMatch;
+
+  for (let i = 0; i < pathSteps.length; i++) {
+    if (
+      stepValue &&
+      Object.prototype.hasOwnProperty.call(stepValue, pathSteps[i])
+    ) {
+      stepValue = stepValue[pathSteps[i]] as T;
+    } else {
+      // If the step is not found, break out of the loop
+      stepValue = undefined;
+      break;
+    }
+  }
+
+  return stepValue;
+};
+
+export const getValue = (keyName: string, obj: Record<string, unknown>) => {
+  if (hasPathToIndentedKey(keyName)) {
+    return matchPathToIndentedKeyValue(keyName, obj);
+  }
+  return obj[keyName];
+};
+
+export const traverseAndUpdateObject = <
+  T extends Record<string, unknown>,
+  U extends Record<string, unknown>
+>(
+  objShape: Partial<T>,
+  fetchedData: Partial<U> | null
+) => {
+  const newObj: Partial<T> = { ...objShape };
+  if (fetchedData === null) return newObj;
+  if (typeof newObj === "object") {
+    Object.entries(newObj).map(([key]) => {
+      if (typeof newObj[key] === "object" && !Array.isArray(newObj[key])) {
+        traverseAndUpdateObject(
+          newObj[key] as Partial<T>,
+          fetchedData[key] as Partial<U>
+        );
+      }
+      (newObj as Record<string, unknown>)[key] = fetchedData[key];
+    });
+  }
+  return newObj;
+};
+
+export const objValuesAreFalsy: <T extends Record<string, unknown> | null>(
+  obj: Partial<T>
+) => boolean = (obj) => {
+  if (!obj) return true;
+  const falsyValue = [null, undefined, "", {}];
+  return Object.values(obj).every((value: unknown) => {
+    if (typeof value === "object") {
+      if (Array.isArray(value)) return value.length === 0;
+      return objValuesAreFalsy(value);
+    }
+    return falsyValue.includes(value);
+  });
+};

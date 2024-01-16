@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { isEmpty, isFalsy } from "../utils";
-import useFetch from "./useFetch";
+import useResourceInfo from "./useResourceInfo";
 
 export const hasUpdates = <T>(
   formData: Partial<T>,
@@ -48,58 +48,59 @@ export const hasUpdates = <T>(
   return changes;
 };
 
-const useForm = <T, U>({
-  formShape,
-  url,
-  onSuccess,
-}: {
-  formShape: Partial<T>;
+interface IUseFormProps<T> {
+  formShape?: T;
   url?: string;
   onSuccess?: () => void;
-}) => {
-  const [formData, setFormData] = useState<Partial<T> | null>(
-    !isEmpty(formShape) ? formShape : null
-  );
+}
+
+const useForm = <T, U>({ formShape, url, onSuccess }: IUseFormProps<T>) => {
+  const [objectShape, setObjectShape] = useState<Partial<T> | null>(null);
+  const [formData, setFormData] = useState<Partial<T> | null>(null);
   const [initialFormData, setInitialFormData] = useState<Partial<T> | null>(
-    !isEmpty(formShape) ? formShape : null
+    null
   );
   const [changedFormData, setChangedFormData] = useState<Partial<T>>({});
   const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
     null
   );
-  const { data, error, loading, sendRequest } = useFetch<U>();
+  const {
+    data,
+    loading,
+    error,
+    requestGetResource,
+    requestUpdateResource,
+    requestDeleteResource,
+  } = useResourceInfo<U | null>();
 
   const submitRequest = useCallback(
-    (options?: RequestInit) => {
+    (body?: Partial<U | null>) => {
       if (!url) return;
-      sendRequest({
+      requestUpdateResource({
         url,
-        options,
+        body,
       });
     },
-    [url, sendRequest]
+    [url, requestUpdateResource]
   );
 
   const handleSubmit = useCallback(
-    (options?: RequestInit) => {
-      submitRequest(options);
+    (body?: Partial<U | null>) => {
+      submitRequest(body);
     },
     [submitRequest]
   );
 
   useEffect(() => {
-    if (isFalsy(formData) && !isFalsy(formShape)) setFormData(formShape);
-  }, [formData, formShape]);
-
-  useEffect(() => {
-    if (!isFalsy(formData) && (!initialFormData || initialFormData === null)) {
-      setInitialFormData(formData);
+    if ((!isFalsy(formShape) || objectShape !== null) && formData === null) {
+      setFormData(formShape || objectShape);
+      setInitialFormData(formShape || objectShape);
     }
-  }, [initialFormData, setInitialFormData, formData]);
+  }, [formData, formShape, objectShape]);
 
   useEffect(() => {
-    if (!isFalsy(formData) && !isFalsy(initialFormData)) {
-      const updates = hasUpdates(formData!, initialFormData!);
+    if (formData !== null && initialFormData !== null) {
+      const updates = hasUpdates(formData, initialFormData);
 
       if (!isEmpty(updates)) {
         setChangedFormData(updates);
@@ -114,16 +115,22 @@ const useForm = <T, U>({
   }, [data, error, loading, onSuccess]);
 
   return {
+    setObjectShape,
     formData,
     setFormData,
     errors,
     setErrors,
     onSubmit: handleSubmit,
-    data,
     initialFormData,
     setInitialFormData,
     changedFormData,
     setChangedFormData,
+    data,
+    loading,
+    error,
+    requestGetResource,
+    requestUpdateResource,
+    requestDeleteResource,
   };
 };
 

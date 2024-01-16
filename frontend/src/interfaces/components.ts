@@ -1,3 +1,5 @@
+import { ObjectId } from "mongoose";
+
 export type ControllerType =
   | "text"
   | "url"
@@ -7,6 +9,13 @@ export type ControllerType =
   | "password"
   | "checkbox"
   | "radio";
+
+export type nonBooleanValueType =
+  | string
+  | number
+  | readonly string[]
+  | ObjectId
+  | Record<string, unknown>;
 
 export type FormElement =
   | HTMLInputElement
@@ -95,6 +104,8 @@ export interface ISelectProps
   options: IOption[];
   value?: string;
   direction?: Direction;
+  resetFieldValue?: boolean;
+  setResetFieldValue?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export enum ErrorType {
@@ -115,3 +126,25 @@ export interface IInputErrorProps {
   type: ErrorType;
   options?: IInputErrorOptions;
 }
+
+export type IFieldProps =
+  | ISelectProps
+  | ITextInputProps
+  | ICheckboxOrRadioInputProps;
+
+export interface IFormControlWithActionsProps<T extends FormElement>
+  extends IFormControlProps<T> {
+  component: JSX.ElementType;
+}
+
+export interface IFormFieldControls {
+  isEditable: boolean;
+  label: string;
+  onToggleEdit: () => void;
+  onCancel: (
+    resetKeyValue: Record<string, nonBooleanValueType | boolean>
+  ) => void;
+  onSave: () => void;
+}
+
+export type CombinedProps<T, U> = T & U;

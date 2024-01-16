@@ -64,7 +64,7 @@ const TextArea = forwardRef(
 
     const fieldHasErrors = errors && id && errors?.[id]?.length > 0;
     const mergedClassNames = twMerge(
-      "text-neutral-800 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 w-full rounded-lg border focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none py-1 px-3 leading-8 transition-colors duration-200 ease-in-out",
+      "text-neutral-800 dark:text-neutral-100 disabled:text-neutral-500 disabled:dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 w-full rounded-lg border focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none py-1 px-3 leading-8 transition-colors duration-200 ease-in-out",
       className
     );
 

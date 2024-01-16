@@ -1,21 +1,21 @@
-import { CheckIcon, PencilIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { ObjectId } from "mongoose";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ControllerType,
   FormElement,
   IFormControlProps,
   IFormStateProps,
   IOption,
+  nonBooleanValueType,
 } from "../../interfaces";
-import IconButton from "../Button/IconButton";
-
-export type nonBooleanValueType =
-  | string
-  | number
-  | readonly string[]
-  | ObjectId
-  | Record<string, unknown>;
+import { getReadableInputName } from "../../utils";
+import FormFieldControls from "../FormFieldControls";
 
 interface IFormControlWithActionsProps<T, U, V>
   extends IFormControlProps<U>,
@@ -25,7 +25,9 @@ interface IFormControlWithActionsProps<T, U, V>
   checked?: boolean;
   options?: IOption[];
   type?: ControllerType;
-  onCancel: (target: U, initialValue: nonBooleanValueType | boolean) => void;
+  onCancel: (
+    resetKeyValue: Record<string, nonBooleanValueType | boolean>
+  ) => void;
   onSave: () => void;
   url?: string;
   getFormattedOptions?: (data: V[]) => { value: string; label: string }[];
@@ -33,7 +35,7 @@ interface IFormControlWithActionsProps<T, U, V>
   currentList?: string[] | (ObjectId | Record<string, unknown>)[];
 }
 
-function FormControlWithActions<T, U extends FormElement, V>({
+const FormControlWithActions = <T, U extends FormElement, V>({
   component,
   value,
   checked,
@@ -41,9 +43,8 @@ function FormControlWithActions<T, U extends FormElement, V>({
   onChange,
   onCancel,
   onSave,
-  options,
   ...props
-}: IFormControlWithActionsProps<T, U, V>) {
+}: IFormControlWithActionsProps<T, U, V>): JSX.Element => {
   const Component = component as JSX.ElementType;
   const fieldRef = useRef<U | null>(null);
   const [fieldValue, setFieldValue] = useState<nonBooleanValueType>(
@@ -57,45 +58,52 @@ function FormControlWithActions<T, U extends FormElement, V>({
   >(value ? value.toString() : checked || false);
   const [isEditable, setIsEditable] = useState(false);
   const [resetFieldValue, setResetFieldValue] = useState(false);
+  const label = useMemo(
+    () => getReadableInputName(props?.id!.replace(":", "")),
+    [props?.id]
+  );
 
-  const handleToggleEdit = () => {
+  const handleToggleEdit = useCallback(() => {
     if (isEditable) {
       onSave && onSave();
       setInitialValue(fieldValue);
     }
     setIsEditable((prev) => !prev);
-  };
+  }, [fieldValue, isEditable, onSave]);
 
-  const handleOnChange = (e: React.ChangeEvent<U>) => {
-    const changedValue =
-      e.target instanceof HTMLInputElement && e.target.type === "checkbox"
-        ? (e.target as HTMLInputElement).checked
-        : (e.target instanceof HTMLInputElement ||
-            e.target instanceof HTMLSelectElement ||
-            e.target instanceof HTMLTextAreaElement) &&
-          e.target.value;
-    value !== undefined &&
-      typeof changedValue !== "boolean" &&
-      setFieldValue(changedValue);
-    checked !== undefined &&
-      typeof changedValue === "boolean" &&
-      setCheckedValue(changedValue);
-    onChange && onChange(e);
-  };
+  const handleOnChange = useCallback(
+    (e: React.ChangeEvent<U>) => {
+      const changedValue =
+        e.target instanceof HTMLInputElement && e.target.type === "checkbox"
+          ? (e.target as HTMLInputElement).checked
+          : (e.target instanceof HTMLInputElement ||
+              e.target instanceof HTMLSelectElement ||
+              e.target instanceof HTMLTextAreaElement) &&
+            e.target.value;
+      value !== undefined &&
+        typeof changedValue !== "boolean" &&
+        setFieldValue(changedValue);
+      checked !== undefined &&
+        typeof changedValue === "boolean" &&
+        setCheckedValue(changedValue);
+      onChange && onChange(e);
+    },
+    [checked, onChange, value]
+  );
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     value !== undefined &&
       typeof initialValue !== "boolean" &&
       setFieldValue(initialValue);
     checked !== undefined &&
       typeof initialValue === "boolean" &&
       setCheckedValue(initialValue);
-    onCancel && onCancel(fieldRef.current!, initialValue!);
+    onCancel && onCancel({ [props.id as string]: initialValue! });
     setResetFieldValue(true);
     setIsEditable(false);
     setResetFieldValue(true);
     setIsEditable(false);
-  };
+  }, [checked, initialValue, onCancel, props.id, value]);
 
   useEffect(() => {
     if (!isEditable && fieldValue !== undefined) {
@@ -115,35 +123,17 @@ function FormControlWithActions<T, U extends FormElement, V>({
         ref={fieldRef}
         disabled={!isEditable}
         type={type}
-        options={options}
         {...props}
       />
-      {/* TODO: Create custom hook for this, something like useFieldControls */}
-      <div role="group" className="flex gap-2">
-        <IconButton
-          onClick={handleToggleEdit}
-          ariaLabel={
-            isEditable
-              ? `Save ${props.label?.replace(":", "")}`
-              : `Edit ${props.label?.replace(":", "")}`
-          }
-        >
-          {isEditable ? (
-            <CheckIcon title="Save" />
-          ) : (
-            <PencilIcon title="Edit" />
-          )}
-        </IconButton>
-        <IconButton
-          onClick={handleCancel}
-          disabled={!isEditable}
-          ariaLabel={`Cancel changes to ${props.label?.replace(":", "")}`}
-        >
-          <XMarkIcon title="Cancel" />
-        </IconButton>
-      </div>
+      <FormFieldControls
+        isEditable={isEditable}
+        label={label}
+        onToggleEdit={handleToggleEdit}
+        onSave={onSave}
+        onCancel={handleCancel}
+      />
     </div>
   );
-}
+};
 
 export default FormControlWithActions;
