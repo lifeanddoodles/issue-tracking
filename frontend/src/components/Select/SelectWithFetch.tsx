@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { Fragment, forwardRef, useCallback, useEffect } from "react";
 import Select from ".";
 import useFetch from "../../hooks/useFetch";
@@ -20,8 +21,11 @@ export interface ISelectWithFetchProps<T>
   url: string;
   query?: string;
   getFormattedOptions: (data: T[]) => { value: string; label: string }[];
-  showList?: boolean;
-  currentList?: string[];
+  showList?: true;
+  currentList?: (ObjectId | Record<string, unknown> | string)[];
+  pathToValue?: string;
+  resetFieldValue?: boolean;
+  setResetFieldValue?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SelectWithFetch = forwardRef(
@@ -39,8 +43,10 @@ const SelectWithFetch = forwardRef(
       url,
       query = "",
       getFormattedOptions,
-      showList = false,
+      showList,
       currentList,
+      resetFieldValue,
+      setResetFieldValue,
     }: ISelectWithFetchProps<T>,
     ref: React.ForwardedRef<HTMLSelectElement>
   ): React.ReactElement => {
@@ -113,6 +119,8 @@ const SelectWithFetch = forwardRef(
             setErrors={setErrors}
             direction={direction}
             disabled={disabled}
+            resetFieldValue={resetFieldValue}
+            setResetFieldValue={setResetFieldValue}
             ref={ref}
           />
           {showList && currentList && resourceOptions && (

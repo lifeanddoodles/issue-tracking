@@ -591,13 +591,19 @@ export const traverseAndUpdateObject = <
   if (fetchedData === null) return newObj;
   if (typeof newObj === "object") {
     Object.entries(newObj).map(([key]) => {
-      if (typeof newObj[key] === "object" && !Array.isArray(newObj[key])) {
+      if (
+        typeof newObj[key] === "object" &&
+        !Array.isArray(newObj[key]) &&
+        fetchedData[key]
+      ) {
         traverseAndUpdateObject(
           newObj[key] as Partial<T>,
           fetchedData[key] as Partial<U>
         );
       }
-      (newObj as Record<string, unknown>)[key] = fetchedData[key];
+
+      (newObj as Record<string, unknown>)[key] =
+        fetchedData[key] || newObj[key];
     });
   }
   return newObj;

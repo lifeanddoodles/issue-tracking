@@ -38,8 +38,8 @@ export interface ICompany {
   email?: string;
   phone?: string;
   address?: IAddressInfo;
-  employees: (ObjectId | Record<string, unknown>)[];
-  projects?: (ObjectId | Record<string, unknown>)[];
+  employees: (ObjectId | Record<string, unknown> | string)[];
+  projects?: (ObjectId | Record<string, unknown> | string)[];
   dba?: string;
   description?: string;
   industry?: Industry;

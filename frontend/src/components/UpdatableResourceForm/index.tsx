@@ -47,6 +47,9 @@ const getChildren = <T extends Record<string, unknown>>({
           {cloneElement(child, {
             ...child.props,
             ...valueObj,
+            ...(child.props?.showList && child?.props?.pathToValue
+              ? { currentList: getValue(child?.props?.pathToValue, formData) }
+              : {}),
             onChange,
             errors,
             setErrors,
