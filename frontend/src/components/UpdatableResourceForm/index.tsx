@@ -64,8 +64,6 @@ const UpdatableResourceForm = withUpdatableResourceForm(
   ({
     resourceName,
     formData,
-    loading,
-    error,
     errors,
     setErrors,
     onDelete,
@@ -86,43 +84,14 @@ const UpdatableResourceForm = withUpdatableResourceForm(
       });
     }, [children, errors, formData, onCancel, onChange, onSave, setErrors]);
 
-    if (loading) {
-      return (
-        <Heading
-          text={`Loading ${resourceName} details...`}
-          level={1}
-          role="status"
-        />
-      );
-    }
-
-    if (error) {
-      return <Heading text={error.message} level={1} role="status" />;
-    }
-
-    if (!formData) {
-      return (
-        <Heading
-          text={`${toCapital(resourceName)} not found`}
-          level={1}
-          role="status"
-        />
-      );
-    }
-
     return (
-      formData &&
-      formData !== null && (
-        <div className={`${resourceName}-details flex flex-col align-stretch`}>
-          <div
-            className={`${resourceName}-details__actions self-end flex gap-4`}
-          >
-            <Button onClick={onDelete}>Delete</Button>
-          </div>
-          <Heading text={`${toCapital(resourceName)} Details`} level={1} />
-          {formattedChildren}
+      <div className={`${resourceName}-details flex flex-col align-stretch`}>
+        <div className={`${resourceName}-details__actions self-end flex gap-4`}>
+          <Button onClick={onDelete}>Delete</Button>
         </div>
-      )
+        <Heading text={`${toCapital(resourceName)} Details`} level={1} />
+        {formattedChildren}
+      </div>
     );
   }
 );

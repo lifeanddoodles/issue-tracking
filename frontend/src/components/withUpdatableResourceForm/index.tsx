@@ -2,7 +2,12 @@ import { useCallback, useEffect, useMemo } from "react";
 import useForm from "../../hooks/useForm";
 import useValidation from "../../hooks/useValidation";
 import { FormElement } from "../../interfaces";
-import { objValuesAreFalsy, traverseAndUpdateObject } from "../../utils";
+import {
+  objValuesAreFalsy,
+  toCapital,
+  traverseAndUpdateObject,
+} from "../../utils";
+import Heading from "../Heading";
 
 const withUpdatableResourceForm = <
   T extends Record<string, unknown>,
@@ -52,10 +57,6 @@ const withUpdatableResourceForm = <
       [objShape]
     );
 
-    useEffect(() => {
-      formDataShape && formDataShape !== null && setObjectShape(formDataShape);
-    }, [formShape, objShape, formDataShape, setObjectShape]);
-
     const { validateField } = useValidation();
 
     const getResourceInfo = useCallback(async () => {
@@ -71,7 +72,6 @@ const withUpdatableResourceForm = <
         >
       ) => {
         const target = e.target;
-        console.log("handleChange", target.value);
 
         setFormData((prevFormData) => {
           // Clone the previous data to avoid mutations
@@ -94,6 +94,10 @@ const withUpdatableResourceForm = <
       });
       getResourceInfo();
       setInitialFormData(formData);
+      /*
+       * TODO: Reset fields after submit
+       * If field name is not in resource's schema, it will be reset
+       */
     }, [
       changedFormData,
       formData,
@@ -113,6 +117,10 @@ const withUpdatableResourceForm = <
         url: `${resourceUrl}/${resourceId}`,
       });
     }, [requestDeleteResource, resourceId, resourceUrl]);
+
+    useEffect(() => {
+      formDataShape && formDataShape !== null && setObjectShape(formDataShape);
+    }, [formShape, objShape, formDataShape, setObjectShape]);
 
     useEffect(() => {
       const fetchData = async () => {
@@ -150,7 +158,26 @@ const withUpdatableResourceForm = <
     );
 
     return (
-      formData && <Component resourceName={resourceName} {...resourceProps} />
+      <>
+        {loading && (
+          <Heading
+            text={`Loading ${resourceName} details...`}
+            level={1}
+            role="status"
+          />
+        )}
+        {!formData && (
+          <Heading
+            text={`${toCapital(resourceName)} not found`}
+            level={1}
+            role="status"
+          />
+        )}
+        {error && <Heading text={error.message} role="status" />}
+        {formData && (
+          <Component resourceName={resourceName} {...resourceProps} />
+        )}
+      </>
     );
   };
 };

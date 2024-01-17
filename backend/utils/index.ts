@@ -2,8 +2,8 @@ import { ObjectId } from "mongoose";
 import Company from "../models/companyModel.js";
 
 export const getEmployees = (
-  employees: (ObjectId | Record<string, unknown>)[],
-  newEmployeeId: ObjectId | Record<string, unknown>
+  employees: (ObjectId | Record<string, unknown> | string)[],
+  newEmployeeId: ObjectId | Record<string, unknown> | string
 ) => {
   if (!employees && !newEmployeeId) {
     return [];
@@ -22,14 +22,15 @@ export const getEmployees = (
 };
 
 export const idIsInIdsArray = (
-  array: (ObjectId | Record<string, unknown>)[],
-  id: ObjectId | Record<string, unknown>
+  array: (ObjectId | Record<string, unknown> | string)[],
+  id: ObjectId | Record<string, unknown> | string
 ) => {
   if (!array.length || array.length === 0) {
     return false;
   }
   return array.includes(id);
 };
+
 export const isAlreadyListedAsEmployeeInACompany = async (
   potentialEmployeeId: string
 ) => {
