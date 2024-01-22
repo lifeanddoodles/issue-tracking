@@ -93,7 +93,7 @@ const withUpdatableResourceForm = <
         body: changedFormData as Partial<U>,
       });
       getResourceInfo();
-      setInitialFormData(formData);
+      setInitialFormData({ ...(formData as Partial<T>) });
       /*
        * TODO: Reset fields after submit
        * If field name is not in resource's schema, it will be reset
@@ -109,7 +109,7 @@ const withUpdatableResourceForm = <
     ]);
 
     const handleCancel = useCallback(() => {
-      setFormData(initialFormData);
+      setFormData({ ...(initialFormData as Partial<T>) });
     }, [initialFormData, setFormData]);
 
     const handleDelete = useCallback(async () => {
@@ -119,8 +119,10 @@ const withUpdatableResourceForm = <
     }, [requestDeleteResource, resourceId, resourceUrl]);
 
     useEffect(() => {
-      formDataShape && formDataShape !== null && setObjectShape(formDataShape);
-    }, [formShape, objShape, formDataShape, setObjectShape]);
+      if (formDataShape && formDataShape !== null) {
+        setObjectShape(formDataShape);
+      }
+    }, [objShape, formDataShape, setObjectShape]);
 
     useEffect(() => {
       const fetchData = async () => {
@@ -166,7 +168,7 @@ const withUpdatableResourceForm = <
             role="status"
           />
         )}
-        {!formData && (
+        {!loading && !formData && (
           <Heading
             text={`${toCapital(resourceName)} not found`}
             level={1}

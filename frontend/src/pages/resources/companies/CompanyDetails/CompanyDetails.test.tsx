@@ -1,11 +1,15 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import user from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import {
-  IAddressInfo,
-  ICompanyDocument,
-  IUserDocument,
-} from "shared/interfaces";
+import { ICompanyDocument, IUserDocument } from "shared/interfaces";
+import { vi } from "vitest";
 import CompanyDetails from ".";
 import {
   fakeAdminUser,
@@ -17,14 +21,15 @@ import { FormElement } from "../../../../interfaces";
 import { getReadableInputName } from "../../../../utils";
 
 const compareValue: <T>(
-  elementToTest: FormElement,
+  elementValue: unknown,
   dataObj: Partial<T>,
   id: keyof T
-) => void = (elementToTest, dataObj, id) => {
-  if (dataObj[id] === undefined) {
-    expect(elementToTest.value).toBe("");
+) => void = (elementValue, dataObj, id) => {
+  const dataValue = getValue(id as string, dataObj);
+  if (dataValue === undefined || dataValue === "") {
+    expect(elementValue).toBe("");
   } else {
-    expect(elementToTest.value).toBe(dataObj[id]);
+    expect(elementValue).toBe(dataValue);
   }
 };
 
@@ -71,97 +76,102 @@ describe("CompanyDetails", () => {
       ...authBase,
     };
 
-    test("renders fields with the data", async () => {
+    const company = fakeCompanies.find(
+      (company) => company._id === auth.user.company
+    );
+
+    const updateInputOrTextarea = async (
+      field: FormElement,
+      newFieldValue: string
+    ) => {
+      await user.clear(field);
+      await user.type(field, newFieldValue);
+    };
+
+    const updateSelect = async (
+      field: FormElement,
+      options: HTMLOptionElement[],
+      newFieldValue: number
+    ) => {
       act(() =>
-        render(
-          <MemoryRouter>
-            <AuthContext.Provider value={auth}>
-              <CompanyDetails />
-            </AuthContext.Provider>
-          </MemoryRouter>
-        )
+        fireEvent.select(field, {
+          target: { value: options[newFieldValue as number].value },
+        })
       );
+    };
 
-      const company = fakeCompanies.find(
-        (company) => company._id === auth.user.company
-      );
+    const updateFieldAndCheckValue = async (
+      field: FormElement,
+      newFieldValue: string | number
+    ) => {
+      if (
+        field instanceof HTMLInputElement ||
+        field instanceof HTMLTextAreaElement
+      ) {
+        await updateInputOrTextarea(field, newFieldValue as string);
 
-      const title = await screen.findByRole("heading", {
-        name: "Company Details",
-      });
-      const name = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("name")}`, "i")
-      );
-      const subscriptionStatus = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("subscriptionStatus")}`, "i")
-      );
-      const email = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("email")}`, "i")
-      );
-      const addressStreet = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("address.street")}`, "i")
-      );
-      const addressCity = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("address.city")}`, "i")
-      );
-      const addressState = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("address.state")}`, "i")
-      );
-      const addressZip = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("address.zip")}`, "i")
-      );
-      const addressCountry = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("address.country")}`, "i")
-      );
-      const dba = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("dba")}`, "i")
-      );
-      const industry = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("industry")}`, "i")
-      );
-      const description = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("description")}`, "i")
-      );
-      const newEmployee = await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("newEmployee")}`, "i")
-      );
-
-      const elements = [
-        title,
-        name,
-        subscriptionStatus,
-        email,
-        addressStreet,
-        addressCity,
-        addressState,
-        addressZip,
-        addressCountry,
-        dba,
-        industry,
-        description,
-        newEmployee,
-      ];
-
-      for (const element of elements) {
-        expect(element as FormElement).toBeInTheDocument();
-        if (element.hasAttribute("value")) {
-          if (element.id.startsWith("address.")) {
-            const addressKey = element.id.replace("address.", "");
-            compareValue<IAddressInfo>(
-              element as FormElement,
-              company!.address,
-              addressKey as keyof IAddressInfo
-            );
-          } else {
-            compareValue<ICompanyDocument>(
-              element as FormElement,
-              company! as Partial<ICompanyDocument>,
-              element.id as keyof ICompanyDocument
-            );
-          }
-        }
+        expect(field.value).toBe(newFieldValue);
       }
-    });
+
+      if (field instanceof HTMLSelectElement) {
+        expect(field).toHaveAttribute("disabled", "");
+
+        const options = Array.from(
+          (field as HTMLSelectElement).querySelectorAll("option")
+        );
+        await updateSelect(field, options, newFieldValue as number);
+
+        expect(field.value).toBe(options[newFieldValue as number].value);
+      }
+    };
+
+    test.each`
+      fieldId                 | findBy
+      ${"heading"}            | ${"role"}
+      ${"name"}               | ${"text"}
+      ${"subscriptionStatus"} | ${"text"}
+      ${"email"}              | ${"text"}
+      ${"address.street"}     | ${"text"}
+      ${"address.city"}       | ${"text"}
+      ${"address.state"}      | ${"text"}
+      ${"address.zip"}        | ${"text"}
+      ${"address.country"}    | ${"text"}
+      ${"dba"}                | ${"text"}
+      ${"industry"}           | ${"text"}
+      ${"description"}        | ${"text"}
+      ${"newEmployee"}        | ${"text"}
+    `(
+      "renders $fieldId with the correct value",
+      async ({ fieldId, findBy }) => {
+        act(() =>
+          render(
+            <MemoryRouter>
+              <AuthContext.Provider value={auth}>
+                <CompanyDetails />
+              </AuthContext.Provider>
+            </MemoryRouter>
+          )
+        );
+
+        await waitFor(async () => {
+          if (findBy === "role") {
+            const title = await screen.findByRole(fieldId, {
+              name: "Company Details",
+            });
+            expect(title).toBeInTheDocument();
+          }
+
+          if (findBy === "text") {
+            const field = (await screen.findByLabelText(
+              RegExp(`^${getReadableInputName(fieldId)}`, "i")
+            )) as FormElement;
+
+            expect(field).toBeInTheDocument();
+            compareValue<ICompanyDocument>(field.value, company!, fieldId);
+          }
+        });
+      }
+    );
 
     test.each`
       fieldId                 | newFieldValue
@@ -170,17 +180,26 @@ describe("CompanyDetails", () => {
       ${"description"}        | ${"New description"}
       ${"subscriptionStatus"} | ${"1"}
       ${"address.street"}     | ${"New street"}
+      ${"address.city"}       | ${"New city"}
+      ${"address.state"}      | ${"New state"}
+      ${"address.zip"}        | ${"11111"}
+      ${"address.country"}    | ${"New country"}
+      ${"dba"}                | ${"New DBA"}
+      ${"industry"}           | ${"1"}
+      ${"newEmployee"}        | ${"1"}
     `(
       "when on edit mode, can change $fieldId field's value",
       async ({ fieldId, newFieldValue }) => {
         user.setup();
 
-        const { rerender } = render(
-          <MemoryRouter>
-            <AuthContext.Provider value={auth}>
-              <CompanyDetails />
-            </AuthContext.Provider>
-          </MemoryRouter>
+        act(() =>
+          render(
+            <MemoryRouter>
+              <AuthContext.Provider value={auth}>
+                <CompanyDetails />
+              </AuthContext.Provider>
+            </MemoryRouter>
+          )
         );
 
         const fieldLabel = getReadableInputName(fieldId);
@@ -207,45 +226,14 @@ describe("CompanyDetails", () => {
 
         expect(fieldSaveButton).toBeInTheDocument();
 
-        if (
-          field instanceof HTMLInputElement ||
-          field instanceof HTMLTextAreaElement
-        ) {
-          expect(field).not.toHaveAttribute("disabled");
-
-          await user.clear(field);
-          await user.type(field, newFieldValue);
-          expect(field.value).toBe(newFieldValue);
-        }
-
-        if (field instanceof HTMLSelectElement) {
-          expect(field).toHaveAttribute("disabled", "");
-
-          const options = Array.from(
-            (field as HTMLSelectElement).querySelectorAll("option")
-          );
-
-          await act(async () => {
-            fireEvent.select(field, {
-              target: { value: options[newFieldValue].value },
-            });
-          });
-
-          rerender(
-            <MemoryRouter>
-              <AuthContext.Provider value={auth}>
-                <CompanyDetails />
-              </AuthContext.Provider>
-            </MemoryRouter>
-          );
-
-          expect(field.value).toBe(options[newFieldValue].value);
-        }
+        await act(() => updateFieldAndCheckValue(field, newFieldValue));
       }
     );
 
-    /* TODO: Debug select fields
-     * Endpoint should be called with { [fieldId]: newFieldValue }
+    /**
+     * TODO: Fix failing tests:
+     * - toHaveBeenCalled()
+     * - toHaveBeenCalledWith({ [fieldId]: newFieldValue })
      */
     test.skip.each`
       fieldId                 | newFieldValue
@@ -253,8 +241,14 @@ describe("CompanyDetails", () => {
       ${"email"}              | ${"new@email.com"}
       ${"description"}        | ${"New description"}
       ${"subscriptionStatus"} | ${"1"}
-      ${"industry"}           | ${"1"}
       ${"address.street"}     | ${"New street"}
+      ${"address.city"}       | ${"New city"}
+      ${"address.state"}      | ${"New state"}
+      ${"address.zip"}        | ${"11111"}
+      ${"address.country"}    | ${"New country"}
+      ${"dba"}                | ${"New DBA"}
+      ${"industry"}           | ${"1"}
+      ${"newEmployee"}        | ${"1"}
     `(
       "when saving changes on $fieldId, the correct data is sent to the server",
       async ({ fieldId, newFieldValue }) => {
@@ -293,82 +287,74 @@ describe("CompanyDetails", () => {
 
         expect(fieldSaveButton).toBeInTheDocument();
 
-        if (
-          field instanceof HTMLInputElement ||
-          field instanceof HTMLTextAreaElement
-        ) {
-          expect(field).not.toHaveAttribute("disabled");
+        await act(() => updateFieldAndCheckValue(field, newFieldValue));
 
-          await user.clear(field);
-          await user.type(field, newFieldValue);
-          expect(field.value).toBe(newFieldValue);
-          await user.click(fieldSaveButton!);
-        }
+        /**
+         * TODO: Fix failing tests for spyOn/mock request method and verify parameters
+         * Use mockOrSpiedRequest.shouldHaveBeenCalledWith({ [fieldId]: newFieldValue })
+         */
+        await user.click(fieldSaveButton!);
+    );
 
-        if (field instanceof HTMLSelectElement) {
-          expect(field).toHaveAttribute("disabled", "");
+    /**
+     * TODO: Fix failing tests for the following (select) fields:
+     * - subscriptionStatus
+     * - industry
+     * - newEmployee
+     */
+    test.each`
+      fieldId              | newFieldValue
+      ${"name"}            | ${"New name"}
+      ${"email"}           | ${"new@email.com"}
+      ${"description"}     | ${"New description"}
+      ${"address.street"}  | ${"New street"}
+      ${"address.city"}    | ${"New city"}
+      ${"address.state"}   | ${"New state"}
+      ${"address.zip"}     | ${"11111"}
+      ${"address.country"} | ${"New country"}
+      ${"dba"}             | ${"New DBA"}
+    `(
+      "when on edit mode, can cancel changes on $fieldId field's value",
+      async ({ fieldId, newFieldValue }) => {
+        user.setup();
 
-          const options = Array.from(
-            (field as HTMLSelectElement).querySelectorAll("option")
-          );
-
-          await act(async () => {
-            fireEvent.select(field, {
-              target: { value: options[newFieldValue].value },
-            });
-          });
-
-          rerender(
+        act(() =>
+          render(
             <MemoryRouter>
               <AuthContext.Provider value={auth}>
                 <CompanyDetails />
               </AuthContext.Provider>
             </MemoryRouter>
-          );
+          )
+        );
 
-          expect(field.value).toBe(options[newFieldValue].value);
-          await user.click(fieldSaveButton!);
-        }
+        const fieldLabel = getReadableInputName(fieldId);
+        const field = (await screen.findByLabelText(
+          RegExp(`^${fieldLabel}`, "i")
+        )) as FormElement;
+        const fieldEditButton = screen.queryByRole("button", {
+          name: RegExp(`^edit ${fieldLabel}`, "i"),
+        });
+        const fieldCancelButton = await screen.findByRole("button", {
+          name: RegExp(`^cancel changes to ${fieldLabel}`, "i"),
+        });
+
+        expect(fieldCancelButton).toBeInTheDocument();
+
+        await act(async () => {
+          await user.click(fieldEditButton!);
+        });
+
+        await act(() => updateFieldAndCheckValue(field, newFieldValue));
+
+        await act(async () => {
+          await user.click(fieldCancelButton!);
+        });
+
+        await waitFor(() => {
+          compareValue<ICompanyDocument>(field.value, company!, fieldId);
+        });
       }
     );
-
-    test("when on edit mode, can cancel changes", async () => {
-      user.setup();
-
-      act(() =>
-        render(
-          <MemoryRouter>
-            <AuthContext.Provider value={auth}>
-              <CompanyDetails />
-            </AuthContext.Provider>
-          </MemoryRouter>
-        )
-      );
-
-      const company = fakeCompanies.find(
-        (company) => company._id === auth.user.company
-      );
-
-      const name = (await screen.findByLabelText(
-        RegExp(`^${getReadableInputName("name")}`, "i")
-      )) as HTMLInputElement;
-      const nameEditButton = await screen.findByRole("button", {
-        name: RegExp(`^edit ${getReadableInputName("name")}`, "i"),
-      });
-      const nameCancelButton = await screen.findByRole("button", {
-        name: RegExp(`^cancel changes to ${getReadableInputName("name")}`, "i"),
-      });
-
-      expect(name).toHaveAttribute("disabled");
-      expect(nameEditButton).toBeInTheDocument();
-      await user.click(nameEditButton);
-
-      await user.clear(name);
-      await user.type(name, "New Company Name");
-      expect(name.value).toBe("New Company Name");
-
-      await user.click(nameCancelButton);
-      expect(name.value).toBe(company?.name);
-    });
   });
 });

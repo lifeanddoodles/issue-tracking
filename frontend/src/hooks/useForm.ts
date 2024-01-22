@@ -92,9 +92,12 @@ const useForm = <T, U>({ formShape, url, onSuccess }: IUseFormProps<T>) => {
   );
 
   useEffect(() => {
-    if ((!isFalsy(formShape) || objectShape !== null) && formData === null) {
-      setFormData(formShape || objectShape);
-      setInitialFormData(formShape || objectShape);
+    if (
+      (!isFalsy(formShape) || objectShape !== null) &&
+      (formData === null || formData === undefined)
+    ) {
+      setFormData({ ...(formShape || objectShape) });
+      setInitialFormData({ ...(formShape || objectShape) });
     }
   }, [formData, formShape, objectShape]);
 

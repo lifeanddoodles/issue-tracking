@@ -549,6 +549,25 @@ export const hasPathToIndentedKey = (keyName: string) => {
   return /(\w\.\w)/.test(keyName);
 };
 
+export const traverseObjectAndGetValue = <T extends Record<string, unknown>>(
+  objShape: Partial<T>,
+  keyName: string
+) => {
+  const newObj: Partial<T> = { ...objShape };
+  let foundValue: unknown;
+  if (typeof newObj === "object") {
+    Object.entries(newObj).map(([, value]) => {
+      if (typeof value === "object" && !Array.isArray(value)) {
+        traverseObjectAndGetValue(value, keyName);
+      }
+
+      foundValue = newObj[keyName];
+    });
+  }
+
+  return foundValue;
+};
+
 export const matchPathToIndentedKeyValue = <T extends Record<string, unknown>>(
   keyName: string,
   objToMatch: T
@@ -558,10 +577,7 @@ export const matchPathToIndentedKeyValue = <T extends Record<string, unknown>>(
   let stepValue: T | undefined = objToMatch;
 
   for (let i = 0; i < pathSteps.length; i++) {
-    if (
-      stepValue &&
-      Object.prototype.hasOwnProperty.call(stepValue, pathSteps[i])
-    ) {
+    if (Object.prototype.hasOwnProperty.call(stepValue, pathSteps[i])) {
       stepValue = stepValue[pathSteps[i]] as T;
     } else {
       // If the step is not found, break out of the loop
@@ -569,7 +585,6 @@ export const matchPathToIndentedKeyValue = <T extends Record<string, unknown>>(
       break;
     }
   }
-
   return stepValue;
 };
 
@@ -588,22 +603,24 @@ export const traverseAndUpdateObject = <
   fetchedData: Partial<U> | null
 ) => {
   const newObj: Partial<T> = { ...objShape };
-  if (fetchedData === null) return newObj;
+  const baselineObj = { ...fetchedData };
+
+  if (baselineObj === null) return newObj;
+
   if (typeof newObj === "object") {
     Object.entries(newObj).map(([key]) => {
       if (
         typeof newObj[key] === "object" &&
         !Array.isArray(newObj[key]) &&
-        fetchedData[key]
+        baselineObj[key]
       ) {
         traverseAndUpdateObject(
           newObj[key] as Partial<T>,
-          fetchedData[key] as Partial<U>
+          baselineObj[key] as Partial<U>
         );
       }
 
-      (newObj as Record<string, unknown>)[key] =
-        fetchedData[key] || newObj[key];
+      (newObj as Record<string, unknown>)[key] = baselineObj[key] || "";
     });
   }
   return newObj;

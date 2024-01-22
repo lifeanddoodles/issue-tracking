@@ -140,33 +140,30 @@ const CompanyDetails = () => {
 
   const handleChange = useCallback(
     (target: FormElement, updatedFormData: PartialDocument) => {
+      const newFormData = { ...updatedFormData };
+
       // Check if the target name starts with 'address.'
       if (target.name.startsWith("address.")) {
         // This is an address property
         // Fix its name, update the correct property inside address
         const addressKey = target.name.replace("address.", "");
 
-        if (!updatedFormData.address) {
-          updatedFormData.address = {
-            street: "",
-            city: "",
-            state: "",
-            zip: "",
-            country: "",
-          };
-        }
-
-        updatedFormData.address[addressKey as keyof IAddressInfo] =
-          target.value;
+        updatedFormData = {
+          ...updatedFormData,
+          address: {
+            ...(updatedFormData.address || {}),
+            [addressKey as keyof IAddressInfo]: target.value,
+          } as IAddressInfo,
+        };
       } else if (target.name === "newEmployee") {
-        updatedFormData[target.name as keyof ICompanyDocument] = target.value;
-        updatedFormData.employees = [
-          ...(updatedFormData?.employees || []),
+        newFormData[target.name as keyof ICompanyDocument] = target.value;
+        newFormData.employees = [
+          ...(newFormData?.employees || []),
           target.value as unknown as ObjectId | Record<string, unknown>,
         ];
       } else {
         // This is not an address property, update the main object
-        updatedFormData[target.name as keyof ICompanyDocument] =
+        newFormData[target.name as keyof ICompanyDocument] =
           target.type === "checkbox"
             ? (target as HTMLInputElement).checked
             : target.value !== "" && target.value
@@ -174,7 +171,7 @@ const CompanyDetails = () => {
             : null;
       }
 
-      return updatedFormData;
+      return newFormData;
     },
     []
   );

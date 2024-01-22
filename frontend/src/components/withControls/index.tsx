@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import useFormFieldControls from "../../hooks/useFormFieldControls";
 import {
   CombinedProps,
@@ -22,7 +22,7 @@ const withControlsBase = <T extends FormElement, U extends IFieldProps>(
     const fieldRef = useRef<T | null>(null);
     const [initialValue, setInitialValue] = useState<
       nonBooleanValueType | boolean
-    >(props.value || props?.checked);
+    >(props.value || props?.checked); // TODO: Fix type error for props.checked
     const [resetFieldValue, setResetFieldValue] = useState(false);
     const label = getReadableInputName(
       (props.label || props.id!).replace(":", "")
