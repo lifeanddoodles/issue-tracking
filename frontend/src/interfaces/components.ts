@@ -1,4 +1,5 @@
 import { ObjectId } from "mongoose";
+import { ButtonVariant } from "../utils";
 
 export type ControllerType =
   | "text"
@@ -137,14 +138,27 @@ export interface IFormControlWithActionsProps<T extends FormElement>
   component: JSX.ElementType;
 }
 
+type ResetKeyValue = Record<string, boolean | nonBooleanValueType>;
+export type IOnClickProps = React.MouseEvent<HTMLElement> | ResetKeyValue;
+
 export interface IFormFieldControls {
   isEditable: boolean;
   label: string;
   onToggleEdit: () => void;
-  onCancel: (
-    resetKeyValue: Record<string, nonBooleanValueType | boolean>
-  ) => void;
+  onCancel: (resetKeyValue: IOnClickProps) => void;
   onSave: () => void;
 }
 
 export type CombinedProps<T, U> = T & U;
+
+export interface IButtonProps {
+  label?: string;
+  children: React.ReactNode;
+  id?: string;
+  onClick?: (e: IOnClickProps) => void;
+  type?: "button" | "submit" | "reset";
+  variant?: ButtonVariant;
+  disabled?: boolean;
+  className?: string;
+  ariaLabel?: string;
+}

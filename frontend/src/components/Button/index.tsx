@@ -1,17 +1,6 @@
 import { twMerge } from "tailwind-merge";
-import { ButtonVariant, getVariantClasses } from "../../utils";
-
-export interface IButtonProps {
-  label?: string;
-  children: React.ReactNode;
-  id?: string;
-  onClick?: (e: React.MouseEvent<HTMLElement>) => void;
-  type?: "button" | "submit" | "reset";
-  variant?: ButtonVariant;
-  disabled?: boolean;
-  className?: string;
-  ariaLabel?: string;
-}
+import { IButtonProps } from "../../interfaces";
+import { getVariantClasses } from "../../utils";
 
 const Button = ({
   children,

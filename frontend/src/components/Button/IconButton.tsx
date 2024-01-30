@@ -1,15 +1,7 @@
-import Button, { IButtonProps } from ".";
-import { nonBooleanValueType } from "../../interfaces";
+import Button from ".";
+import { IButtonProps } from "../../interfaces";
 
-type IOnClickProps =
-  | React.MouseEvent<HTMLElement>
-  | Record<string, nonBooleanValueType | boolean>;
-
-interface IconButtonProps extends Omit<IButtonProps, "onClick"> {
-  onClick: (e: IOnClickProps) => void;
-}
-
-const IconButton = ({ children, ...props }: IconButtonProps) => {
+const IconButton = ({ children, ...props }: IButtonProps) => {
   return (
     <Button {...props} variant="icon">
       {children}
