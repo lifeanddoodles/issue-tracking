@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { isEmpty, isFalsy } from "../utils";
+import { isFalsy } from "../utils";
 import useResourceInfo from "./useResourceInfo";
 
 export const hasUpdates = <T>(
@@ -35,10 +35,8 @@ export const hasUpdates = <T>(
       }
     }
     if (
-      typeof formData[key as keyof T] !== "object" &&
       typeof formData[key as keyof T] !== "undefined" &&
-      (!initialFormData[key as keyof T] ||
-        initialFormData[key as keyof T] === undefined ||
+      (!Object.prototype.hasOwnProperty.call(initialFormData, key as keyof T) ||
         initialFormData[key as keyof T] === null ||
         formData[key as keyof T] !== initialFormData[key as keyof T])
     ) {
@@ -102,12 +100,14 @@ const useForm = <T, U>({ formShape, url, onSuccess }: IUseFormProps<T>) => {
   }, [formData, formShape, objectShape]);
 
   useEffect(() => {
-    if (formData !== null && initialFormData !== null) {
+    if (
+      formData !== null &&
+      formData !== undefined &&
+      initialFormData !== null
+    ) {
       const updates = hasUpdates(formData, initialFormData);
 
-      if (!isEmpty(updates)) {
-        setChangedFormData(updates);
-      }
+      setChangedFormData(updates);
     }
   }, [setChangedFormData, formData, initialFormData]);
 

@@ -341,7 +341,7 @@ export function getAssignableDepartmentTeamOptions(noSelectionText?: string) {
 }
 
 export function getUserDataOptions(users: Partial<IUserDocument>[]) {
-  return users.map((user) => ({
+  return users?.map((user) => ({
     value: user._id as string,
     label: getFullName(user.firstName!, user.lastName!),
   }));

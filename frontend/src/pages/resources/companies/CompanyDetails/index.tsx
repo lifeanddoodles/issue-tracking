@@ -140,7 +140,7 @@ const CompanyDetails = () => {
 
   const handleChange = useCallback(
     (target: FormElement, updatedFormData: PartialDocument) => {
-      const newFormData = { ...updatedFormData };
+      let newFormData = { ...updatedFormData };
 
       // Check if the target name starts with 'address.'
       if (target.name.startsWith("address.")) {
@@ -148,10 +148,10 @@ const CompanyDetails = () => {
         // Fix its name, update the correct property inside address
         const addressKey = target.name.replace("address.", "");
 
-        updatedFormData = {
-          ...updatedFormData,
+        newFormData = {
+          ...newFormData,
           address: {
-            ...(updatedFormData.address || {}),
+            ...(newFormData.address || {}),
             [addressKey as keyof IAddressInfo]: target.value,
           } as IAddressInfo,
         };

@@ -18,7 +18,7 @@ import {
 } from "../../../../__mocks__";
 import AuthContext from "../../../../context/AuthContext";
 import { FormElement } from "../../../../interfaces";
-import { getReadableInputName } from "../../../../utils";
+import { getReadableInputName, getValue } from "../../../../utils";
 
 const compareValue: <T>(
   elementValue: unknown,
@@ -254,12 +254,14 @@ describe("CompanyDetails", () => {
       async ({ fieldId, newFieldValue }) => {
         user.setup();
 
-        const { rerender } = render(
-          <MemoryRouter>
-            <AuthContext.Provider value={auth}>
-              <CompanyDetails />
-            </AuthContext.Provider>
-          </MemoryRouter>
+        act(() =>
+          render(
+            <MemoryRouter>
+              <AuthContext.Provider value={auth}>
+                <CompanyDetails />
+              </AuthContext.Provider>
+            </MemoryRouter>
+          )
         );
 
         const fieldLabel = getReadableInputName(fieldId);
@@ -289,11 +291,13 @@ describe("CompanyDetails", () => {
 
         await act(() => updateFieldAndCheckValue(field, newFieldValue));
 
+        await user.click(fieldSaveButton!);
         /**
          * TODO: Fix failing tests for spyOn/mock request method and verify parameters
-         * Use mockOrSpiedRequest.shouldHaveBeenCalledWith({ [fieldId]: newFieldValue })
+         * - Assert mockOrSpyFn.toHaveBeenCalled()
+         * - Assert mockOrSpyFn.toHaveBeenCalledWith({ url: '/companies/${company!._id}', options: { [fieldId]: newFieldValue } })
          */
-        await user.click(fieldSaveButton!);
+      }
     );
 
     /**
