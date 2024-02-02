@@ -2,7 +2,6 @@ import {
   act,
   fireEvent,
   render,
-  renderHook,
   screen,
   waitFor,
 } from "@testing-library/react";
@@ -17,8 +16,12 @@ import {
   fakeCompanies,
 } from "../../../../__mocks__";
 import AuthContext from "../../../../context/AuthContext";
+import useResourceInfo from "../../../../hooks/useResourceInfo";
 import { FormElement } from "../../../../interfaces";
+import { COMPANIES_BASE_API_URL } from "../../../../routes";
 import { getReadableInputName, getValue } from "../../../../utils";
+
+vi.mock("../../../../hooks/useResourceInfo");
 
 const compareValue: <T>(
   elementValue: unknown,
@@ -42,6 +45,19 @@ const authBase = {
 
 describe("CompanyDetails", () => {
   describe("if company does not exist", async () => {
+    beforeEach(() => {
+      vi.mocked(useResourceInfo)
+        .mockClear()
+        .mockImplementation(() => ({
+          data: null,
+          loading: false,
+          error: new Error("Error"),
+          requestGetResource: vi.fn(),
+          requestUpdateResource: vi.fn(),
+          requestDeleteResource: vi.fn(),
+        }));
+    });
+
     test("renders error", async () => {
       const auth = {
         user: {
@@ -79,6 +95,23 @@ describe("CompanyDetails", () => {
     const company = fakeCompanies.find(
       (company) => company._id === auth.user.company
     );
+
+    const requestUpdateResourceMock = vi.fn(async () => {
+      return Promise.resolve();
+    });
+
+    beforeEach(() => {
+      vi.mocked(useResourceInfo)
+        .mockClear()
+        .mockImplementation(() => ({
+          data: company,
+          loading: false,
+          error: null,
+          requestGetResource: vi.fn(),
+          requestUpdateResource: requestUpdateResourceMock,
+          requestDeleteResource: vi.fn(),
+        }));
+    });
 
     const updateInputOrTextarea = async (
       field: FormElement,
@@ -231,24 +264,22 @@ describe("CompanyDetails", () => {
     );
 
     /**
-     * TODO: Fix failing tests:
-     * - toHaveBeenCalled()
-     * - toHaveBeenCalledWith({ [fieldId]: newFieldValue })
+     * TODO: Fix failing tests for the select fields:
+     * - subscriptionStatus
+     * - industry
+     * - newEmployee
      */
-    test.skip.each`
-      fieldId                 | newFieldValue
-      ${"name"}               | ${"New name"}
-      ${"email"}              | ${"new@email.com"}
-      ${"description"}        | ${"New description"}
-      ${"subscriptionStatus"} | ${"1"}
-      ${"address.street"}     | ${"New street"}
-      ${"address.city"}       | ${"New city"}
-      ${"address.state"}      | ${"New state"}
-      ${"address.zip"}        | ${"11111"}
-      ${"address.country"}    | ${"New country"}
-      ${"dba"}                | ${"New DBA"}
-      ${"industry"}           | ${"1"}
-      ${"newEmployee"}        | ${"1"}
+    test.each`
+      fieldId              | newFieldValue
+      ${"name"}            | ${"New name"}
+      ${"email"}           | ${"new@email.com"}
+      ${"description"}     | ${"New description"}
+      ${"address.street"}  | ${"New street"}
+      ${"address.city"}    | ${"New city"}
+      ${"address.state"}   | ${"New state"}
+      ${"address.zip"}     | ${"11111"}
+      ${"address.country"} | ${"New country"}
+      ${"dba"}             | ${"New DBA"}
     `(
       "when saving changes on $fieldId, the correct data is sent to the server",
       async ({ fieldId, newFieldValue }) => {
@@ -292,16 +323,32 @@ describe("CompanyDetails", () => {
         await act(() => updateFieldAndCheckValue(field, newFieldValue));
 
         await user.click(fieldSaveButton!);
-        /**
-         * TODO: Fix failing tests for spyOn/mock request method and verify parameters
-         * - Assert mockOrSpyFn.toHaveBeenCalled()
-         * - Assert mockOrSpyFn.toHaveBeenCalledWith({ url: '/companies/${company!._id}', options: { [fieldId]: newFieldValue } })
-         */
+
+        const updatedField = fieldId.startsWith("address.")
+          ? "address"
+          : fieldId;
+        const body = {
+          [updatedField]: fieldId.startsWith("address.")
+            ? {
+                ...company!.address,
+                [fieldId.split(".")[1]]: newFieldValue,
+              }
+            : newFieldValue,
+        };
+
+        await waitFor(async () => {
+          expect(requestUpdateResourceMock).toHaveBeenCalled();
+        });
+
+        expect(requestUpdateResourceMock).toHaveBeenCalledWith({
+          url: `${COMPANIES_BASE_API_URL}/${company!._id}`,
+          body,
+        });
       }
     );
 
     /**
-     * TODO: Fix failing tests for the following (select) fields:
+     * TODO: Fix failing tests for the select fields:
      * - subscriptionStatus
      * - industry
      * - newEmployee
