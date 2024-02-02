@@ -3,60 +3,12 @@ import {
   Dispatch,
   SetStateAction,
   cloneElement,
-  useCallback,
   useEffect,
   useMemo,
-  useState,
 } from "react";
-import useFormFieldControls from "../../hooks/useFormFieldControls";
 import { getReadableInputName } from "../../utils";
 import FormFieldControls from "../FormFieldControls";
-
-const withControls = (Component: JSX.ElementType) => {
-  return ({
-    label,
-    children,
-    onCancel,
-    onSave,
-  }: {
-    label: string;
-    children: React.ReactNode;
-    onCancel: () => void;
-    onSave: () => void;
-  }) => {
-    const [resetFieldValue, setResetFieldValue] = useState(false);
-    const formattedLabel = getReadableInputName(label.replace(":", ""));
-    const { isEditable, setIsEditable, onToggleEdit } = useFormFieldControls();
-
-    const handleToggleEdit = useCallback(() => {
-      onToggleEdit();
-    }, [onToggleEdit]);
-
-    const handleSave = useCallback(() => {
-      onSave && onSave();
-      handleToggleEdit();
-    }, [handleToggleEdit, onSave]);
-
-    const handleCancel = useCallback(() => {
-      onCancel && onCancel();
-      setResetFieldValue(true);
-      setIsEditable(false);
-    }, [onCancel, setIsEditable]);
-
-    return (
-      <Component
-        children={children}
-        isEditable={isEditable}
-        label={formattedLabel}
-        onToggleEdit={handleToggleEdit}
-        onSave={handleSave}
-        onCancel={handleCancel}
-        resetFieldValue={resetFieldValue}
-        setResetFieldValue={setResetFieldValue}
-      />
-    );
-  };
-};
+import withControls from "./hoc/withControls";
 
 const FieldWithControls = withControls(
   ({
