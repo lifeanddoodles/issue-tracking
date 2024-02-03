@@ -137,6 +137,24 @@ export const handlers: HttpHandler[] = [
       );
     }
   ),
+  http.delete<PathParams, DefaultBodyType | ErrorResponse>(
+    `${baseUrl}${COMPANIES_BASE_API_URL}/:id`,
+    ({ params }) => {
+      const fakeCompany = fakeCompanies.find(
+        (company) => company._id === params.id
+      );
+      if (!fakeCompany) {
+        return HttpResponse.json<ErrorResponse>(
+          { message: "Company not deleted" },
+          { status: 404 }
+        );
+      }
+      return HttpResponse.json(
+        { message: "Company deleted successfully" },
+        { status: 200 }
+      );
+    }
+  ),
   http.get(`${baseUrl}${SERVICES_BASE_API_URL}`, () => {
     return HttpResponse.json(fakeServices, { status: 200 });
   }),
