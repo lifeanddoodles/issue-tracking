@@ -4,11 +4,13 @@ import { getReadableInputName } from "../../../utils";
 
 const withControls = (Component: JSX.ElementType) => {
   return ({
+    id,
     label,
     children,
     onCancel,
     onSave,
   }: {
+    id: string;
     label: string;
     children: React.ReactNode;
     onCancel: () => void;
@@ -37,6 +39,7 @@ const withControls = (Component: JSX.ElementType) => {
       <Component
         children={children}
         isEditable={isEditable}
+        id={id}
         label={formattedLabel}
         onToggleEdit={handleToggleEdit}
         onSave={handleSave}

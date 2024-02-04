@@ -10,6 +10,7 @@ import { FormElement } from "../../interfaces";
 import { getValue, toCapital } from "../../utils";
 import Button from "../Button";
 import FieldWithControls from "../FieldWithControls";
+import Form from "../Form";
 import Heading from "../Heading";
 import withUpdatableResourceForm from "../withUpdatableResourceForm";
 
@@ -39,6 +40,7 @@ const getChildren = <T extends Record<string, unknown>>({
 
       return (
         <FieldWithControls
+          id={child.props.id}
           label={child.props.label}
           onCancel={onCancel}
           onSave={onSave}
@@ -90,7 +92,12 @@ const UpdatableResourceForm = withUpdatableResourceForm(
           <Button onClick={onDelete}>Delete</Button>
         </div>
         <Heading text={`${toCapital(resourceName)} Details`} level={1} />
-        {formattedChildren}
+        <Form
+          className={`${resourceName}-details__form`}
+          ariaLabel={`${resourceName}-details-form`}
+        >
+          {formattedChildren}
+        </Form>
       </div>
     );
   }

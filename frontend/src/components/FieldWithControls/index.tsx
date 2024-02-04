@@ -1,6 +1,7 @@
 import {
   Children,
   Dispatch,
+  ReactNode,
   SetStateAction,
   cloneElement,
   useEffect,
@@ -13,6 +14,7 @@ import withControls from "./hoc/withControls";
 const FieldWithControls = withControls(
   ({
     children,
+    id,
     label,
     onCancel,
     onSave,
@@ -21,7 +23,8 @@ const FieldWithControls = withControls(
     resetFieldValue,
     setResetFieldValue,
   }: {
-    children: React.ReactNode;
+    children: ReactNode;
+    id: string;
     label: string;
     onCancel: () => void;
     onSave: () => void;
@@ -32,10 +35,10 @@ const FieldWithControls = withControls(
   }) => {
     const formattedLabel = getReadableInputName(label.replace(":", ""));
     const childWithNewProps = useMemo(() => {
-      const childElement = Children.only(children);
+      const childElement = Children.only(children) as JSX.Element;
 
-      return cloneElement(childElement as JSX.Element, {
-        ...(childElement as JSX.Element).props,
+      return cloneElement(childElement, {
+        ...childElement.props,
         disabled: !isEditable,
         resetFieldValue,
         setResetFieldValue,
@@ -47,7 +50,7 @@ const FieldWithControls = withControls(
     }, [setResetFieldValue]);
 
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center" data-testid={id}>
         {childWithNewProps}
         <FormFieldControls
           label={formattedLabel}
