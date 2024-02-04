@@ -34,12 +34,12 @@ const Input = forwardRef(
     const { validateField } = useValidation();
 
     const handleReset = useCallback(() => {
-      setInputValue(value!);
+      setInputValue((type !== "checkbox" ? value : checked)!);
       setResetFieldValue && setResetFieldValue(false);
-    }, [value, setResetFieldValue]);
+    }, [type, value, checked, setResetFieldValue]);
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInputValue(e.target.value);
+      setInputValue(type !== "checkbox" ? e.target.value : e.target.checked);
       onChange && onChange(e);
     };
 
