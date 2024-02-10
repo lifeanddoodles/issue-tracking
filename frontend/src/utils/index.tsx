@@ -516,6 +516,10 @@ export function getReadableInputName(id: string) {
       return "Description";
     case "newEmployee":
       return "Add employee";
+    case "newTeamMember":
+      return "Add team member";
+    case "newService":
+      return "Add service";
     default:
       return id;
   }
@@ -568,7 +572,7 @@ export const traverseObjectAndGetValue = <T extends Record<string, unknown>>(
   return foundValue;
 };
 
-export const matchPathToIndentedKeyValue = <T extends Record<string, unknown>>(
+export const matchPathToIndentedKeyValue = <T,>(
   keyName: string,
   objToMatch: T
 ) => {
@@ -578,7 +582,7 @@ export const matchPathToIndentedKeyValue = <T extends Record<string, unknown>>(
 
   for (let i = 0; i < pathSteps.length; i++) {
     if (Object.prototype.hasOwnProperty.call(stepValue, pathSteps[i])) {
-      stepValue = stepValue[pathSteps[i]] as T;
+      stepValue = stepValue[pathSteps[i] as keyof T] as T;
     } else {
       // If the step is not found, break out of the loop
       stepValue = undefined;
@@ -588,17 +592,14 @@ export const matchPathToIndentedKeyValue = <T extends Record<string, unknown>>(
   return stepValue;
 };
 
-export const getValue = (keyName: string, obj: Record<string, unknown>) => {
+export const getValue = <T,>(keyName: string, obj: T) => {
   if (hasPathToIndentedKey(keyName)) {
     return matchPathToIndentedKeyValue(keyName, obj);
   }
-  return obj[keyName];
+  return obj[keyName as keyof T];
 };
 
-export const traverseAndUpdateObject = <
-  T extends Record<string, unknown>,
-  U extends Record<string, unknown>
->(
+export const traverseAndUpdateObject = <T, U extends Record<string, unknown>>(
   objShape: Partial<T>,
   fetchedData: Partial<U> | null
 ) => {
@@ -610,12 +611,12 @@ export const traverseAndUpdateObject = <
   if (typeof newObj === "object") {
     Object.entries(newObj).map(([key]) => {
       if (
-        typeof newObj[key] === "object" &&
-        !Array.isArray(newObj[key]) &&
+        typeof newObj[key as keyof T] === "object" &&
+        !Array.isArray(newObj[key as keyof T]) &&
         baselineObj[key]
       ) {
         traverseAndUpdateObject(
-          newObj[key] as Partial<T>,
+          newObj[key as keyof T] as Partial<T>,
           baselineObj[key] as Partial<U>
         );
       }

@@ -17,7 +17,7 @@ import SelectWithFetch from "../../../components/Select/SelectWithFetch";
 import { useAuthContext } from "../../../context/AuthProvider";
 import useFetch from "../../../hooks/useFetch";
 import useValidation from "../../../hooks/useValidation";
-import { FormFieldMapItem } from "../../../interfaces";
+import { FormField } from "../../../interfaces";
 import {
   COMPANIES_BASE_API_URL,
   USERS_BASE_API_URL,
@@ -51,12 +51,12 @@ const Register = () => {
     loading: newCompanyLoading,
     sendRequest,
   } = useFetch<ICompanyDocument>();
-  const fields: FormFieldMapItem[] = useMemo(
+  const fields: FormField[] = useMemo(
     () => [
       {
         id: "firstName",
         label: "First name:",
-        component: TextInput,
+        Component: TextInput,
         required: true,
         fieldProps: {
           minLength: 2,
@@ -65,7 +65,7 @@ const Register = () => {
       {
         id: "lastName",
         label: "Last name:",
-        component: TextInput,
+        Component: TextInput,
         required: true,
         fieldProps: {
           minLength: 2,
@@ -74,16 +74,16 @@ const Register = () => {
       {
         id: "email",
         label: "Email:",
-        component: EmailInput,
+        Component: EmailInput,
         required: true,
       },
       {
         id: "company",
         label: "Company:",
         ...(!companyParam
-          ? { component: TextInput }
+          ? { Component: TextInput }
           : {
-              component: SelectWithFetch,
+              Component: SelectWithFetch,
               fieldProps: {
                 url: COMPANIES_BASE_API_URL,
                 getFormattedOptions: getCompanyDataOptions,
@@ -96,18 +96,18 @@ const Register = () => {
       {
         id: "position",
         label: "Position:",
-        component: TextInput,
+        Component: TextInput,
       },
       {
         id: "password",
         label: "Password:",
-        component: PasswordInput,
+        Component: PasswordInput,
         required: true,
       },
       {
         id: "confirmPassword",
         label: "Confirm password:",
-        component: PasswordInput,
+        Component: PasswordInput,
         required: true,
       },
     ],
@@ -225,14 +225,7 @@ const Register = () => {
     <Form onSubmit={handleSubmit}>
       <Heading text="Register" level={1} />
       {fields.map(
-        ({
-          id,
-          label,
-          component: Component,
-          required,
-          fieldProps,
-          customFormProps,
-        }) => (
+        ({ id, label, Component, required, fieldProps, customFormProps }) => (
           <Component
             key={id}
             label={label}

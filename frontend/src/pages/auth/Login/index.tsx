@@ -6,21 +6,21 @@ import Heading from "../../../components/Heading";
 import { EmailInput, PasswordInput } from "../../../components/Input";
 import { useAuthContext } from "../../../context/AuthProvider";
 import useValidation from "../../../hooks/useValidation";
-import { FormFieldMapItem } from "../../../interfaces";
+import { FormField } from "../../../interfaces";
 import { LOGIN_API_URL, getLoginUserOptions } from "../../../routes";
 import GoogleLoginButton from "./GoogleLoginButton";
 
-const fields: FormFieldMapItem[] = [
+const fields: FormField[] = [
   {
     id: "email",
     label: "Email:",
-    component: EmailInput,
+    Component: EmailInput,
     required: true,
   },
   {
     id: "password",
     label: "Password:",
-    component: PasswordInput,
+    Component: PasswordInput,
     required: true,
   },
 ];
@@ -88,7 +88,7 @@ const Login = () => {
     <>
       <Form onSubmit={handleSubmit}>
         <Heading text="Login" level={1} />
-        {fields.map(({ id, label, component: Component, required }) => (
+        {fields.map(({ id, label, Component, required }) => (
           <Component
             key={id}
             label={label}

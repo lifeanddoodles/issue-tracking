@@ -1,4 +1,5 @@
 import { ObjectId } from "mongoose";
+import { ElementType } from "react";
 import { ButtonVariant } from "../utils";
 
 export type ControllerType =
@@ -23,14 +24,15 @@ export type FormElement =
   | HTMLSelectElement
   | HTMLTextAreaElement;
 
-export interface FormFieldMapItem {
+export interface FormField {
   id: string;
-  component: React.ElementType;
+  Component: ElementType;
   label?: string;
   placeholder?: string;
   required?: boolean;
   fieldProps?: Record<string, unknown>;
   customFormProps?: Record<string, unknown>;
+  ensureAdmin?: boolean;
 }
 
 export interface IFormStateProps {

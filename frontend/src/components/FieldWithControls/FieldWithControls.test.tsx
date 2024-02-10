@@ -22,6 +22,7 @@ describe("FieldWithControls", () => {
   const renderField = () => {
     render(
       <FieldWithControls
+        id={fieldProps.id}
         label={fieldProps.label}
         onCancel={controlsProps.onCancel}
         onSave={controlsProps.onSave}

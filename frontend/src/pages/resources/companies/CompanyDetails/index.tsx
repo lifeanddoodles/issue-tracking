@@ -14,6 +14,7 @@ import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import TextArea from "../../../../components/TextArea";
 import UpdatableResourceForm from "../../../../components/UpdatableResourceForm";
 import { useAuthContext } from "../../../../context/AuthProvider";
+import { ResourceUpdatableFormProps } from "../../../../interfaces";
 import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
   getIndustryOptions,
@@ -21,30 +22,25 @@ import {
   getUserDataOptions,
 } from "../../../../utils";
 
-type PartialDocument = Partial<ICompanyDocument> & {
-  newEmployee?: ObjectId | Record<string, unknown>;
-};
-
-interface ICompanyDetailsFormProps {
-  resourceUrl: string;
-  resourceId: string;
-  resourceName: string;
-  onChange: (
-    target: FormElement,
-    updates: Partial<ICompanyDocument>
-  ) => Partial<ICompanyDocument>;
-  formShape: Partial<ICompanyDocument> & {
+type CompanyFormData = Partial<
+  ICompanyDocument & {
     newEmployee?: string;
-  };
-}
+  }
+>;
 
-const CompanyDetailsForm = ({
+const CompanyDetailsForm: ({
   resourceUrl,
   resourceId,
   resourceName,
   onChange,
   formShape,
-}: ICompanyDetailsFormProps) => {
+}: ResourceUpdatableFormProps<CompanyFormData>) => JSX.Element = ({
+  resourceUrl,
+  resourceId,
+  resourceName,
+  onChange,
+  formShape,
+}) => {
   return (
     <UpdatableResourceForm
       resourceUrl={resourceUrl}
@@ -101,6 +97,8 @@ const CompanyDetailsForm = ({
         id="description"
         value={formShape?.description}
       />
+      {/* TODO: Select should be displayed only for admin, other users must fill a separate form */}
+      {/* TODO: Handle optional and/or invalid children to modify */}
       <SelectWithFetch
         label="Add employee:"
         id="newEmployee"
@@ -139,7 +137,7 @@ const CompanyDetails = () => {
   };
 
   const handleChange = useCallback(
-    (target: FormElement, updatedFormData: PartialDocument) => {
+    (target: FormElement, updatedFormData: CompanyFormData) => {
       let newFormData = { ...updatedFormData };
 
       // Check if the target name starts with 'address.'
@@ -185,6 +183,10 @@ const CompanyDetails = () => {
         onChange={handleChange}
         formShape={formShape}
       />
+      {/*
+       * TODO: Add new employee form or link if user is not admin
+       * <Link to="/dashboard/users/create">Add team member</Link>
+       */}
     </>
   );
 };

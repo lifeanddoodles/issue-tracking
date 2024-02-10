@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
 import useForm from "../../hooks/useForm";
 import useValidation from "../../hooks/useValidation";
-import { FormElement } from "../../interfaces";
+import { ResourceUpdatableFormProps } from "../../interfaces";
 import {
   objValuesAreFalsy,
   toCapital,
@@ -9,10 +9,7 @@ import {
 } from "../../utils";
 import Heading from "../Heading";
 
-const withUpdatableResourceForm = <
-  T extends Record<string, unknown>,
-  U extends Record<string, unknown>
->(
+const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
   Component: JSX.ElementType
 ) => {
   return ({
@@ -22,14 +19,7 @@ const withUpdatableResourceForm = <
     onChange,
     formShape,
     children,
-  }: {
-    resourceUrl: string;
-    resourceId: string;
-    resourceName: string;
-    onChange: (target: FormElement, updates: Partial<T>) => Partial<T>;
-    formShape: Partial<T>;
-    children: JSX.Element | JSX.Element[];
-  }) => {
+  }: ResourceUpdatableFormProps<T>) => {
     const {
       setObjectShape,
       formData,

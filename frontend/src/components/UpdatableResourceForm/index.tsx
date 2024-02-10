@@ -14,7 +14,7 @@ import Form from "../Form";
 import Heading from "../Heading";
 import withUpdatableResourceForm from "../withUpdatableResourceForm";
 
-const getChildren = <T extends Record<string, unknown>>({
+const getChildren = <T,>({
   children,
   errors,
   formData,
@@ -32,7 +32,7 @@ const getChildren = <T extends Record<string, unknown>>({
   setErrors: Dispatch<SetStateAction<{ [key: string]: string[] } | null>>;
 }) => {
   return Children.toArray(children).map((child) => {
-    if (isValidElement(child)) {
+    if (isValidElement(child) && child?.props?.id) {
       const valueObj =
         child.props?.value !== undefined
           ? { value: getValue(child.props.id, formData) }
