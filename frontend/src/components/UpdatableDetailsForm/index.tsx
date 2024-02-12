@@ -12,7 +12,7 @@ const UpdatableDetailsForm = <T extends Record<string, unknown>>({
   isAdmin,
 }: ResourceUpdatableFormProps<T> & {
   fields: FormField[];
-  isAdmin: boolean;
+  isAdmin?: boolean;
 }) => {
   const renderedChildren = fields.map(
     ({
