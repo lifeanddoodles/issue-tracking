@@ -119,7 +119,7 @@ const ProjectDetails = () => {
         onChange={handleChange}
         formShape={formShape}
         fields={fields}
-        isAdmin={isAdmin}
+        userRole={user?.role as UserRole}
       />
       {!isAdmin && <Link to="/dashboard/users/create">Add team member</Link>}
     </>

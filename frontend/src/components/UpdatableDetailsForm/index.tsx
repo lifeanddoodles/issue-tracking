@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { UserRole } from "../../../../shared/interfaces";
 import { FormField, ResourceUpdatableFormProps } from "../../interfaces";
 import UpdatableResourceForm from "../UpdatableResourceForm";
 
@@ -9,22 +10,30 @@ const UpdatableDetailsForm = <T extends Record<string, unknown>>({
   onChange,
   formShape,
   fields,
-  isAdmin,
+  userRole,
 }: ResourceUpdatableFormProps<T> & {
   fields: FormField[];
-  isAdmin?: boolean;
+  userRole?: UserRole;
 }) => {
+  const isAdmin = userRole === UserRole.ADMIN;
   const renderedChildren = fields.map(
     ({
       Component,
       id,
+      disabled,
       ensureAdmin = false,
       fieldProps = {},
       ...otherProps
-    }: FormField) => {
+    }: FormField & {
+      disabled?: boolean | ((userRole: UserRole) => boolean);
+    }) => {
       if (ensureAdmin && !isAdmin) return <Fragment key={id}></Fragment>;
 
       const value = formShape[id as keyof T];
+      const disabledValue =
+        typeof disabled === "function"
+          ? disabled(userRole as UserRole)
+          : disabled;
 
       return (
         <Component
@@ -32,6 +41,7 @@ const UpdatableDetailsForm = <T extends Record<string, unknown>>({
           {...otherProps}
           id={id}
           value={value}
+          disabled={disabledValue}
           key={id}
         />
       );
@@ -45,6 +55,7 @@ const UpdatableDetailsForm = <T extends Record<string, unknown>>({
       resourceName={resourceName}
       onChange={onChange}
       formShape={formShape}
+      userRole={userRole}
     >
       {renderedChildren}
     </UpdatableResourceForm>

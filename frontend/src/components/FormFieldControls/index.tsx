@@ -8,12 +8,14 @@ const FormFieldControls = ({
   onToggleEdit,
   onSave,
   onCancel,
+  disableToggleEdit,
 }: IFormFieldControls) => {
   return (
     <div role="group" className="flex gap-2">
       <IconButton
         onClick={!isEditable ? onToggleEdit : onSave}
         ariaLabel={isEditable ? `Save ${label}` : `Edit ${label}`}
+        disabled={disableToggleEdit}
       >
         {isEditable ? <CheckIcon title="Save" /> : <PencilIcon title="Edit" />}
       </IconButton>

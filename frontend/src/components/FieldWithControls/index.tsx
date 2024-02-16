@@ -22,6 +22,7 @@ const FieldWithControls = withControls(
     onToggleEdit,
     resetFieldValue,
     setResetFieldValue,
+    disableToggleEdit,
   }: {
     children: ReactNode;
     id: string;
@@ -32,6 +33,7 @@ const FieldWithControls = withControls(
     onToggleEdit: () => void;
     resetFieldValue: boolean;
     setResetFieldValue: Dispatch<SetStateAction<boolean>>;
+    disableToggleEdit: boolean;
   }) => {
     const formattedLabel = getReadableInputName(label.replace(":", ""));
     const childWithNewProps = useMemo(() => {
@@ -58,6 +60,7 @@ const FieldWithControls = withControls(
           onCancel={onCancel}
           isEditable={isEditable}
           onToggleEdit={onToggleEdit}
+          disableToggleEdit={disableToggleEdit}
         />
       </div>
     );

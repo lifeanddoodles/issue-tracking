@@ -31,6 +31,7 @@ export interface FormField {
   placeholder?: string;
   required?: boolean;
   fieldProps?: Record<string, unknown>;
+  wrapperProps?: Record<string, unknown>;
   customFormProps?: Record<string, unknown>;
   ensureAdmin?: boolean;
 }
@@ -149,6 +150,7 @@ export interface IFormFieldControls {
   onToggleEdit: () => void;
   onCancel: (resetKeyValue: IOnClickProps) => void;
   onSave: () => void;
+  disableToggleEdit?: boolean;
 }
 
 export type CombinedProps<T, U> = T & U;

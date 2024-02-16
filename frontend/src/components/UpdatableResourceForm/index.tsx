@@ -6,7 +6,8 @@ import {
   isValidElement,
   useMemo,
 } from "react";
-import { FormElement } from "../../interfaces";
+import { UserRole } from "../../../../shared/interfaces";
+import { FormElement, WrapperWithLinkFallbackProps } from "../../interfaces";
 import { getValue, toCapital } from "../../utils";
 import Button from "../Button";
 import FieldWithControls from "../FieldWithControls";
@@ -22,6 +23,7 @@ const getChildren = <T,>({
   onChange,
   onSave,
   setErrors,
+  userRole,
 }: {
   children: JSX.Element | JSX.Element[];
   errors: { [key: string]: string[] } | null;
@@ -30,24 +32,31 @@ const getChildren = <T,>({
   onChange: (target: FormElement, updates: Partial<T>) => Partial<T>;
   onSave: () => void;
   setErrors: Dispatch<SetStateAction<{ [key: string]: string[] } | null>>;
+  userRole?: UserRole;
 }) => {
   return Children.toArray(children).map((child) => {
-    if (isValidElement(child) && child?.props?.id) {
+    if (isValidElement(child) && child?.props) {
+      const { id, label, wrapperProps = {}, ...rest } = child.props;
       const valueObj =
         child.props?.value !== undefined
-          ? { value: getValue(child.props.id, formData) }
-          : { checked: getValue(child.props.id, formData) };
+          ? { value: getValue(id, formData) }
+          : { checked: getValue(id, formData) };
 
-      return (
+      const disableToggleEdit = wrapperProps?.disableToggleEdit
+        ? wrapperProps?.disableToggleEdit(userRole)
+        : false;
+
+      const newChild = (
         <FieldWithControls
-          id={child.props.id}
-          label={child.props.label}
+          id={id}
+          label={label}
           onCancel={onCancel}
           onSave={onSave}
-          key={child.props.id}
+          disableToggleEdit={disableToggleEdit}
+          key={id}
         >
           {cloneElement(child, {
-            ...child.props,
+            ...rest,
             ...valueObj,
             ...(child.props?.showList && child?.props?.pathToValue
               ? { currentList: getValue(child?.props?.pathToValue, formData) }
@@ -58,6 +67,39 @@ const getChildren = <T,>({
           })}
         </FieldWithControls>
       );
+
+      const ChildWithWrapper = ({
+        Wrapper,
+        getResourceId,
+        resourceName,
+        uiResourceBaseUrl,
+      }: {
+        Wrapper: (args: WrapperWithLinkFallbackProps) => JSX.Element;
+        getResourceId: (formData: T, key: string) => string;
+        resourceName: string;
+        uiResourceBaseUrl: string;
+      }) => {
+        if (!Wrapper) {
+          return;
+        }
+
+        const resourceId = getResourceId(formData, resourceName);
+
+        return (
+          <Wrapper
+            resourceId={resourceId}
+            resourceName={resourceName}
+            uiResourceBaseUrl={uiResourceBaseUrl}
+            key={id}
+          >
+            {newChild}
+          </Wrapper>
+        );
+      };
+
+      return Object.keys(wrapperProps).length > 0
+        ? ChildWithWrapper({ ...wrapperProps })
+        : newChild;
     }
   });
 };
@@ -72,6 +114,7 @@ const UpdatableResourceForm = withUpdatableResourceForm(
     onChange,
     onSave,
     onCancel,
+    userRole,
     children,
   }) => {
     const formattedChildren = useMemo(() => {
@@ -83,8 +126,18 @@ const UpdatableResourceForm = withUpdatableResourceForm(
         onChange,
         onSave,
         setErrors,
+        userRole,
       });
-    }, [children, errors, formData, onCancel, onChange, onSave, setErrors]);
+    }, [
+      children,
+      errors,
+      formData,
+      onCancel,
+      onChange,
+      onSave,
+      setErrors,
+      userRole,
+    ]);
 
     return (
       <div className={`${resourceName}-details flex flex-col align-stretch`}>

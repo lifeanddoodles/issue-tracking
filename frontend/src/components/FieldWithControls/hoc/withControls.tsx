@@ -9,12 +9,14 @@ const withControls = (Component: JSX.ElementType) => {
     children,
     onCancel,
     onSave,
+    disableToggleEdit,
   }: {
     id: string;
     label: string;
     children: React.ReactNode;
     onCancel: () => void;
     onSave: () => void;
+    disableToggleEdit?: boolean;
   }) => {
     const [resetFieldValue, setResetFieldValue] = useState(false);
     const formattedLabel = getReadableInputName(label.replace(":", ""));
@@ -46,6 +48,7 @@ const withControls = (Component: JSX.ElementType) => {
         onCancel={handleCancel}
         resetFieldValue={resetFieldValue}
         setResetFieldValue={setResetFieldValue}
+        disableToggleEdit={disableToggleEdit}
       />
     );
   };

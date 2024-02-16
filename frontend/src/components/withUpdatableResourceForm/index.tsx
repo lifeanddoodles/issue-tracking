@@ -18,6 +18,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
     resourceName,
     onChange,
     formShape,
+    userRole,
     children,
   }: ResourceUpdatableFormProps<T>) => {
     const {
@@ -124,6 +125,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
 
     const resourceProps = useMemo(
       () => ({
+        resourceName,
         formData,
         loading,
         error,
@@ -133,9 +135,11 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
         onSave: handleSave,
         onCancel: handleCancel,
         onDelete: handleDelete,
+        userRole,
         children,
       }),
       [
+        resourceName,
         children,
         error,
         errors,
@@ -146,6 +150,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
         loading,
         setErrors,
         formData,
+        userRole,
       ]
     );
 
@@ -166,9 +171,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
           />
         )}
         {error && <Heading text={error.message} role="status" />}
-        {formData && (
-          <Component resourceName={resourceName} {...resourceProps} />
-        )}
+        {formData && <Component {...resourceProps} />}
       </>
     );
   };

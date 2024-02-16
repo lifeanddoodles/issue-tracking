@@ -121,6 +121,10 @@ export const fakeClientUserNoCompany = fakeUsers.filter(
   (user) => user.role === UserRole.CLIENT && !user.company
 )[0];
 
+export const fakeClientUserWithCompany = fakeUsers.filter(
+  (user) => user.role === UserRole.CLIENT && user.company
+)[0];
+
 export const fakeServices = [
   {
     _id: "service-000",

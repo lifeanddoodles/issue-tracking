@@ -520,6 +520,24 @@ export function getReadableInputName(id: string) {
       return "Add team member";
     case "newService":
       return "Add service";
+    case "assignToTeam":
+      return "Assign to team";
+    case "assignee":
+      return "Assignee";
+    case "reporter":
+      return "Reporter";
+    case "priority":
+      return "Priority";
+    case "ticketType":
+      return "Type";
+    case "estimatedTime":
+      return "Estimated time (in hours)";
+    case "deadline":
+      return "Deadline";
+    case "isSubtask":
+      return "Is subtask";
+    case "parentTask":
+      return "Parent task";
     default:
       return id;
   }

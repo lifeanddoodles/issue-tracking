@@ -32,6 +32,7 @@ const Input = forwardRef(
       type !== "checkbox" ? value || "" : checked || false
     );
     const { validateField } = useValidation();
+    const { wrapperProps = {}, ...rest } = props;
 
     const handleReset = useCallback(() => {
       setInputValue((type !== "checkbox" ? value : checked)!);
@@ -78,7 +79,7 @@ const Input = forwardRef(
           value={typeof inputValue !== "boolean" ? inputValue || "" : undefined}
           checked={typeof inputValue === "boolean" && inputValue}
           required={required}
-          {...props}
+          {...rest}
           aria-invalid={inputHasErrors || false}
           aria-errormessage={`${id}-errors`}
           className={mergedClassNames}
