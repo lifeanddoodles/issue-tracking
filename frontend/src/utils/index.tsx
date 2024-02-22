@@ -622,9 +622,12 @@ export const traverseAndUpdateObject = <T, U extends Record<string, unknown>>(
   fetchedData: Partial<U> | null
 ) => {
   const newObj: Partial<T> = { ...objShape };
-  const baselineObj = { ...fetchedData };
 
-  if (baselineObj === null) return newObj;
+  if (fetchedData === null) {
+    return newObj;
+  }
+
+  const baselineObj = { ...fetchedData };
 
   if (typeof newObj === "object") {
     Object.entries(newObj).map(([key]) => {
