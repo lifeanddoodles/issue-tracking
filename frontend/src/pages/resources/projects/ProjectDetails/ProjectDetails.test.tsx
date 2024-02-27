@@ -19,6 +19,7 @@ import {
   authBase,
   compareValue,
   componentWithAuthContext,
+  fieldNotDisabled,
   getFieldByLabel,
   renderWithRouter,
   renderWithRouterFromRoute,
@@ -153,16 +154,17 @@ describe("ProjectDetails", () => {
         expect(fieldEditButton).toBeInTheDocument();
 
         await user.click(fieldEditButton!);
-        expect(
-          screen.queryByRole("button", {
-            name: RegExp(`^edit ${fieldLabel}`, "i"),
-          })
-        ).not.toBeInTheDocument();
 
         const fieldSaveButton = screen.queryByRole("button", {
           name: RegExp(`^save ${fieldLabel}`, "i"),
         });
 
+        fieldNotDisabled(field);
+        expect(
+          screen.queryByRole("button", {
+            name: RegExp(`^edit ${fieldLabel}`, "i"),
+          })
+        ).not.toBeInTheDocument();
         expect(fieldSaveButton).toBeInTheDocument();
 
         await act(() => updateFieldAndCheckValue(field, newFieldValue));
@@ -201,16 +203,15 @@ describe("ProjectDetails", () => {
 
         await user.click(fieldEditButton!);
 
+        const fieldSaveButton = screen.queryByRole("button", {
+          name: RegExp(`^save ${fieldLabel}`, "i"),
+        });
+
         expect(
           screen.queryByRole("button", {
             name: RegExp(`^edit ${fieldLabel}`, "i"),
           })
         ).not.toBeInTheDocument();
-
-        const fieldSaveButton = screen.queryByRole("button", {
-          name: RegExp(`^save ${fieldLabel}`, "i"),
-        });
-
         expect(fieldSaveButton).toBeInTheDocument();
 
         await act(() => updateFieldAndCheckValue(field, newFieldValue));
@@ -223,11 +224,10 @@ describe("ProjectDetails", () => {
 
         await waitFor(async () => {
           expect(requestUpdateResourceMock).toHaveBeenCalled();
-        });
-
-        expect(requestUpdateResourceMock).toHaveBeenCalledWith({
-          url: `${PROJECTS_BASE_API_URL}/${project?._id}`,
-          body,
+          expect(requestUpdateResourceMock).toHaveBeenCalledWith({
+            url: `${PROJECTS_BASE_API_URL}/${project?._id}`,
+            body,
+          });
         });
       }
     );
@@ -258,15 +258,11 @@ describe("ProjectDetails", () => {
 
         expect(fieldCancelButton).toBeInTheDocument();
 
-        await act(async () => {
-          await user.click(fieldEditButton!);
-        });
+        await user.click(fieldEditButton!);
 
         await act(() => updateFieldAndCheckValue(field, newFieldValue));
 
-        await act(async () => {
-          await user.click(fieldCancelButton!);
-        });
+        await user.click(fieldCancelButton!);
 
         await waitFor(() => {
           compareValue<IProjectDocument>(

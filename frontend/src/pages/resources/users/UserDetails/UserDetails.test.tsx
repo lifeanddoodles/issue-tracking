@@ -21,6 +21,7 @@ import {
   adminAuth,
   compareValue,
   componentWithAuthContext,
+  fieldNotDisabled,
   getFieldByLabel,
   renderWithRouter,
   renderWithRouterFromRoute,
@@ -145,16 +146,17 @@ describe("UserDetails", () => {
         expect(fieldEditButton).toBeInTheDocument();
 
         await user.click(fieldEditButton!);
-        expect(
-          screen.queryByRole("button", {
-            name: RegExp(`^edit ${fieldLabel}`, "i"),
-          })
-        ).not.toBeInTheDocument();
 
         const fieldSaveButton = screen.queryByRole("button", {
           name: RegExp(`^save ${fieldLabel}`, "i"),
         });
 
+        fieldNotDisabled(field);
+        expect(
+          screen.queryByRole("button", {
+            name: RegExp(`^edit ${fieldLabel}`, "i"),
+          })
+        ).not.toBeInTheDocument();
         expect(fieldSaveButton).toBeInTheDocument();
 
         await act(() => updateFieldAndCheckValue(field, newFieldValue));
@@ -189,16 +191,15 @@ describe("UserDetails", () => {
 
         await user.click(fieldEditButton!);
 
+        const fieldSaveButton = screen.queryByRole("button", {
+          name: RegExp(`^save ${fieldLabel}`, "i"),
+        });
+
         expect(
           screen.queryByRole("button", {
             name: RegExp(`^edit ${fieldLabel}`, "i"),
           })
         ).not.toBeInTheDocument();
-
-        const fieldSaveButton = screen.queryByRole("button", {
-          name: RegExp(`^save ${fieldLabel}`, "i"),
-        });
-
         expect(fieldSaveButton).toBeInTheDocument();
 
         await act(() => updateFieldAndCheckValue(field, newFieldValue));
@@ -211,11 +212,10 @@ describe("UserDetails", () => {
 
         await waitFor(async () => {
           expect(requestUpdateResourceMock).toHaveBeenCalled();
-        });
-
-        expect(requestUpdateResourceMock).toHaveBeenCalledWith({
-          url: `${USERS_BASE_API_URL}/${fakeUser?._id}`,
-          body,
+          expect(requestUpdateResourceMock).toHaveBeenCalledWith({
+            url: `${USERS_BASE_API_URL}/${fakeUser?._id}`,
+            body,
+          });
         });
       }
     );
@@ -242,15 +242,11 @@ describe("UserDetails", () => {
 
         expect(fieldCancelButton).toBeInTheDocument();
 
-        await act(async () => {
-          await user.click(fieldEditButton!);
-        });
+        await user.click(fieldEditButton!);
 
         await act(() => updateFieldAndCheckValue(field, newFieldValue));
 
-        await act(async () => {
-          await user.click(fieldCancelButton!);
-        });
+        await user.click(fieldCancelButton!);
 
         await waitFor(() => {
           compareValue<IUserDocument>(

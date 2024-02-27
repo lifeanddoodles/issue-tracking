@@ -493,6 +493,7 @@ export function getReadableInputName(id: string) {
     case "name":
       return "Name";
     case "subscriptionStatus":
+    case "status":
       return "Status";
     case "url":
       return "URL";
@@ -531,7 +532,7 @@ export function getReadableInputName(id: string) {
     case "ticketType":
       return "Type";
     case "estimatedTime":
-      return "Estimated time (in hours)";
+      return "Estimated time";
     case "deadline":
       return "Deadline";
     case "isSubtask":
@@ -610,11 +611,26 @@ export const matchPathToIndentedKeyValue = <T,>(
   return stepValue;
 };
 
-export const getValue = <T,>(keyName: string, obj: T) => {
-  if (hasPathToIndentedKey(keyName)) {
-    return matchPathToIndentedKeyValue(keyName, obj);
+export const getValue = <T,>(
+  keyName: keyof T,
+  obj: T | Partial<T>,
+  getIdFromPopulated?: boolean
+) => {
+  if (hasPathToIndentedKey(keyName as string)) {
+    return matchPathToIndentedKeyValue(keyName as string, obj);
   }
-  return obj[keyName as keyof T];
+
+  const value = obj[keyName];
+  if (
+    getIdFromPopulated &&
+    value &&
+    typeof value === "object" &&
+    "_id" in value
+  ) {
+    return value._id;
+  }
+
+  return value;
 };
 
 export const traverseAndUpdateObject = <T, U extends Record<string, unknown>>(
