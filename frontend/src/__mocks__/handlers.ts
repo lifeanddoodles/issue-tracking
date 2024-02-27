@@ -5,7 +5,7 @@ import {
   HttpResponse,
   PathParams,
 } from "msw";
-import { ICompany, IUserDocument } from "shared/interfaces";
+import { ICompany, ITicket, IUserDocument } from "shared/interfaces";
 import {
   ErrorResponse,
   LoginRequestData,
@@ -77,6 +77,25 @@ export const handlers: HttpHandler[] = [
   http.get(`${baseUrl}${TICKETS_BASE_API_URL}`, () => {
     return HttpResponse.json(fakePopulatedTickets, { status: 200 });
   }),
+  http.patch<PathParams, DefaultBodyType | ErrorResponse>(
+    `${baseUrl}${TICKETS_BASE_API_URL}/:id`,
+    async ({ params, request }) => {
+      const fakeTicket = fakePopulatedTickets.find(
+        (ticket) => ticket._id === params.id
+      );
+      if (!fakeTicket) {
+        return HttpResponse.json(
+          { message: "Ticket not found" },
+          { status: 404 }
+        );
+      }
+      const newTicketData = (await request.json()) as Partial<ITicket>;
+      return HttpResponse.json(
+        { ...fakeTicket, ...newTicketData },
+        { status: 200 }
+      );
+    }
+  ),
   http.get<PathParams, DefaultBodyType | ErrorResponse>(
     `${baseUrl}${TICKETS_BASE_API_URL}/:id`,
     ({ params }) => {

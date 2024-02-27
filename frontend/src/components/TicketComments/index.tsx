@@ -34,7 +34,7 @@ const TicketComments = ({ comments }: ITicketCommentsProps) => {
 
   const loadFormattedComments = useCallback(async () => {
     if (!comments || comments.length === 0) return;
-    const newComments = comments.map((comment) => ({
+    const newComments = comments?.map((comment) => ({
       comment,
     }));
 
@@ -67,7 +67,7 @@ const TicketComments = ({ comments }: ITicketCommentsProps) => {
       ) : (
         <ul>
           {!loading &&
-            formattedComments.map((item) => (
+            formattedComments?.map((item) => (
               <Comment
                 key={
                   typeof item.comment._id === "string"

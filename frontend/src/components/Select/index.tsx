@@ -28,6 +28,7 @@ const SelectComponent: ForwardRefRenderFunction<
     direction = "col",
     resetFieldValue,
     setResetFieldValue,
+    ...props
   }: ISelectProps,
   ref: React.ForwardedRef<HTMLSelectElement>
 ) => {
@@ -104,6 +105,7 @@ const SelectComponent: ForwardRefRenderFunction<
         required={required}
         disabled={disabled}
         ref={ref}
+        {...props}
       >
         {options?.map((option) => (
           <option key={option.value} value={option.value}>

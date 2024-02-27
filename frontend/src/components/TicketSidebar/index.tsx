@@ -91,7 +91,6 @@ const TicketSidebar = ({
         <Button onClick={handleDelete}>Delete</Button>
       </div>
       <Select
-        // label="Status:"
         id="status"
         value={formData?.status}
         options={getStatusOptions()}
@@ -99,6 +98,7 @@ const TicketSidebar = ({
         required
         errors={errors}
         setErrors={setErrors}
+        data-testid="status"
       />
       <Box>
         <Heading text="Details" level={3} className="border-b" />
@@ -179,6 +179,7 @@ const TicketSidebar = ({
             <Input
               label="Estimated time (in hours):"
               id="estimatedTime"
+              type="number"
               onChange={handleChange}
               value={formData?.estimatedTime}
               required

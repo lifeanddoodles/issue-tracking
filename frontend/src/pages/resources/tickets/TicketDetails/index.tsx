@@ -46,7 +46,7 @@ const TicketDetails = () => {
       ticketType: "" as TicketType,
       estimatedTime: "" as unknown as number,
       deadline: "",
-      isSubtask: "" as unknown as boolean,
+      isSubtask: false,
       parentTask: "" as unknown as ObjectId | Record<string, unknown>,
     }),
     []
