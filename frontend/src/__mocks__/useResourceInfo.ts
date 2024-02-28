@@ -5,7 +5,7 @@ export const requestUpdateResourceMock = vi.fn(async () => {
 });
 
 export const useResourceInfoMockReturnWithSuccess = <T>(data: T) => ({
-  data: data,
+  data,
   loading: false,
   error: null,
   requestGetResource: vi.fn(),

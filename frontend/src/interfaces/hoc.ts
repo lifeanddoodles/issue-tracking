@@ -10,6 +10,7 @@ export interface ResourceUpdatableFormProps<T> {
   formShape: Partial<T>;
   userRole?: UserRole;
   children?: JSX.Element | JSX.Element[];
+  title?: string;
 }
 
 export type WrapperWithLinkFallbackProps = PropsWithChildren<{

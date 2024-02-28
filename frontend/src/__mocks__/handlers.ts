@@ -74,6 +74,23 @@ export const handlers: HttpHandler[] = [
     const newUser = await request.json();
     return HttpResponse.json(newUser, { status: 201 });
   }),
+  http.patch<PathParams, DefaultBodyType | ErrorResponse>(
+    `${baseUrl}${USERS_BASE_API_URL}/:id`,
+    async ({ params, request }) => {
+      const fakeUser = fakeUsers.find((user) => user._id === params.id);
+      if (!fakeUser) {
+        return HttpResponse.json(
+          { message: "User not found" },
+          { status: 404 }
+        );
+      }
+      const newUserData = (await request.json()) as Partial<IUserDocument>;
+      return HttpResponse.json(
+        { ...fakeUser, ...newUserData },
+        { status: 200 }
+      );
+    }
+  ),
   http.get(`${baseUrl}${TICKETS_BASE_API_URL}`, () => {
     return HttpResponse.json(fakePopulatedTickets, { status: 200 });
   }),

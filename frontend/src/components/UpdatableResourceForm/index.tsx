@@ -43,7 +43,7 @@ const getChildren = <T,>({
           : { checked: getValue(id, formData) };
 
       const disableToggleEdit = wrapperProps?.disableToggleEdit
-        ? wrapperProps?.disableToggleEdit(userRole)
+        ? wrapperProps?.disableToggleEdit(userRole, [UserRole.ADMIN])
         : false;
 
       const newChild = (
@@ -115,6 +115,7 @@ const UpdatableResourceForm = withUpdatableResourceForm(
     onSave,
     onCancel,
     userRole,
+    title,
     children,
   }) => {
     const formattedChildren = useMemo(() => {
@@ -144,7 +145,10 @@ const UpdatableResourceForm = withUpdatableResourceForm(
         <div className={`${resourceName}-details__actions self-end flex gap-4`}>
           <Button onClick={onDelete}>Delete</Button>
         </div>
-        <Heading text={`${toCapital(resourceName)} Details`} level={1} />
+        <Heading
+          text={title ?? `${toCapital(resourceName)} Details`}
+          level={1}
+        />
         <Form
           className={`${resourceName}-details__form`}
           ariaLabel={`${resourceName}-details-form`}

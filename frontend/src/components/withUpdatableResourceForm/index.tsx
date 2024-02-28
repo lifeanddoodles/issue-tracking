@@ -19,6 +19,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
     onChange,
     formShape,
     userRole,
+    title,
     children,
   }: ResourceUpdatableFormProps<T>) => {
     const {
@@ -136,6 +137,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
         onCancel: handleCancel,
         onDelete: handleDelete,
         userRole,
+        title,
         children,
       }),
       [
@@ -151,6 +153,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
         setErrors,
         formData,
         userRole,
+        title,
       ]
     );
 

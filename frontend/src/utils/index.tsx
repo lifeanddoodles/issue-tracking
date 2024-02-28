@@ -677,3 +677,13 @@ export const objValuesAreFalsy: <T extends Record<string, unknown> | null>(
     return falsyValue.includes(value);
   });
 };
+
+export const userNotAuthorized = (
+  userRole: UserRole,
+  allowedRoles: UserRole[]
+) => !allowedRoles.includes(userRole);
+
+export const getResourceId = <T extends Record<string, unknown>>(
+  formData: T,
+  key: string
+) => formData[key] as string;

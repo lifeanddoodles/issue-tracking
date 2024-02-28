@@ -8,15 +8,13 @@ import UpdatableDetailsForm from "../../../../components/UpdatableDetailsForm";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import { FormElement } from "../../../../interfaces";
 import { USERS_BASE_API_URL } from "../../../../routes";
-import { getDepartmentTeamOptions } from "../../../../utils";
+import {
+  getDepartmentTeamOptions,
+  getResourceId,
+  userNotAuthorized,
+} from "../../../../utils";
 
 type UserFormData = Partial<IUserDocument>;
-
-const userNotAuthorized = (userRole: UserRole) => userRole !== UserRole.ADMIN;
-const getResourceId = <T extends Record<string, unknown>>(
-  formData: T,
-  key: string
-) => formData[key] as string;
 
 const fields = [
   {
