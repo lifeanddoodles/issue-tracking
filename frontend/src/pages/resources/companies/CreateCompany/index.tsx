@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
+  IAddressInfo,
   ICompany,
   Industry,
   SubscriptionStatus,
@@ -12,16 +13,90 @@ import { EmailInput, TextInput, UrlInput } from "../../../../components/Input";
 import Select from "../../../../components/Select";
 import TextArea from "../../../../components/TextArea";
 import { useAuthContext } from "../../../../context/AuthProvider";
-import useFetch from "../../../../hooks/useFetch";
+import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
-import { COMPANIES_BASE_API_URL, getPostOptions } from "../../../../routes";
+import { FormField } from "../../../../interfaces";
+import { COMPANIES_BASE_API_URL } from "../../../../routes";
 import { getIndustryOptions } from "../../../../utils";
 
-const CreateTicket = () => {
+type CreateCompanyFormData = Partial<ICompany>;
+
+const fields = [
+  {
+    Component: TextInput,
+    label: "Name:",
+    id: "name",
+    required: true,
+  },
+  {
+    Component: UrlInput,
+    label: "Website:",
+    id: "url",
+    required: true,
+  },
+  {
+    Component: TextInput,
+    label: "Phone:",
+    id: "phone",
+  },
+  {
+    Component: EmailInput,
+    label: "Email:",
+    id: "email",
+  },
+  {
+    Component: TextInput,
+    label: "Street:",
+    id: "address.street",
+  },
+  {
+    Component: TextInput,
+    label: "City:",
+    id: "address.city",
+  },
+  {
+    Component: TextInput,
+    label: "State:",
+    id: "address.state",
+  },
+  {
+    Component: TextInput,
+    label: "Zip:",
+    id: "address.zip",
+  },
+  {
+    Component: TextInput,
+    label: "Country:",
+    id: "address.country",
+  },
+  {
+    Component: TextInput,
+    label: "DBA:",
+    id: "dba",
+  },
+  {
+    Component: Select,
+    label: "Industry:",
+    id: "industry",
+    required: true,
+    fieldProps: {
+      options: getIndustryOptions(),
+    },
+  },
+  {
+    Component: TextArea,
+    label: "Description:",
+    id: "description",
+    required: true,
+  },
+];
+
+const CreateCompany = () => {
   const { user } = useAuthContext();
   const role = user?.role;
   const isClient = role === UserRole.CLIENT;
-  const formDataShape = {
+  const navigate = useNavigate();
+  const formDataShape: CreateCompanyFormData = {
     name: "",
     url: "",
     phone: "",
@@ -29,30 +104,26 @@ const CreateTicket = () => {
     industry: "" as Industry,
     subscriptionStatus: SubscriptionStatus.ONBOARDING,
     email: "",
-    street: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: "",
+    address: {
+      street: "",
+      city: "",
+      state: "",
+      zip: "",
+      country: "",
+    },
     employees: [],
     projects: [],
     dba: "",
   };
-  const [formData, setFormData] = useState<
-    ICompany & {
-      street: string;
-      city: string;
-      state: string;
-      zip: string;
-      country: string;
-    }
-  >(formDataShape);
 
-  const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
-    null
-  );
   const { validateField } = useValidation();
-  const { data, error, loading, sendRequest } = useFetch();
+  const { formData, setFormData, errors, setErrors, onSubmit } = useForm({
+    formShape: formDataShape as CreateCompanyFormData,
+    url: COMPANIES_BASE_API_URL,
+    onSuccess: () => {
+      navigate(isClient ? "/dashboard/my-company" : "/dashboard/companies");
+    },
+  });
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -61,9 +132,35 @@ const CreateTicket = () => {
   ) => {
     const target = e.target;
 
-    setFormData({
-      ...formData,
-      [target.name]: target.value,
+    setFormData((prevFormData) => {
+      // Clone the previous data to avoid mutations
+      let currentFormData = { ...prevFormData };
+      // Check if the target name starts with 'address.'
+      if (target.name.startsWith("address.")) {
+        // This is an address property
+        // Fix its name, update the correct property inside address
+        const addressKey = target.name.replace("address.", "");
+
+        currentFormData = {
+          ...currentFormData,
+          address: {
+            ...(currentFormData.address || {}),
+            [addressKey as keyof IAddressInfo]: target.value,
+          } as IAddressInfo,
+        };
+      } else {
+        currentFormData = {
+          ...currentFormData,
+          [target.name as keyof ICompany]:
+            target.type === "checkbox"
+              ? (target as HTMLInputElement).checked
+              : target.value !== "" && target.value
+              ? target.value
+              : "",
+        };
+      }
+
+      return currentFormData;
     });
 
     validateField({
@@ -77,133 +174,35 @@ const CreateTicket = () => {
 
     const formDataBody = {
       ...formData,
-      address: {
-        street: formData?.street,
-        city: formData?.city,
-        state: formData?.state,
-        zip: formData?.zip,
-        country: formData?.country,
-      },
       employeeId: isClient ? user!._id : "",
     };
 
-    const options = getPostOptions<ICompany>(formDataBody);
-    sendRequest({ url: COMPANIES_BASE_API_URL, options });
+    onSubmit("POST", formDataBody);
   };
 
-  useEffect(() => {
-    if (data && !loading && !error) {
-      console.log(data);
-      // TODO: Redirect to ticket details
-    }
-  }, [data, error, loading]);
-
   return (
-    <Form onSubmit={handleSubmit} className="ml-0">
-      <Heading text="Create company" level={1} />
-      <TextInput
-        label="Name:"
-        id="name"
-        onChange={handleChange}
-        value={formData.name}
-        required
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <UrlInput
-        label="Website:"
-        id="url"
-        type="url"
-        onChange={handleChange}
-        value={formData.url}
-        required
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextInput
-        label="Phone:"
-        id="phone"
-        onChange={handleChange}
-        value={formData.phone}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <EmailInput
-        label="Email:"
-        id="email"
-        onChange={handleChange}
-        value={formData.email}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextInput
-        label="Street:"
-        id="street"
-        onChange={handleChange}
-        value={formData.street}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextInput
-        label="City:"
-        id="city"
-        onChange={handleChange}
-        value={formData.city}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextInput
-        label="State:"
-        id="state"
-        onChange={handleChange}
-        value={formData.state}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextInput
-        label="Zip:"
-        id="zip"
-        onChange={handleChange}
-        value={formData.zip}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextInput
-        label="Country:"
-        id="country"
-        onChange={handleChange}
-        value={formData.country}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextInput
-        label="DBA:"
-        id="dba"
-        onChange={handleChange}
-        value={formData.dba}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <Select
-        label="Industry:"
-        id="industry"
-        value={formData?.industry}
-        options={getIndustryOptions()}
-        onChange={handleChange}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextArea
-        label="Description:"
-        id="description"
-        onChange={handleChange}
-        value={formData.description}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <Button type="submit">Submit</Button>
-    </Form>
+    formData && (
+      <Form onSubmit={handleSubmit} className="ml-0">
+        <Heading text="Create company" level={1} />
+        {fields.map(
+          ({ Component, id, label, required, fieldProps = {} }: FormField) => (
+            <Component
+              key={id}
+              id={id}
+              label={label}
+              required={required}
+              value={formData![id as keyof typeof formData] as string}
+              onChange={handleChange}
+              {...fieldProps}
+              errors={errors}
+              setErrors={setErrors}
+            />
+          )
+        )}
+        <Button type="submit">Submit</Button>
+      </Form>
+    )
   );
 };
 
-export default CreateTicket;
+export default CreateCompany;
