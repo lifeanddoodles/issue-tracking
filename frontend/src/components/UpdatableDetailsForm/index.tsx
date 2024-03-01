@@ -24,16 +24,20 @@ const UpdatableDetailsForm = <T extends Record<string, unknown>>({
       disabled,
       ensureAdmin = false,
       fieldProps = {},
+      allowedRoles = [UserRole.ADMIN],
       ...otherProps
     }: FormField & {
-      disabled?: boolean | ((userRole: UserRole) => boolean);
+      disabled?:
+        | boolean
+        | ((userRole: UserRole, allowedRoles: UserRole[]) => boolean);
+      allowedRoles?: UserRole[];
     }) => {
       if (ensureAdmin && !isAdmin) return <Fragment key={id}></Fragment>;
 
       const value = formShape[id as keyof T];
       const disabledValue =
         typeof disabled === "function"
-          ? disabled(userRole as UserRole)
+          ? disabled(userRole as UserRole, allowedRoles)
           : disabled;
 
       return (

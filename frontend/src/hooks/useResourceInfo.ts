@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import useFetch from "../hooks/useFetch";
 import { ResourceRequestProps, ResourceState } from "../interfaces";
-import { getDeleteOptions, getUpdateOptions } from "../routes";
+import { getDeleteOptions, getPostOptions, getUpdateOptions } from "../routes";
 
 const useResourceInfo = <T>(): ResourceState<T> => {
   const { data, loading, error, sendRequest } = useFetch<T | null>();
@@ -9,6 +9,14 @@ const useResourceInfo = <T>(): ResourceState<T> => {
   const requestGetResource = useCallback(
     async ({ url }: ResourceRequestProps<T>) => {
       await sendRequest({ url });
+    },
+    [sendRequest]
+  );
+
+  const requestPostResource = useCallback(
+    async ({ url, body }: ResourceRequestProps<T>) => {
+      const options = getPostOptions(body!);
+      await sendRequest({ url, options });
     },
     [sendRequest]
   );
@@ -34,6 +42,7 @@ const useResourceInfo = <T>(): ResourceState<T> => {
     loading,
     error,
     requestGetResource,
+    requestPostResource,
     requestUpdateResource,
     requestDeleteResource,
   };

@@ -67,26 +67,46 @@ const useForm = <T, U>({ formShape, url, onSuccess }: IUseFormProps<T>) => {
     loading,
     error,
     requestGetResource,
+    requestPostResource,
     requestUpdateResource,
     requestDeleteResource,
   } = useResourceInfo<U | null>();
 
-  const submitRequest = useCallback(
-    (body?: Partial<U | null>) => {
-      if (!url) return;
-      requestUpdateResource({
-        url,
-        body,
-      });
-    },
-    [url, requestUpdateResource]
-  );
-
   const handleSubmit = useCallback(
-    (body?: Partial<U | null>) => {
-      submitRequest(body);
+    (
+      requestType: "GET" | "POST" | "PATCH" | "DELETE",
+      body?: Partial<U | null>
+    ) => {
+      if (!url) return;
+      switch (requestType) {
+        case "GET":
+          return requestGetResource({
+            url,
+          });
+        case "PATCH":
+          return requestUpdateResource({
+            url,
+            body,
+          });
+        case "DELETE":
+          return requestDeleteResource({
+            url,
+          });
+        case "POST":
+        default:
+          return requestPostResource({
+            url,
+            body,
+          });
+      }
     },
-    [submitRequest]
+    [
+      url,
+      requestGetResource,
+      requestUpdateResource,
+      requestDeleteResource,
+      requestPostResource,
+    ]
   );
 
   useEffect(() => {
@@ -132,6 +152,7 @@ const useForm = <T, U>({ formShape, url, onSuccess }: IUseFormProps<T>) => {
     loading,
     error,
     requestGetResource,
+    requestPostResource,
     requestUpdateResource,
     requestDeleteResource,
   };

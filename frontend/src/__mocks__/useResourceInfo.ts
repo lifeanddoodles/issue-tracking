@@ -1,5 +1,9 @@
 import { ResourceState } from "../interfaces";
 
+export const requestPostResourceMock = vi.fn(async () => {
+  return Promise.resolve();
+});
+
 export const requestUpdateResourceMock = vi.fn(async () => {
   return Promise.resolve();
 });
@@ -9,6 +13,7 @@ export const useResourceInfoMockReturnWithSuccess = <T>(data: T) => ({
   loading: false,
   error: null,
   requestGetResource: vi.fn(),
+  requestPostResource: requestPostResourceMock,
   requestUpdateResource: requestUpdateResourceMock,
   requestDeleteResource: vi.fn(),
 });
@@ -18,6 +23,7 @@ export const useResourceInfoMockReturnWithError = {
   loading: false,
   error: new Error("Error"),
   requestGetResource: vi.fn(),
+  requestPostResource: vi.fn(),
   requestUpdateResource: vi.fn(),
   requestDeleteResource: vi.fn(),
 };

@@ -195,21 +195,22 @@ export const fakeCompanies = [
 
 export const newFakeCompany = {
   _id: "company-002",
-  name: "New Client",
-  url: "newclient.com",
-  email: "contact@newclient.com",
+  name: "New Company",
+  url: "https://newcompany.com",
+  phone: "12345678901",
+  email: "contact@newcompany.com",
   subscriptionStatus: SubscriptionStatus.ONBOARDING,
   employees: [],
   projects: [],
   industry: Industry.HEALTHCARE,
-  dba: "New Client LLC",
+  dba: "New Company LLC",
   description: "Lorem ipsum dolor.",
   address: {
     street: "Sesame",
     city: "Test City",
-    state: "",
-    zip: "",
-    country: "",
+    state: "State",
+    zip: "12345",
+    country: "US",
   },
 };
 
