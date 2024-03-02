@@ -1,14 +1,14 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  IProjectBase,
   IProjectDocument,
+  IUserDocument,
   UserRole,
 } from "../../../../../../shared/interfaces";
 import Button from "../../../../components/Button";
 import Form from "../../../../components/Form";
 import Heading from "../../../../components/Heading";
-import { TextInput } from "../../../../components/Input";
+import { TextInput, UrlInput } from "../../../../components/Input";
 import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import TextArea from "../../../../components/TextArea";
 import { useAuthContext } from "../../../../context/AuthProvider";
@@ -19,22 +19,85 @@ import {
   PROJECTS_BASE_API_URL,
   SERVICES_BASE_API_URL,
   USERS_BASE_API_URL,
-  getPostOptions,
 } from "../../../../routes";
 import {
   getCompanyDataOptions,
   getServiceDataOptions,
   getUserDataOptions,
+  renderFields,
 } from "../../../../utils";
+
+type CreateProjectFormData = Partial<IProjectDocument> & {
+  teamMember?: string;
+  newService?: string;
+};
+
+const getCompanyQuery = (user: Partial<IUserDocument>, companyId: string) => {
+  return user?.role === UserRole.CLIENT
+    ? `company=${user?.company}`
+    : companyId
+    ? `company=${companyId}`
+    : "";
+};
+
+const fields = [
+  {
+    Component: TextInput,
+    label: "Name:",
+    id: "name",
+    required: true,
+  },
+  {
+    Component: TextArea,
+    label: "Description:",
+    id: "description",
+    required: true,
+  },
+  {
+    Component: UrlInput,
+    label: "URL:",
+    id: "url",
+  },
+  {
+    Component: SelectWithFetch,
+    label: "Add company:",
+    id: "company",
+    required: true,
+    permissions: { VIEW: [UserRole.ADMIN] },
+    fieldProps: {
+      url: COMPANIES_BASE_API_URL,
+      getFormattedOptions: getCompanyDataOptions,
+    },
+  },
+  {
+    Component: SelectWithFetch,
+    label: "Add team member:",
+    id: "teamMember",
+    fieldProps: {
+      url: USERS_BASE_API_URL,
+      getFormattedOptions: getUserDataOptions,
+      query: true,
+    },
+  },
+  {
+    Component: SelectWithFetch,
+    label: "Add service:",
+    id: "newService",
+    fieldProps: {
+      url: SERVICES_BASE_API_URL,
+      getFormattedOptions: getServiceDataOptions,
+    },
+  },
+];
 
 const CreateProject = () => {
   const { user } = useAuthContext();
+  const userRole = user?.role as UserRole;
   const isClient = user?.role === UserRole.CLIENT;
-  const isAdmin = user?.role === UserRole.ADMIN;
   const navigate = useNavigate();
-  const formDataShape = {
+  const formDataShape: CreateProjectFormData = {
     name: "",
-    company: user?.company,
+    company: isClient ? user?.company : "",
     url: "",
     description: "",
     teamMember: "",
@@ -44,101 +107,101 @@ const CreateProject = () => {
     tickets: [],
   };
   const { formData, setFormData, errors, setErrors, onSubmit } = useForm<
-    IProjectBase & { teamMember: string; newService: string },
+    CreateProjectFormData,
     IProjectDocument
   >({
-    formShape: formDataShape as Partial<IProjectBase>,
+    formShape: formDataShape,
     url: PROJECTS_BASE_API_URL,
     onSuccess: () => {
       navigate(isClient ? "/dashboard/my-projects" : "/dashboard/projects");
     },
   });
   const { validateField } = useValidation();
-  const companyQuery = useMemo(() => {
-    return `company=${user?.company}`;
-  }, [user?.company]);
+  const companyQuery = useMemo(
+    () =>
+      formData?.company &&
+      getCompanyQuery(user as IUserDocument, formData?.company as string),
+    [formData?.company, user]
+  );
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const target = e.target;
+  const handleChange = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
+      const target = e.target;
 
-    setFormData({
-      ...formData,
-      [target.name]: target.value,
-    });
+      setFormData({
+        ...formData,
+        [target.name]: target.value,
+      });
 
-    validateField({
-      target,
-      setErrors,
-    });
-  };
+      validateField({
+        target,
+        setErrors,
+      });
+    },
+    [formData, setErrors, setFormData, validateField]
+  );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    const options = getPostOptions({
-      ...formData,
-      team: [...(formData.team || []), formData.teamMember],
-    });
-    onSubmit(options);
-  };
+      const {
+        newService,
+        teamMember,
+        services = [],
+        team = [],
+        ...restFormData
+      } = formData as Partial<CreateProjectFormData>;
+
+      const formDataBody = {
+        ...restFormData,
+        services: [...services, newService].filter(Boolean),
+        team: [...team, teamMember].filter(Boolean),
+      };
+
+      onSubmit("POST", formDataBody as Partial<IProjectDocument>);
+    },
+    [formData, onSubmit]
+  );
+
+  const fieldsWithFormProps = useCallback(
+    (formShape: CreateProjectFormData) =>
+      fields.map((field) => {
+        return {
+          ...field,
+          name: field.id,
+          value: formShape![field.id as keyof typeof formShape] as string,
+          onChange: handleChange,
+          errors,
+          setErrors,
+          ...(field?.fieldProps?.query ? { query: companyQuery } : {}),
+        };
+      }),
+    [companyQuery, errors, handleChange, setErrors]
+  );
+
+  const getRenderedChildren = useCallback(
+    (formShape: CreateProjectFormData) =>
+      renderFields(fieldsWithFormProps(formShape), formShape, userRole),
+    [fieldsWithFormProps, userRole]
+  );
+  const renderedChildren = useMemo(
+    () => formData !== null && getRenderedChildren(formData),
+    [formData, getRenderedChildren]
+  );
 
   return (
-    <Form onSubmit={handleSubmit} className="ml-0">
-      <Heading text="Create project" level={1} />
-      <TextInput
-        label="Name:"
-        id="name"
-        onChange={handleChange}
-        value={formData.name}
-        required
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextArea
-        label="Description:"
-        id="description"
-        onChange={handleChange}
-        value={formData.description}
-        required
-        errors={errors}
-        setErrors={setErrors}
-      />
-      {isAdmin && (
-        <SelectWithFetch
-          label="Add company:"
-          id="company"
-          value={String(formData.company)}
-          onChange={handleChange}
-          errors={errors}
-          url={COMPANIES_BASE_API_URL}
-          getFormattedOptions={getCompanyDataOptions}
-        />
-      )}
-      <SelectWithFetch
-        label="Add team member:"
-        id="teamMember"
-        value={formData.teamMember || ""}
-        onChange={handleChange}
-        errors={errors}
-        url={USERS_BASE_API_URL}
-        query={companyQuery}
-        getFormattedOptions={getUserDataOptions}
-      />
-      <SelectWithFetch
-        label="Add service:"
-        id="newService"
-        value={formData.newService || ""}
-        onChange={handleChange}
-        errors={errors}
-        url={SERVICES_BASE_API_URL}
-        getFormattedOptions={getServiceDataOptions}
-      />
-      <Button type="submit">Submit</Button>
-    </Form>
+    formData && (
+      <Form onSubmit={handleSubmit} className="ml-0">
+        <Heading text="Create project" level={1} />
+        {renderedChildren}
+        <Button type="submit">Submit</Button>
+      </Form>
+    )
   );
 };
 

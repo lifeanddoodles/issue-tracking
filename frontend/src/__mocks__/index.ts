@@ -135,7 +135,7 @@ export const fakeServices = [
     tier: Tier.FREE,
   },
   {
-    _id: "service-002",
+    _id: "service-001",
     name: "Email Builder",
     description: "Drag n' Drop email builder.",
     url: "https://emailbuilder.saascompany.com",
@@ -240,8 +240,8 @@ export const fakeProjects = [
 export const newFakeProject = {
   _id: "project-002",
   name: "Another Website",
-  url: "",
-  description: "Another Website",
+  url: "https://new-project.com",
+  description: "Secondary website for existing client",
   company: "company-001",
   services: ["service-000"],
   team: [],
