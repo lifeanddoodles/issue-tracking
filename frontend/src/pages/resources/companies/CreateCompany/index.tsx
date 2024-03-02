@@ -185,15 +185,14 @@ const CreateCompany = () => {
       <Form onSubmit={handleSubmit} className="ml-0">
         <Heading text="Create company" level={1} />
         {fields.map(
-          ({ Component, id, label, required, fieldProps = {} }: FormField) => (
+          ({ Component, id, fieldProps = {}, ...otherProps }: FormField) => (
             <Component
               key={id}
               id={id}
-              label={label}
-              required={required}
               value={formData![id as keyof typeof formData] as string}
-              onChange={handleChange}
               {...fieldProps}
+              {...otherProps}
+              onChange={handleChange}
               errors={errors}
               setErrors={setErrors}
             />

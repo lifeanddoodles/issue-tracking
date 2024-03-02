@@ -1,5 +1,6 @@
 import { ObjectId } from "mongoose";
 import { ElementType } from "react";
+import { UserRole } from "../../../shared/interfaces";
 import { ButtonVariant } from "../utils";
 
 export type ControllerType =
@@ -24,6 +25,10 @@ export type FormElement =
   | HTMLSelectElement
   | HTMLTextAreaElement;
 
+export type PermissionType = "VIEW" | "EDIT";
+
+export type Permissions = Partial<{ [key in PermissionType]: UserRole[] }>;
+
 export interface FormField {
   id: string;
   Component: ElementType;
@@ -33,8 +38,13 @@ export interface FormField {
   fieldProps?: Record<string, unknown>;
   wrapperProps?: Record<string, unknown>;
   customFormProps?: Record<string, unknown>;
-  ensureAdmin?: boolean;
+  permissions?: Permissions;
 }
+
+export interface FormFieldWithProps<T>
+  extends FormField,
+    Partial<Omit<IFormStateProps, "id">>,
+    Partial<Omit<IFormControlProps<T>, "id">> {}
 
 export interface IFormStateProps {
   errors?: { [key: string]: string[] } | null;

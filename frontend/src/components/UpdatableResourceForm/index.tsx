@@ -15,7 +15,7 @@ import Form from "../Form";
 import Heading from "../Heading";
 import withUpdatableResourceForm from "../withUpdatableResourceForm";
 
-const getChildren = <T,>({
+const getFormattedFields = <T,>({
   children,
   errors,
   formData,
@@ -119,7 +119,7 @@ const UpdatableResourceForm = withUpdatableResourceForm(
     children,
   }) => {
     const formattedChildren = useMemo(() => {
-      return getChildren({
+      return getFormattedFields({
         children,
         errors,
         formData,

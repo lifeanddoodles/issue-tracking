@@ -1,4 +1,5 @@
 import { ObjectId } from "mongoose";
+import { Fragment } from "react";
 import {
   DepartmentTeam,
   ICompanyDocument,
@@ -14,7 +15,12 @@ import {
   Tier,
   UserRole,
 } from "../../../shared/interfaces";
-import { ErrorType, IInputErrorProps } from "../interfaces";
+import {
+  ErrorType,
+  FormElement,
+  FormFieldWithProps,
+  IInputErrorProps,
+} from "../interfaces";
 
 export const isEmpty = (item: Record<string, unknown> | unknown[]) => {
   if (Array.isArray(item)) {
@@ -683,7 +689,52 @@ export const userNotAuthorized = (
   allowedRoles: UserRole[]
 ) => !allowedRoles.includes(userRole);
 
+export const userIsAuthorized = (
+  userRole: UserRole,
+  allowedRoles: UserRole[]
+) => allowedRoles.includes(userRole);
+
 export const getResourceId = <T extends Record<string, unknown>>(
   formData: T,
   key: string
 ) => formData[key] as string;
+
+export const renderFields = <T,>(
+  fields: FormFieldWithProps<FormElement>[],
+  formShape: T,
+  userRole?: UserRole
+) =>
+  fields.map(
+    ({
+      Component,
+      id,
+      fieldProps = {},
+      disabled = false,
+      permissions,
+      ...otherProps
+    }: FormFieldWithProps<FormElement>) => {
+      if (
+        userRole &&
+        permissions?.VIEW &&
+        !userIsAuthorized(userRole as UserRole, permissions.VIEW)
+      )
+        return <Fragment key={id}></Fragment>;
+
+      const value = formShape[id as keyof T];
+      const disabledValue =
+        userRole && permissions?.EDIT
+          ? !userIsAuthorized(userRole as UserRole, permissions.EDIT)
+          : disabled;
+
+      return (
+        <Component
+          key={id}
+          id={id}
+          value={value}
+          disabled={disabledValue}
+          {...fieldProps}
+          {...otherProps}
+        />
+      );
+    }
+  );

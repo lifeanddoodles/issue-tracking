@@ -22,7 +22,7 @@ export const updateInputOrTextarea = async (
   if (field instanceof HTMLInputElement && field.type === "checkbox") {
     return await toggleChecked(field, newFieldValue);
   }
-
+  if (newFieldValue.trim() === "") return;
   await user.clear(field);
   await user.type(field, newFieldValue);
 };
@@ -30,11 +30,15 @@ export const updateInputOrTextarea = async (
 export const updateSelect = async (
   field: FormElement,
   options: HTMLOptionElement[],
-  newFieldValue: number
+  newFieldValue: number | string
 ) => {
+  const newSelectValue = isNaN(+newFieldValue)
+    ? newFieldValue
+    : options[newFieldValue as number]?.value;
+
   act(() =>
     fireEvent.select(field, {
-      target: { value: options[newFieldValue as number].value },
+      target: { value: newSelectValue },
     })
   );
 };
@@ -62,12 +66,21 @@ export const updateFieldAndCheckValue = async (
   }
 
   if (field instanceof HTMLSelectElement) {
-    const options = Array.from(
-      (field as HTMLSelectElement).querySelectorAll("option")
-    );
-    await updateSelect(field, options, newFieldValue as number);
+    let options: HTMLOptionElement[] = [];
+    let expectedSelectValue;
 
-    expect(field.value).toBe(options[newFieldValue as number].value);
-    return options[newFieldValue as number].value;
+    if (isNaN(+newFieldValue)) {
+      expectedSelectValue = newFieldValue;
+    } else {
+      options = Array.from(
+        (field as HTMLSelectElement).querySelectorAll("option")
+      );
+      expectedSelectValue = options[newFieldValue as number].value;
+    }
+
+    await updateSelect(field, options, newFieldValue);
+
+    expect(field.value).toBe(expectedSelectValue);
+    return expectedSelectValue;
   }
 };
