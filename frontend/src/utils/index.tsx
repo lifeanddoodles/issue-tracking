@@ -726,13 +726,19 @@ export const renderFields = <T,>(
           ? !userIsAuthorized(userRole as UserRole, permissions.EDIT)
           : disabled;
 
+      const { pattern, ...otherFieldProps } = fieldProps;
+      const patternAsString = (pattern as RegExp)
+        ?.toString()
+        ?.replace(/\//g, "");
+
       return (
         <Component
           key={id}
           id={id}
           value={value}
           disabled={disabledValue}
-          {...fieldProps}
+          pattern={patternAsString}
+          {...otherFieldProps}
           {...otherProps}
         />
       );

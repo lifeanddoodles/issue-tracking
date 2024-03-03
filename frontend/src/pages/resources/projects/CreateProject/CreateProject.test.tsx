@@ -16,7 +16,7 @@ vi.mock("../../../../hooks/useForm");
 
 const fieldsToTest = [
   { fieldId: "name", newFieldValue: newFakeProject.name, customLabel: null },
-  { fieldId: "url", newFieldValue: newFakeProject.name, customLabel: null },
+  { fieldId: "url", newFieldValue: newFakeProject.url, customLabel: null },
   {
     fieldId: "description",
     newFieldValue: newFakeProject.description,
@@ -182,7 +182,7 @@ describe("CreateProject", () => {
   /**
    * Test submit functionality
    */
-  describe.only("when submitting", async () => {
+  describe("when submitting", async () => {
     beforeEach(async () => {
       vi.mocked(useForm)
         .mockClear()

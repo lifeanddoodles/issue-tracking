@@ -42,6 +42,9 @@ const getFormattedFields = <T,>({
           ? { value: getValue(id, formData) }
           : { checked: getValue(id, formData) };
 
+      /**
+       * TODO: Refactor to use `permissions` prop and userIsAuthorized function
+       */
       const disableToggleEdit = wrapperProps?.disableToggleEdit
         ? wrapperProps?.disableToggleEdit(userRole, [UserRole.ADMIN])
         : false;

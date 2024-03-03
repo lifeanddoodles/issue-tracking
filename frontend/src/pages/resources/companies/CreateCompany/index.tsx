@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IAddressInfo,
@@ -125,60 +126,66 @@ const CreateCompany = () => {
     },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const target = e.target;
+  const handleChange = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
+      const target = e.target;
 
-    setFormData((prevFormData) => {
-      // Clone the previous data to avoid mutations
-      let currentFormData = { ...prevFormData };
-      // Check if the target name starts with 'address.'
-      if (target.name.startsWith("address.")) {
-        // This is an address property
-        // Fix its name, update the correct property inside address
-        const addressKey = target.name.replace("address.", "");
+      setFormData((prevFormData) => {
+        // Clone the previous data to avoid mutations
+        let currentFormData = { ...prevFormData };
+        // Check if the target name starts with 'address.'
+        if (target.name.startsWith("address.")) {
+          // This is an address property
+          // Fix its name, update the correct property inside address
+          const addressKey = target.name.replace("address.", "");
 
-        currentFormData = {
-          ...currentFormData,
-          address: {
-            ...(currentFormData.address || {}),
-            [addressKey as keyof IAddressInfo]: target.value,
-          } as IAddressInfo,
-        };
-      } else {
-        currentFormData = {
-          ...currentFormData,
-          [target.name as keyof ICompany]:
-            target.type === "checkbox"
-              ? (target as HTMLInputElement).checked
-              : target.value !== "" && target.value
-              ? target.value
-              : "",
-        };
-      }
+          currentFormData = {
+            ...currentFormData,
+            address: {
+              ...(currentFormData.address || {}),
+              [addressKey as keyof IAddressInfo]: target.value,
+            } as IAddressInfo,
+          };
+        } else {
+          currentFormData = {
+            ...currentFormData,
+            [target.name as keyof ICompany]:
+              target.type === "checkbox"
+                ? (target as HTMLInputElement).checked
+                : target.value !== "" && target.value
+                ? target.value
+                : "",
+          };
+        }
 
-      return currentFormData;
-    });
+        return currentFormData;
+      });
 
-    validateField({
-      target,
-      setErrors,
-    });
-  };
+      validateField({
+        target,
+        setErrors,
+      });
+    },
+    [setErrors, setFormData, validateField]
+  );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    const formDataBody = {
-      ...formData,
-      employeeId: isClient ? user!._id : "",
-    };
+      const formDataBody = {
+        ...formData,
+        employeeId: isClient ? user!._id : "",
+      };
 
-    onSubmit("POST", formDataBody);
-  };
+      onSubmit("POST", formDataBody);
+    },
+    [formData, isClient, onSubmit, user]
+  );
 
   return (
     formData && (

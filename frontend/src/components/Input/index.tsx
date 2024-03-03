@@ -25,13 +25,14 @@ const Input = forwardRef(
       required,
       disabled,
       ...props
-    }: IBaseInputProps,
+    }: IBaseInputProps & { wrapperProps?: Record<string, unknown> },
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
     const [inputValue, setInputValue] = useState(
       type !== "checkbox" ? value || "" : checked || false
     );
     const { validateField } = useValidation();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { wrapperProps = {}, ...rest } = props;
 
     const handleReset = useCallback(() => {
