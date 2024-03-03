@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IServiceBase,
@@ -7,15 +8,54 @@ import {
 import Button from "../../../../components/Button";
 import Form from "../../../../components/Form";
 import Heading from "../../../../components/Heading";
-import { TextInput } from "../../../../components/Input";
+import { TextInput, UrlInput } from "../../../../components/Input";
 import Select from "../../../../components/Select";
 import TextArea from "../../../../components/TextArea";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
-import { SERVICES_BASE_API_URL, getPostOptions } from "../../../../routes";
-import { getTierOptions } from "../../../../utils";
+import { SERVICES_BASE_API_URL } from "../../../../routes";
+import { getTierOptions, renderFields } from "../../../../utils";
 
-const CreateProject = () => {
+type CreateServiceFormData = Partial<IServiceDocument>;
+
+const fields = [
+  {
+    Component: TextInput,
+    label: "Name:",
+    id: "name",
+    required: true,
+  },
+  {
+    Component: TextArea,
+    label: "Description:",
+    id: "description",
+  },
+  {
+    Component: UrlInput,
+    label: "URL:",
+    id: "url",
+  },
+  {
+    Component: TextInput,
+    label: "Version:",
+    id: "version",
+    fieldProps: {
+      placeholder: "1.0.0",
+      pattern: /^\d\.\d\.\d$/,
+    },
+  },
+  {
+    Component: Select,
+    label: "Tier:",
+    id: "tier",
+    fieldProps: {
+      options: getTierOptions(),
+      direction: "col",
+    },
+  },
+];
+
+const CreateService = () => {
   const navigate = useNavigate();
   const formDataShape = {
     name: "",
@@ -25,7 +65,7 @@ const CreateProject = () => {
     tier: "" as Tier,
   };
   const { formData, setFormData, errors, setErrors, onSubmit } = useForm<
-    IServiceBase,
+    CreateServiceFormData,
     IServiceDocument
   >({
     formShape: formDataShape as Partial<IServiceBase>,
@@ -36,82 +76,68 @@ const CreateProject = () => {
   });
   const { validateField } = useValidation();
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const target = e.target;
+  const handleChange = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
+      const target = e.target;
 
-    setFormData({
-      ...formData,
-      [target.name]: target.value,
-    });
+      setFormData({
+        ...formData,
+        [target.name]: target.value,
+      });
 
-    validateField({
-      target,
-      setErrors,
-    });
-  };
+      validateField({
+        target,
+        setErrors,
+      });
+    },
+    [formData, setErrors, setFormData, validateField]
+  );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    const options = getPostOptions({
-      ...formData,
-    });
-    onSubmit(options);
-  };
+      onSubmit("POST", formData);
+    },
+    [formData, onSubmit]
+  );
+
+  const fieldsWithFormProps = useCallback(
+    (formShape: CreateServiceFormData) =>
+      fields.map((field) => {
+        return {
+          ...field,
+          name: field.id,
+          value: formShape![field.id as keyof typeof formShape] as string,
+          onChange: handleChange,
+          errors,
+          setErrors,
+        };
+      }),
+    [errors, handleChange, setErrors]
+  );
+
+  const getRenderedChildren = useCallback(
+    (formShape: CreateServiceFormData) =>
+      renderFields(fieldsWithFormProps(formShape), formShape),
+    [fieldsWithFormProps]
+  );
+  const renderedChildren = useMemo(
+    () => formData !== null && getRenderedChildren(formData),
+    [formData, getRenderedChildren]
+  );
 
   return (
     <Form onSubmit={handleSubmit} className="ml-0">
       <Heading text="Create service" level={1} />
-      <TextInput
-        label="Name:"
-        id="name"
-        onChange={handleChange}
-        value={formData.name}
-        required
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextArea
-        label="Description:"
-        id="description"
-        onChange={handleChange}
-        value={formData.description}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextInput
-        label="URL:"
-        id="url"
-        onChange={handleChange}
-        value={formData.url}
-        errors={errors}
-        setErrors={setErrors}
-      />
-      <TextInput
-        label="Version:"
-        id="version"
-        onChange={handleChange}
-        value={formData.version}
-        errors={errors}
-        setErrors={setErrors}
-        placeholder="1.0.0"
-        pattern="^\d\.\d\.\d$"
-      />
-      <Select
-        label="Tier:"
-        id="tier"
-        value={formData.tier}
-        options={getTierOptions()}
-        onChange={handleChange}
-        direction="col"
-      />
+      {renderedChildren}
       <Button type="submit">Submit</Button>
     </Form>
   );
 };
 
-export default CreateProject;
+export default CreateService;
