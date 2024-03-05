@@ -5,11 +5,13 @@ import { FormElement } from "../../interfaces";
 
 export const toggleChecked = async (
   field: HTMLInputElement,
-  newFieldValue?: string
+  newFieldValue?: string | boolean
 ) => {
   if (newFieldValue) {
     const newFieldValueBoolean =
-      newFieldValue === "true" || newFieldValue === "1";
+      typeof newFieldValue === "string"
+        ? newFieldValue === "true" || newFieldValue === "1"
+        : newFieldValue;
     return (field.checked = newFieldValueBoolean);
   }
   await user.click(field);
@@ -17,14 +19,15 @@ export const toggleChecked = async (
 
 export const updateInputOrTextarea = async (
   field: FormElement,
-  newFieldValue: string
+  newFieldValue: string | number | boolean
 ) => {
   if (field instanceof HTMLInputElement && field.type === "checkbox") {
-    return await toggleChecked(field, newFieldValue);
+    return await toggleChecked(field, newFieldValue as string | boolean);
   }
-  if (newFieldValue.trim() === "") return;
+  if (newFieldValue.toString().trim() === "") return;
+
   await user.clear(field);
-  await user.type(field, newFieldValue);
+  await user.type(field, newFieldValue.toString());
 };
 
 export const updateSelect = async (
@@ -45,21 +48,26 @@ export const updateSelect = async (
 
 export const updateFieldAndCheckValue = async (
   field: FormElement,
-  newFieldValue: string | number
+  newFieldValue: string | number | boolean
 ) => {
   if (
     field instanceof HTMLInputElement ||
     field instanceof HTMLTextAreaElement
   ) {
-    await updateInputOrTextarea(field, newFieldValue as string);
+    await updateInputOrTextarea(
+      field,
+      newFieldValue as string | number | boolean
+    );
     const fieldValue =
       field!.type === "checkbox"
         ? (field as HTMLInputElement).checked
-        : field.value;
+        : field.value || "";
     const formattedNewFieldValue =
       field!.type === "checkbox"
-        ? newFieldValue === "true" || newFieldValue === "1"
-        : newFieldValue;
+        ? typeof newFieldValue === "boolean"
+          ? newFieldValue
+          : newFieldValue === "true" || newFieldValue === "1"
+        : newFieldValue.toString() || "";
 
     expect(fieldValue).toBe(formattedNewFieldValue);
     return null;
@@ -78,7 +86,7 @@ export const updateFieldAndCheckValue = async (
       expectedSelectValue = options[newFieldValue as number].value;
     }
 
-    await updateSelect(field, options, newFieldValue);
+    await updateSelect(field, options, newFieldValue as string | number);
 
     expect(field.value).toBe(expectedSelectValue);
     return expectedSelectValue;

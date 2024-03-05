@@ -242,29 +242,12 @@ describe("CreateCompany", () => {
         )
       );
 
-      const filteredLabels = [
-        { fieldLabel: "name", newValue: newFakeCompany.name },
-        { fieldLabel: "website", newValue: newFakeCompany.url },
-        { fieldLabel: "phone", newValue: newFakeCompany.phone },
-        { fieldLabel: "email", newValue: newFakeCompany.email },
-        { fieldLabel: "street", newValue: newFakeCompany.address.street },
-        { fieldLabel: "city", newValue: newFakeCompany.address.city },
-        { fieldLabel: "state", newValue: newFakeCompany.address.state },
-        { fieldLabel: "zip", newValue: newFakeCompany.address.zip },
-        { fieldLabel: "country", newValue: newFakeCompany.address.country },
-        { fieldLabel: "dba", newValue: newFakeCompany.dba },
-        { fieldLabel: "industry", newValue: "1" },
-        { fieldLabel: "description", newValue: newFakeCompany.description },
-      ];
-
-      for (const { fieldLabel, newValue } of filteredLabels) {
-        const field = screen.getByLabelText(
-          RegExp(`^${fieldLabel}`, "i")
-        ) as FormElement;
+      for (const { fieldId, newFieldValue, customLabel } of fieldsToTest) {
+        const [field] = await getFieldByLabel(customLabel || fieldId);
 
         expect(field).toBeInTheDocument();
 
-        await act(() => updateFieldAndCheckValue(field, newValue));
+        await act(() => updateFieldAndCheckValue(field, newFieldValue));
       }
 
       const submitButton = screen.getByRole("button", {

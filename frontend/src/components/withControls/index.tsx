@@ -16,13 +16,19 @@ const withControlsBase = <T extends FormElement, U extends IFieldProps>(
   ) => void,
   onSave: () => void
 ) => {
-  return (props: CombinedProps<IFormControlWithActionsProps<T>, U>) => {
+  return (
+    props: CombinedProps<IFormControlWithActionsProps<T>, U> & {
+      // TODO: Fix type to include checked
+      checked?: boolean;
+    }
+  ) => {
     const MemoizedComponent = useMemo(() => props.component, [props.component]);
     const Component = MemoizedComponent as JSX.ElementType;
     const fieldRef = useRef<T | null>(null);
+    const formattedValue = props?.checked ?? props.value;
     const [initialValue, setInitialValue] = useState<
       nonBooleanValueType | boolean
-    >(props.value || props?.checked); // TODO: Fix type error for props.checked
+    >(formattedValue!);
     const [resetFieldValue, setResetFieldValue] = useState(false);
     const label = getReadableInputName(
       (props.label || props.id!).replace(":", "")

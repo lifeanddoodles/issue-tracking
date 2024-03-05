@@ -1,11 +1,4 @@
-type TestCaseProps = {
-  fieldId: string;
-  newFieldValue: string;
-  findBy?: string;
-  customLabel?: string | null;
-};
-
-type ChainableOptions = "only" | "skip";
+import { ChainableOptions, TestCaseProps } from "../../interfaces";
 
 export function testEach(
   testCases: TestCaseProps[],

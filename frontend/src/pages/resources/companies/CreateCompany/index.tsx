@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IAddressInfo,
@@ -16,9 +16,8 @@ import TextArea from "../../../../components/TextArea";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
-import { FormField } from "../../../../interfaces";
 import { COMPANIES_BASE_API_URL } from "../../../../routes";
-import { getIndustryOptions } from "../../../../utils";
+import { getIndustryOptions, renderFields } from "../../../../utils";
 
 type CreateCompanyFormData = Partial<ICompany>;
 
@@ -81,7 +80,7 @@ const fields = [
     id: "industry",
     required: true,
     fieldProps: {
-      options: getIndustryOptions(),
+      options: getIndustryOptions,
     },
   },
   {
@@ -94,8 +93,8 @@ const fields = [
 
 const CreateCompany = () => {
   const { user } = useAuthContext();
-  const role = user?.role;
-  const isClient = role === UserRole.CLIENT;
+  const userRole = user?.role as UserRole;
+  const isClient = userRole === UserRole.CLIENT;
   const navigate = useNavigate();
   const formDataShape: CreateCompanyFormData = {
     name: "",
@@ -187,24 +186,37 @@ const CreateCompany = () => {
     [formData, isClient, onSubmit, user]
   );
 
+  const fieldsWithFormProps = useCallback(
+    (formShape: CreateCompanyFormData) =>
+      fields.map((field) => {
+        return {
+          ...field,
+          name: field.id,
+          value: formShape![field.id as keyof typeof formShape] as string,
+          onChange: handleChange,
+          errors,
+          setErrors,
+        };
+      }),
+    [errors, handleChange, setErrors]
+  );
+
+  const getRenderedChildren = useCallback(
+    (formShape: CreateCompanyFormData) =>
+      renderFields(fieldsWithFormProps(formShape), formShape, userRole),
+    [fieldsWithFormProps, userRole]
+  );
+
+  const renderedChildren = useMemo(
+    () => formData !== null && getRenderedChildren(formData),
+    [formData, getRenderedChildren]
+  );
+
   return (
     formData && (
       <Form onSubmit={handleSubmit} className="ml-0">
         <Heading text="Create company" level={1} />
-        {fields.map(
-          ({ Component, id, fieldProps = {}, ...otherProps }: FormField) => (
-            <Component
-              key={id}
-              id={id}
-              value={formData![id as keyof typeof formData] as string}
-              {...fieldProps}
-              {...otherProps}
-              onChange={handleChange}
-              errors={errors}
-              setErrors={setErrors}
-            />
-          )
-        )}
+        {renderedChildren}
         <Button type="submit">Submit</Button>
       </Form>
     )

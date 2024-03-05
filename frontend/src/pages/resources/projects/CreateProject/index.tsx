@@ -117,6 +117,7 @@ const CreateProject = () => {
     },
   });
   const { validateField } = useValidation();
+
   const companyQuery = useMemo(
     () =>
       formData?.company &&
@@ -189,6 +190,7 @@ const CreateProject = () => {
       renderFields(fieldsWithFormProps(formShape), formShape, userRole),
     [fieldsWithFormProps, userRole]
   );
+
   const renderedChildren = useMemo(
     () => formData !== null && getRenderedChildren(formData),
     [formData, getRenderedChildren]

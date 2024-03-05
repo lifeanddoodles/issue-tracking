@@ -51,7 +51,7 @@ export interface ITicket extends ITicketBase {
   estimatedTime?: number;
   deadline?: Date | string;
   isSubtask: boolean;
-  parentTask?: ObjectId | Record<string, unknown>;
+  parentTask?: ObjectId | Record<string, unknown> | string;
 }
 
 export interface ITicketDocument extends ITicket, Document {

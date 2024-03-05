@@ -353,6 +353,15 @@ export function getUserDataOptions(users: Partial<IUserDocument>[]) {
   }));
 }
 
+export function getNonClientDataOptions(users: Partial<IUserDocument>[]) {
+  return users
+    .filter((user) => user?.role !== UserRole.CLIENT)
+    .map((user) => ({
+      value: user._id as string,
+      label: getFullName(user.firstName!, user.lastName!),
+    }));
+}
+
 export function getClientDataOptions(users: Partial<IUserDocument>[]) {
   return users
     .filter((user) => user?.role === UserRole.CLIENT)
@@ -524,6 +533,7 @@ export function getReadableInputName(id: string) {
     case "newEmployee":
       return "Add employee";
     case "newTeamMember":
+    case "teamMember":
       return "Add team member";
     case "newService":
       return "Add service";
@@ -726,10 +736,13 @@ export const renderFields = <T,>(
           ? !userIsAuthorized(userRole as UserRole, permissions.EDIT)
           : disabled;
 
-      const { pattern, ...otherFieldProps } = fieldProps;
+      const { pattern, options, ...otherFieldProps } = fieldProps;
       const patternAsString = (pattern as RegExp)
         ?.toString()
         ?.replace(/\//g, "");
+
+      const formattedOptions =
+        typeof options === "function" ? options() : options;
 
       return (
         <Component
@@ -738,6 +751,7 @@ export const renderFields = <T,>(
           value={value}
           disabled={disabledValue}
           pattern={patternAsString}
+          options={formattedOptions}
           {...otherFieldProps}
           {...otherProps}
         />

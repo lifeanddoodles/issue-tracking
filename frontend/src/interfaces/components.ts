@@ -39,6 +39,9 @@ export interface FormField {
   wrapperProps?: Record<string, unknown>;
   customFormProps?: Record<string, unknown>;
   permissions?: Permissions;
+  disabled?:
+    | boolean
+    | ((id: string, getArgs?: (id: string) => unknown) => boolean);
 }
 
 export interface FormFieldWithProps<T>
@@ -61,8 +64,6 @@ export interface IFormControlProps<T> {
   className?: string;
   onChange?: (e: React.ChangeEvent<T>) => void;
   onFocus?: (e: React.FocusEvent<T>) => void;
-  required?: boolean;
-  disabled?: boolean;
 }
 
 export interface IBaseInputProps
@@ -118,6 +119,23 @@ export interface ISelectProps
   options: IOption[];
   value?: string;
   direction?: Direction;
+  resetFieldValue?: boolean;
+  setResetFieldValue?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface ISelectWithFetchProps<T>
+  extends React.SelectHTMLAttributes<HTMLSelectElement>,
+    IFormControlProps<HTMLSelectElement>,
+    IFormStateProps {
+  value: string;
+  direction?: Direction;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  url: string;
+  query?: string;
+  getFormattedOptions: (data: T[]) => { value: string; label: string }[];
+  showList?: true;
+  currentList?: (ObjectId | Record<string, unknown> | string)[];
+  pathToValue?: string;
   resetFieldValue?: boolean;
   setResetFieldValue?: React.Dispatch<React.SetStateAction<boolean>>;
 }

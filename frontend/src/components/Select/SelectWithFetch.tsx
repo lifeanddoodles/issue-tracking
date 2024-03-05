@@ -1,32 +1,7 @@
-import { ObjectId } from "mongoose";
 import { Fragment, forwardRef, useCallback, useEffect } from "react";
 import Select from ".";
 import useFetch from "../../hooks/useFetch";
-import {
-  Direction,
-  IFormControlProps,
-  IFormStateProps,
-} from "../../interfaces";
-
-export interface ISelectWithFetchProps<T>
-  extends IFormControlProps<HTMLSelectElement>,
-    IFormStateProps {
-  value: string;
-  direction?: Direction;
-  onChange?: (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => void;
-  url: string;
-  query?: string;
-  getFormattedOptions: (data: T[]) => { value: string; label: string }[];
-  showList?: true;
-  currentList?: (ObjectId | Record<string, unknown> | string)[];
-  pathToValue?: string;
-  resetFieldValue?: boolean;
-  setResetFieldValue?: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { ISelectWithFetchProps } from "../../interfaces";
 
 const SelectWithFetch = forwardRef(
   <T extends object>(
@@ -52,11 +27,7 @@ const SelectWithFetch = forwardRef(
   ): React.ReactElement => {
     const { data, loading, error, sendRequest } = useFetch<T[] | null>(null);
 
-    const handleChange = (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
-    ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       onChange && onChange(e);
     };
 

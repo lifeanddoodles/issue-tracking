@@ -212,22 +212,12 @@ describe("CreateService", () => {
         )
       );
 
-      const filteredLabels = [
-        { fieldLabel: "name", newValue: newFakeService.name },
-        { fieldLabel: "description", newValue: newFakeService.description },
-        { fieldLabel: "url", newValue: newFakeService.url },
-        { fieldLabel: "version", newValue: newFakeService.version },
-        { fieldLabel: "tier", newValue: newFakeService.tier },
-      ];
-
-      for (const { fieldLabel, newValue } of filteredLabels) {
-        const field = (await screen.findByLabelText(
-          RegExp(`^${fieldLabel}`, "i")
-        )) as FormElement;
+      for (const { fieldId, newFieldValue } of fieldsToTest) {
+        const [field] = await getFieldByLabel(fieldId);
 
         expect(field).toBeInTheDocument();
 
-        await act(() => updateFieldAndCheckValue(field, newValue));
+        await act(() => updateFieldAndCheckValue(field, newFieldValue));
       }
 
       const submitButton = screen.getByRole("button", {

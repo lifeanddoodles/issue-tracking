@@ -23,8 +23,8 @@ const fieldsToTest = [
     customLabel: null,
   },
   { fieldId: "company", newFieldValue: "1", customLabel: "Add company" },
-  { fieldId: "teamMember", newFieldValue: "1", customLabel: "Add team member" },
-  { fieldId: "newService", newFieldValue: "1", customLabel: "Add service" },
+  { fieldId: "teamMember", newFieldValue: "1", customLabel: null },
+  { fieldId: "newService", newFieldValue: "1", customLabel: null },
 ];
 
 const formDataShape = {
@@ -218,23 +218,12 @@ describe("CreateProject", () => {
         )
       );
 
-      const filteredLabels = [
-        { fieldLabel: "name", newValue: newFakeProject.name },
-        { fieldLabel: "url", newValue: newFakeProject.url },
-        { fieldLabel: "description", newValue: newFakeProject.description },
-        { fieldLabel: "add company", newValue: newFakeProject.company },
-        { fieldLabel: "add team member", newValue: "1" },
-        { fieldLabel: "add service", newValue: filledFormData.newService },
-      ];
-
-      for (const { fieldLabel, newValue } of filteredLabels) {
-        const field = (await screen.findByLabelText(
-          RegExp(`^${fieldLabel}`, "i")
-        )) as FormElement;
+      for (const { fieldId, newFieldValue, customLabel } of fieldsToTest) {
+        const [field] = await getFieldByLabel(customLabel || fieldId);
 
         expect(field).toBeInTheDocument();
 
-        await act(() => updateFieldAndCheckValue(field, newValue));
+        await act(() => updateFieldAndCheckValue(field, newFieldValue));
       }
 
       const submitButton = screen.getByRole("button", {

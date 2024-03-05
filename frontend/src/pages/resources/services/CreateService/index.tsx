@@ -49,7 +49,7 @@ const fields = [
     label: "Tier:",
     id: "tier",
     fieldProps: {
-      options: getTierOptions(),
+      options: getTierOptions,
       direction: "col",
     },
   },
@@ -126,6 +126,7 @@ const CreateService = () => {
       renderFields(fieldsWithFormProps(formShape), formShape),
     [fieldsWithFormProps]
   );
+
   const renderedChildren = useMemo(
     () => formData !== null && getRenderedChildren(formData),
     [formData, getRenderedChildren]

@@ -134,4 +134,10 @@ export const UrlInput = forwardRef(
   }
 );
 
+export const CheckboxInput = forwardRef(
+  (props: IBaseInputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+    return <Input {...props} type="checkbox" ref={ref} />;
+  }
+);
+
 export default Input;

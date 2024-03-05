@@ -306,11 +306,16 @@ export const newFakeClientTicket: Partial<ITicket> = {
 export const newFakeTicket: Partial<ITicketDocument> = {
   _id: "ticket-004",
   ...newFakeClientTicket,
-  status: Status.OPEN,
-  ticketType: TicketType.ISSUE,
-  priority: Priority.HIGH,
-  isSubtask: false,
   assignToTeam: DepartmentTeam.DEVELOPMENT,
+  assignee: "dev-001",
+  reporter: "staff-001",
+  status: Status.OPEN,
+  priority: Priority.HIGH,
+  ticketType: TicketType.ISSUE,
+  estimatedTime: 10,
+  deadline: "",
+  isSubtask: true,
+  parentTask: "ticket-003",
 };
 
 export const fakePopulatedTickets: (
