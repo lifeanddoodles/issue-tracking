@@ -236,7 +236,7 @@ describe("CreateTicket", () => {
   /**
    * Test submit functionality
    */
-  describe.only("when submitting", async () => {
+  describe("when submitting", async () => {
     beforeEach(async () => {
       vi.mocked(useForm)
         .mockClear()

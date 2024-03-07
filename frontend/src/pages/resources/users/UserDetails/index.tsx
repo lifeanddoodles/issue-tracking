@@ -31,11 +31,11 @@ const fields = [
   },
   {
     Component: Select,
-    label: "Assign to team:",
+    label: "Department:",
     id: "department",
     required: true,
     fieldProps: {
-      options: getDepartmentTeamOptions(),
+      options: getDepartmentTeamOptions,
     },
   },
   {

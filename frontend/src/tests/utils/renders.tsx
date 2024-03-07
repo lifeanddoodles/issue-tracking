@@ -34,13 +34,16 @@ export const componentWithAuthContext = <T extends ReactElement>(
   return <AuthContext.Provider value={auth}>{Component}</AuthContext.Provider>;
 };
 
+export const componentWithRouter = <T extends ReactElement>(
+  Component: T,
+  auth: IAuthContext
+) => <MemoryRouter>{componentWithAuthContext(Component, auth)}</MemoryRouter>;
+
 export const renderWithRouter = <T extends ReactElement>(
   Component: T,
   auth: IAuthContext
 ) => {
-  render(
-    <MemoryRouter>{componentWithAuthContext(Component, auth)}</MemoryRouter>
-  );
+  render(componentWithRouter(Component, auth));
 };
 
 export const renderWithRouterFromRoute = <T extends ReactElement>(
