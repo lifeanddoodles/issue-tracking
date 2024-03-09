@@ -8,13 +8,19 @@ import {
   fakeProjects,
 } from "../../../../__mocks__";
 import NotClientRoute from "../../../../components/NotClientRoute";
-import {} from "../../../../interfaces";
 import {
   IAuthContext,
   authBase,
   renderWithRouterFromMultipleRoutes,
 } from "../../../../tests/utils";
 import Dashboard from "../../../account/Dashboard";
+
+enum TableColumns {
+  name = "Name",
+  url = "URL",
+  subscriptionStatus = "Status",
+  industry = "Industry",
+}
 
 describe("AllProjects", () => {
   let auth: IAuthContext;
@@ -67,13 +73,6 @@ describe("AllProjects", () => {
         ...authBase,
       };
     });
-
-    enum TableColumns {
-      name = "Name",
-      url = "URL",
-      subscriptionStatus = "Status",
-      industry = "Industry",
-    }
 
     test("renders data correctly", async () => {
       await act(() =>
