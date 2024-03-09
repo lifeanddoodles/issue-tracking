@@ -6,6 +6,6 @@ const NotClientRoute = () => {
   const { user } = useAuthContext();
   const isNotClient = user?.role !== UserRole.CLIENT;
 
-  return isNotClient ? <Outlet /> : <Navigate to="/login" replace />;
+  return isNotClient ? <Outlet /> : <Navigate to="/dashboard" replace />;
 };
 export default NotClientRoute;

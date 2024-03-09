@@ -1,3 +1,4 @@
+export * from "./components";
 export * from "./customTests";
 export * from "./matchers";
 export * from "./mutations";

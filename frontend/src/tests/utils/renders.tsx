@@ -1,9 +1,10 @@
 import { render } from "@testing-library/react";
-import { ReactElement } from "react";
+import { ReactElement, ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { IUserDocument } from "../../../../shared/interfaces";
 import { fakeAdminUser } from "../../__mocks__";
 import AuthContext from "../../context/AuthContext";
+import { RouterFromMultipleRoutes } from "../../tests/utils";
 
 export const authBase = {
   error: null,
@@ -57,4 +58,17 @@ export const renderWithRouterFromRoute = <T extends ReactElement>(
         <Route path={path} element={Component} />
       </Routes>
     </MemoryRouter>
+  );
+
+export const renderWithRouterFromMultipleRoutes = (
+  initialEntries: string[],
+  auth: IAuthContext,
+  children: ReactNode
+) =>
+  render(
+    <RouterFromMultipleRoutes
+      initialEntries={[...initialEntries]}
+      auth={auth}
+      children={children}
+    />
   );

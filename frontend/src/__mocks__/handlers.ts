@@ -232,9 +232,31 @@ export const handlers: HttpHandler[] = [
     const newComment = await request.json();
     return HttpResponse.json(newComment, { status: 201 });
   }),
-  http.get(`${baseUrl}${PROJECTS_BASE_API_URL}`, () => {
-    return HttpResponse.json(fakeProjects, { status: 200 });
-  }),
+  http.get<PathParams, DefaultBodyType | ErrorResponse>(
+    `${baseUrl}${PROJECTS_BASE_API_URL}`,
+    ({ request }) => {
+      const url = new URL(request.url);
+
+      if (url.searchParams.size > 0) {
+        const companyId = url.searchParams.get("company");
+        const company = fakeCompanies.find(
+          (company) => company._id === companyId
+        );
+        if (!company) {
+          return HttpResponse.json<ErrorResponse>(
+            { message: "Company not found" },
+            { status: 404 }
+          );
+        }
+        const fakeProjectMatches = fakeProjects.filter((project) =>
+          company.projects.includes(project._id)
+        );
+
+        return HttpResponse.json(fakeProjectMatches, { status: 200 });
+      }
+      return HttpResponse.json(fakeProjects, { status: 200 });
+    }
+  ),
   http.get<PathParams, DefaultBodyType | ErrorResponse>(
     `${baseUrl}${PROJECTS_BASE_API_URL}/:id`,
     ({ params }) => {

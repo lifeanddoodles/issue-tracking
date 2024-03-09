@@ -1,13 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
-import { IProjectDocument } from "../../../../../../shared/interfaces";
+import {
+  IProjectDocument,
+  IServiceDocument,
+} from "../../../../../../shared/interfaces";
 import Button from "../../../../components/Button";
 import Select from "../../../../components/Select";
 import TableFromDocuments from "../../../../components/TableFromDocuments";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useFetch from "../../../../hooks/useFetch";
 import Row from "../../../../layout/Row";
-import { PROJECTS_BASE_API_URL } from "../../../../routes";
-import { getColumnTitles, objectToQueryString } from "../../../../utils";
+import {
+  PROJECTS_BASE_API_URL,
+  SERVICES_BASE_API_URL,
+} from "../../../../routes";
+import {
+  getColumnTitles,
+  getServiceDataOptions,
+  objectToQueryString,
+} from "../../../../utils";
 
 enum TableColumns {
   name = "Name",
@@ -16,15 +26,53 @@ enum TableColumns {
   services = "Services",
 }
 
+const useProjectsFetch = () => {
+  const { data, loading, error, sendRequest } = useFetch<
+    IProjectDocument[] | []
+  >();
+
+  const getProjectsRows = useCallback(
+    async (companyId: string, query: string) => {
+      await sendRequest({
+        url: `${PROJECTS_BASE_API_URL}?company=${companyId}${
+          query ? `&${query}` : ""
+        }`,
+      });
+    },
+    [sendRequest]
+  );
+
+  return { data, loading, error, getProjectsRows };
+};
+
+const useServicesFetch = () => {
+  const { data, loading, error, sendRequest } = useFetch<
+    IServiceDocument[] | []
+  >();
+
+  const getServices = useCallback(async () => {
+    await sendRequest({
+      url: SERVICES_BASE_API_URL,
+    });
+  }, [sendRequest]);
+
+  return { data, loading, error, getServices };
+};
+
 const ProjectsByCompany = () => {
   const { user } = useAuthContext();
   const companyId = user?.company!.toString();
   const {
+    data: services,
+    loading: servicesLoading,
+    getServices,
+  } = useServicesFetch();
+  const {
     data: projects,
-    loading,
-    error,
-    sendRequest,
-  } = useFetch<IProjectDocument[] | []>();
+    loading: projectsLoading,
+    error: projectsError,
+    getProjectsRows,
+  } = useProjectsFetch();
   const [filters, setFilters] = useState<
     Partial<{
       name: string;
@@ -51,13 +99,9 @@ const ProjectsByCompany = () => {
     // TODO: Reset controllers to select empty option
   }, []);
 
-  const getRows = useCallback(() => {
-    sendRequest({
-      url: `${PROJECTS_BASE_API_URL}?company=${companyId}${
-        query ? `&${query}` : ""
-      }`,
-    });
-  }, [companyId, query, sendRequest]);
+  const getRows = useCallback(async () => {
+    getProjectsRows(companyId!, query);
+  }, [companyId, getProjectsRows, query]);
 
   const handleChangeFilters = (
     e: React.ChangeEvent<
@@ -71,11 +115,15 @@ const ProjectsByCompany = () => {
   };
 
   useEffect(() => {
+    getServices();
+  }, [getServices]);
+
+  useEffect(() => {
     getRows();
   }, [getRows]);
 
   const formattedProjects =
-    !loading &&
+    !projectsLoading &&
     projects?.map((project) => {
       return {
         id: project._id.toString(),
@@ -88,39 +136,44 @@ const ProjectsByCompany = () => {
       };
     });
 
-  if (error) return <h3 role="status">{error.message}</h3>;
+  if (projectsError) return <h3 role="status">{projectsError.message}</h3>;
 
   return (
     <>
       <div className="filters mb-8">
         <Row className="gap-2">
-          <Select
-            id="services"
-            value={filters?.service}
-            options={[
-              { value: "652df330ae65f850e576202e", label: "Website Builder" },
-            ]}
-            onChange={handleChangeFilters}
-          />
+          {servicesLoading && <p role="status">Loading services...</p>}
+          {services && (
+            <Select
+              id="services"
+              value={filters?.service}
+              options={getServiceDataOptions(services)}
+              onChange={handleChangeFilters}
+            />
+          )}
         </Row>
         <Row className="gap-2">
           <Button onClick={applyFilters}>Apply filters</Button>
           <Button onClick={clearFilters}>Clear filters</Button>
         </Row>
       </div>
-      {loading && <h3 role="status">Loading projects...</h3>}
-      {!loading && formattedProjects && formattedProjects?.length === 0 && (
-        <h3 role="status">No projects found</h3>
-      )}
-      {!loading && formattedProjects && formattedProjects?.length > 0 && (
-        <TableFromDocuments
-          cols={getColumnTitles(formattedProjects[0], TableColumns)}
-          rows={formattedProjects}
-          resourceBaseUrl="/dashboard/projects"
-          apiBaseUrl={PROJECTS_BASE_API_URL}
-          refetch={getRows}
-        />
-      )}
+      {projectsLoading && <h3 role="status">Loading projects...</h3>}
+      {!projectsLoading &&
+        formattedProjects &&
+        formattedProjects?.length === 0 && (
+          <h3 role="status">No projects found</h3>
+        )}
+      {!projectsLoading &&
+        formattedProjects &&
+        formattedProjects?.length > 0 && (
+          <TableFromDocuments
+            cols={getColumnTitles(formattedProjects[0], TableColumns)}
+            rows={formattedProjects}
+            resourceBaseUrl="/dashboard/projects"
+            apiBaseUrl={PROJECTS_BASE_API_URL}
+            refetch={getRows}
+          />
+        )}
     </>
   );
 };

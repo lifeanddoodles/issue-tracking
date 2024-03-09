@@ -1,17 +1,109 @@
-import { act, render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { act, screen, waitFor, within } from "@testing-library/react";
+import { Route } from "react-router-dom";
+import { IUserDocument } from "shared/interfaces";
 import AllProjects from ".";
+import {
+  fakeAdminUser,
+  fakeClientUser,
+  fakeProjects,
+} from "../../../../__mocks__";
+import NotClientRoute from "../../../../components/NotClientRoute";
+import {} from "../../../../interfaces";
+import {
+  IAuthContext,
+  authBase,
+  renderWithRouterFromMultipleRoutes,
+} from "../../../../tests/utils";
+import Dashboard from "../../../account/Dashboard";
 
 describe("AllProjects", () => {
-  test("renders correctly", async () => {
-    act(() =>
-      render(
-        <MemoryRouter>
-          <AllProjects />
-        </MemoryRouter>
-      )
-    );
-    const element = await screen.findByRole("table");
-    expect(element).toBeInTheDocument();
+  let auth: IAuthContext;
+
+  beforeAll(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("if user is a client", async () => {
+    beforeEach(async () => {
+      auth = {
+        user: {
+          ...fakeClientUser,
+        } as IUserDocument,
+        ...authBase,
+      };
+    });
+
+    test("redirects to dashboard", async () => {
+      await act(() =>
+        renderWithRouterFromMultipleRoutes(
+          ["/dashboard/projects"],
+          auth,
+          <>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="" element={<NotClientRoute />}>
+              <Route path="/dashboard/projects" element={<AllProjects />} />
+            </Route>
+          </>
+        )
+      );
+
+      const title = await screen.findByRole("heading", {
+        name: "Dashboard",
+        level: 1,
+      });
+      expect(title).toBeInTheDocument();
+      expect(screen.getByTestId("location-display")).toHaveTextContent(
+        "/dashboard"
+      );
+    });
+  });
+
+  describe("if user is not a client", async () => {
+    beforeEach(async () => {
+      auth = {
+        user: {
+          ...fakeAdminUser,
+        } as IUserDocument,
+        ...authBase,
+      };
+    });
+
+    enum TableColumns {
+      name = "Name",
+      url = "URL",
+      subscriptionStatus = "Status",
+      industry = "Industry",
+    }
+
+    test("renders data correctly", async () => {
+      await act(() =>
+        renderWithRouterFromMultipleRoutes(
+          ["/dashboard/projects"],
+          auth,
+          <>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="" element={<NotClientRoute />}>
+              <Route path="/dashboard/projects" element={<AllProjects />} />
+            </Route>
+          </>
+        )
+      );
+
+      await waitFor(async () => {
+        expect(screen.getByTestId("location-display")).toHaveTextContent(
+          "/dashboard/projects"
+        );
+        const element = await screen.findByRole("table");
+        expect(element).toBeInTheDocument();
+
+        const cols = await screen.findAllByRole("columnheader");
+        const rowGroups = await screen.findAllByRole("rowgroup");
+        const tbody = rowGroups[1];
+        const rows = await within(tbody).findAllByRole("row");
+
+        expect(cols.length).to.equal(Object.keys(TableColumns).length + 1);
+        expect(rows.length).to.equal(fakeProjects.length);
+      });
+    });
   });
 });

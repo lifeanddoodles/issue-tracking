@@ -86,10 +86,20 @@ export const fakeUsers = [
     password: "123456789",
     role: UserRole.CLIENT,
   },
+  {
+    _id: "client-003",
+    firstName: "Bob",
+    lastName: "Smith",
+    position: "Marketing Coordinator",
+    email: "bob.smith@clientcompany.com",
+    password: "bETj6uCOI",
+    role: UserRole.CLIENT,
+    company: "company-002",
+  },
 ];
 
 export const newFakeUser = {
-  _id: "staff-003",
+  _id: "staff-004",
   firstName: "Beth",
   lastName: "Parker",
   email: "beth.parker@saascompany.com",
@@ -162,7 +172,7 @@ export const fakeCompanies = [
     email: "contact@saascompany.com",
     subscriptionStatus: SubscriptionStatus.ACTIVE,
     employees: [],
-    projects: [],
+    projects: ["project-000", "project-001"],
     dba: "SaaS LLC",
     description: "Lorem ipsum dolor.",
     address: {
@@ -179,9 +189,28 @@ export const fakeCompanies = [
     url: "clientcompany.com",
     email: "contact@clientcompany.com",
     subscriptionStatus: SubscriptionStatus.ONBOARDING,
-    employees: [],
-    projects: [],
+    employees: ["client-001"],
+    projects: ["project-000", "project-001"],
     industry: Industry.FINANCE,
+    dba: "Client Company LLC",
+    description: "Lorem ipsum dolor.",
+    address: {
+      street: "Sesame",
+      city: "Test City",
+      state: "",
+      zip: "",
+      country: "",
+    },
+  },
+  {
+    _id: "company-002",
+    name: "Client Company",
+    url: "clientcompany.com",
+    email: "contact@clientcompany.com",
+    subscriptionStatus: SubscriptionStatus.ONBOARDING,
+    employees: ["client-003"],
+    projects: [],
+    industry: Industry.EDUCATION,
     dba: "Client Company LLC",
     description: "Lorem ipsum dolor.",
     address: {
@@ -195,7 +224,7 @@ export const fakeCompanies = [
 ];
 
 export const newFakeCompany = {
-  _id: "company-002",
+  _id: "company-003",
   name: "New Company",
   url: "https://newcompany.com",
   phone: "12345678901",
@@ -236,10 +265,20 @@ export const fakeProjects = [
     team: [],
     tickets: [],
   },
+  {
+    _id: "project-002",
+    name: "Email campaign",
+    url: "",
+    description: "Email drip campaign",
+    company: "company-001",
+    services: ["service-001"],
+    team: [],
+    tickets: [],
+  },
 ];
 
 export const newFakeProject = {
-  _id: "project-002",
+  _id: "project-003",
   name: "Another Website",
   url: "https://new-project.com",
   description: "Secondary website for existing client",
@@ -454,3 +493,12 @@ export const fakeOptions = [
     value: "C",
   },
 ];
+
+const companyNoProjects = fakeCompanies.find(
+  (company) => company.projects.length === 0
+);
+
+export const fakeClientUserWithCompanyNoProjects = fakeUsers.filter(
+  (user) =>
+    user.role === UserRole.CLIENT && user.company === companyNoProjects?._id
+)[0];
