@@ -15,17 +15,22 @@ import {
   TextInput,
 } from "../../../../components/Input";
 import Select from "../../../../components/Select";
+import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
-import { USERS_BASE_API_URL } from "../../../../routes";
+import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
+  getCompanyDataOptions,
   getDepartmentTeamOptions,
   getUserRoleOptions,
   renderFields,
 } from "../../../../utils";
 
-type CreateUserFormData = Partial<IUserDocument> & { confirmPassword: string };
+type CreateUserFormData = Partial<IUserDocument> & {
+  confirmPassword: string;
+  newAssignedAccount?: ObjectId | Record<string, unknown> | string;
+};
 
 const fields = [
   {
@@ -66,6 +71,7 @@ const fields = [
     label: "Role:",
     id: "role",
     required: true,
+    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
     fieldProps: {
       options: getUserRoleOptions,
       direction: "col",
@@ -93,6 +99,18 @@ const fields = [
     id: "confirmPassword",
     required: true,
   },
+  {
+    Component: SelectWithFetch,
+    label: "Assign account:",
+    id: "newAssignedAccount",
+    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    fieldProps: {
+      url: COMPANIES_BASE_API_URL,
+      getFormattedOptions: getCompanyDataOptions,
+      showList: true,
+      pathToValue: "assignedAccounts",
+    },
+  },
 ];
 
 const CreateUser = () => {
@@ -106,10 +124,14 @@ const CreateUser = () => {
     password: "",
     confirmPassword: "",
     role: "",
-    company: "" as unknown as ObjectId | Record<string, unknown>,
+    company: "" as unknown as ObjectId | Record<string, unknown> | string,
     position: "",
     department: "" as DepartmentTeam,
     avatarUrl: "",
+    newAssignedAccount: "" as unknown as
+      | ObjectId
+      | Record<string, unknown>
+      | string,
   };
   const { formData, setFormData, errors, setErrors, onSubmit, data } = useForm<
     CreateUserFormData,
@@ -137,9 +159,31 @@ const CreateUser = () => {
     ) => {
       const target = e.target;
 
-      setFormData({
-        ...formData,
-        [target.name]: target.value,
+      setFormData((prevFormData) => {
+        let currentFormData = { ...prevFormData };
+
+        if (target.name === "newAssignedAccount") {
+          currentFormData[target.name as keyof IUserDocument] = target.value;
+          currentFormData.assignedAccounts = [
+            ...(currentFormData?.assignedAccounts || []),
+            target.value as unknown as
+              | ObjectId
+              | Record<string, unknown>
+              | string,
+          ];
+        } else {
+          currentFormData = {
+            ...currentFormData,
+            [target.name as keyof IUserDocument]:
+              target.type === "checkbox"
+                ? (target as HTMLInputElement).checked
+                : target.value !== "" && target.value
+                ? target.value
+                : "",
+          };
+        }
+
+        return currentFormData;
       });
 
       const changedId =
@@ -165,6 +209,10 @@ const CreateUser = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
+      /**
+       * TODO: Update endpoint to add CS Rep's ID
+       * to the corresponding company's assigned rep
+       */
       onSubmit("POST", formData);
     },
     [formData, onSubmit]

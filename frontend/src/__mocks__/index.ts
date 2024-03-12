@@ -96,10 +96,21 @@ export const fakeUsers = [
     role: UserRole.CLIENT,
     company: "company-002",
   },
+  {
+    _id: "staff-005",
+    firstName: "Vanessa",
+    lastName: "Houston",
+    email: "vanessa.houston@saascompany.com",
+    department: DepartmentTeam.CUSTOMER_SUCCESS,
+    position: "Customer Success Manager",
+    password: "j6u9EwT1r",
+    role: UserRole.STAFF,
+    company: "company-000",
+  },
 ];
 
 export const newFakeUser = {
-  _id: "staff-004",
+  _id: "staff-005",
   firstName: "Beth",
   lastName: "Parker",
   email: "beth.parker@saascompany.com",
@@ -134,6 +145,12 @@ export const fakeClientUserNoCompany = fakeUsers.filter(
 
 export const fakeClientUserWithCompany = fakeUsers.filter(
   (user) => user.role === UserRole.CLIENT && user.company
+)[0];
+
+export const fakeCustomerSuccessUser = fakeUsers.filter(
+  (user) =>
+    user.role === UserRole.STAFF &&
+    user.department === DepartmentTeam.CUSTOMER_SUCCESS
 )[0];
 
 export const fakeServices = [

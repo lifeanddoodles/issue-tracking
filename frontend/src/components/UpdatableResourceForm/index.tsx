@@ -7,7 +7,11 @@ import {
   useMemo,
 } from "react";
 import { UserRole } from "../../../../shared/interfaces";
-import { FormElement, WrapperWithLinkFallbackProps } from "../../interfaces";
+import {
+  FormElement,
+  SecondaryLabel,
+  WrapperWithLinkFallbackProps,
+} from "../../interfaces";
 import { getValue, toCapital } from "../../utils";
 import Button from "../Button";
 import FieldWithControls from "../FieldWithControls";
@@ -36,17 +40,24 @@ const getFormattedFields = <T,>({
 }) => {
   return Children.toArray(children).map((child) => {
     if (isValidElement(child) && child?.props) {
-      const { id, label, wrapperProps = {}, ...rest } = child.props;
+      const {
+        id,
+        label,
+        wrapperProps = {},
+        permissions,
+        ...rest
+      } = child.props;
       const valueObj =
-        child.props?.value !== undefined
-          ? { value: getValue(id, formData) }
-          : { checked: getValue(id, formData) };
+        child.props?.checked !== undefined
+          ? { checked: getValue(id, formData) }
+          : { value: getValue(id, formData) };
 
-      /**
-       * TODO: Refactor to use `permissions` prop and userIsAuthorized function
-       */
       const disableToggleEdit = wrapperProps?.disableToggleEdit
-        ? wrapperProps?.disableToggleEdit(userRole, [UserRole.ADMIN])
+        ? wrapperProps?.disableToggleEdit(userRole, permissions?.EDIT)
+        : false;
+
+      const forceVisible = wrapperProps?.forceVisible
+        ? wrapperProps?.forceVisible(userRole, permissions?.VIEW)
         : false;
 
       const newChild = (
@@ -76,11 +87,17 @@ const getFormattedFields = <T,>({
         getResourceId,
         resourceName,
         uiResourceBaseUrl,
+        secondaryLabels,
+        forceVisible,
       }: {
         Wrapper: (args: WrapperWithLinkFallbackProps) => JSX.Element;
         getResourceId: (formData: T, key: string) => string;
         resourceName: string;
         uiResourceBaseUrl: string;
+        secondaryLabels?: Partial<{
+          [key in SecondaryLabel]: string;
+        }>;
+        forceVisible?: boolean;
       }) => {
         if (!Wrapper) {
           return;
@@ -93,6 +110,8 @@ const getFormattedFields = <T,>({
             resourceId={resourceId}
             resourceName={resourceName}
             uiResourceBaseUrl={uiResourceBaseUrl}
+            secondaryLabels={secondaryLabels}
+            forceVisible={forceVisible}
             key={id}
           >
             {newChild}
@@ -101,7 +120,7 @@ const getFormattedFields = <T,>({
       };
 
       return Object.keys(wrapperProps).length > 0
-        ? ChildWithWrapper({ ...wrapperProps })
+        ? ChildWithWrapper({ ...wrapperProps, forceVisible })
         : newChild;
     }
   });

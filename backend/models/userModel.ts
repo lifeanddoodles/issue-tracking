@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-import { IUserDocument } from "../../shared/interfaces/index.js";
+import { IUserDocument, UserRole } from "../../shared/interfaces/index.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -47,6 +47,23 @@ const userSchema = new mongoose.Schema(
         "PRODUCT",
         "MANAGEMENT",
       ],
+    },
+    assignedAccounts: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Company",
+      validate: {
+        validator: function (
+          value: [mongoose.Schema.Types.ObjectId],
+          doc: IUserDocument
+        ) {
+          if (doc.role === UserRole.CLIENT) {
+            return false;
+          }
+          return value.every((id) =>
+            mongoose.Types.ObjectId.isValid(id.toString())
+          );
+        },
+      },
     },
   },
   { timestamps: true }

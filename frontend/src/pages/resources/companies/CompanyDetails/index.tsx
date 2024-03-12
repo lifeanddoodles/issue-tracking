@@ -7,19 +7,24 @@ import {
   ICompanyDocument,
   Industry,
   SubscriptionStatus,
+  UserRole,
 } from "../../../../../../shared/interfaces";
+import FieldWrapperWithLinkFallback from "../../../../components/FieldWrapperWithLinkFallback";
 import { EmailInput, TextInput, UrlInput } from "../../../../components/Input";
 import Select from "../../../../components/Select";
 import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import TextArea from "../../../../components/TextArea";
-import UpdatableResourceForm from "../../../../components/UpdatableResourceForm";
+import UpdatableDetailsForm from "../../../../components/UpdatableDetailsForm";
 import { useAuthContext } from "../../../../context/AuthProvider";
-import { ResourceUpdatableFormProps } from "../../../../interfaces";
 import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
+  getCustomerSuccessOptions,
   getIndustryOptions,
+  getResourceId,
   getSubscriptionStatusOptions,
   getUserDataOptions,
+  userIsAuthorized,
+  userNotAuthorized,
 } from "../../../../utils";
 
 type CompanyFormData = Partial<
@@ -28,89 +33,119 @@ type CompanyFormData = Partial<
   }
 >;
 
-const CompanyDetailsForm: ({
-  resourceUrl,
-  resourceId,
-  resourceName,
-  onChange,
-  formShape,
-}: ResourceUpdatableFormProps<CompanyFormData>) => JSX.Element = ({
-  resourceUrl,
-  resourceId,
-  resourceName,
-  onChange,
-  formShape,
-}) => {
-  return (
-    <UpdatableResourceForm
-      resourceUrl={resourceUrl}
-      resourceId={resourceId}
-      resourceName={resourceName}
-      onChange={onChange}
-      formShape={formShape}
-    >
-      <TextInput label="Name:" id="name" required value={formShape?.name} />
-      <Select
-        label="Status:"
-        id="subscriptionStatus"
-        options={getSubscriptionStatusOptions()}
-        required
-        value={formShape?.subscriptionStatus}
-      />
-      <EmailInput label="Email:" id="email" required value={formShape?.email} />
-      <UrlInput label="URL:" id="url" required value={formShape?.url} />
-      <TextInput label="Phone:" id="phone" value={formShape?.phone} />
-      <TextInput
-        label="Street:"
-        id="address.street"
-        value={formShape?.address?.street}
-      />
-      <TextInput
-        label="City:"
-        id="address.city"
-        value={formShape?.address?.city}
-      />
-      <TextInput
-        label="State:"
-        id="address.state"
-        value={formShape?.address?.state}
-      />
-      <TextInput
-        label="Zip:"
-        id="address.zip"
-        value={formShape?.address?.zip}
-      />
-      <TextInput
-        label="Country:"
-        id="address.country"
-        value={formShape?.address?.country}
-      />
-      <TextInput label="DBA:" id="dba" value={formShape?.dba} />
-      <Select
-        label="Industry:"
-        id="industry"
-        options={getIndustryOptions()}
-        value={formShape?.industry}
-      />
-      <TextArea
-        label="Description:"
-        id="description"
-        value={formShape?.description}
-      />
-      {/* TODO: Select should be displayed only for admin, other users must fill a separate form */}
-      {/* TODO: Handle optional and/or invalid children to modify */}
-      <SelectWithFetch
-        label="Add employee:"
-        id="newEmployee"
-        value={formShape?.newEmployee as string}
-        url={USERS_BASE_API_URL}
-        getFormattedOptions={getUserDataOptions}
-        showList={true}
-        pathToValue={"employees"}
-      />
-    </UpdatableResourceForm>
-  );
-};
+const fields = [
+  {
+    Component: TextInput,
+    label: "Name:",
+    id: "name",
+    required: true,
+  },
+  {
+    Component: Select,
+    label: "Status:",
+    id: "subscriptionStatus",
+    required: true,
+    fieldProps: {
+      options: getSubscriptionStatusOptions,
+    },
+  },
+  {
+    Component: EmailInput,
+    label: "Email:",
+    id: "email",
+  },
+  {
+    Component: UrlInput,
+    label: "URL:",
+    id: "url",
+    required: true,
+  },
+  {
+    Component: TextInput,
+    label: "Phone:",
+    id: "phone",
+  },
+  {
+    Component: TextInput,
+    label: "Street:",
+    id: "address.street",
+  },
+  {
+    Component: TextInput,
+    label: "City:",
+    id: "address.city",
+  },
+  {
+    Component: TextInput,
+    label: "State:",
+    id: "address.state",
+  },
+  {
+    Component: TextInput,
+    label: "Zip:",
+    id: "address.zip",
+  },
+  {
+    Component: TextInput,
+    label: "Country:",
+    id: "address.country",
+  },
+  {
+    Component: TextInput,
+    label: "DBA:",
+    id: "dba",
+  },
+  {
+    Component: Select,
+    label: "Industry:",
+    id: "industry",
+    required: true,
+    fieldProps: {
+      options: getIndustryOptions,
+    },
+  },
+  {
+    Component: TextArea,
+    label: "Description:",
+    id: "description",
+    required: true,
+  },
+  {
+    Component: SelectWithFetch,
+    label: "Add employee:",
+    id: "newEmployee",
+    permissions: {
+      VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+      EDIT: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+    },
+    fieldProps: {
+      url: USERS_BASE_API_URL,
+      getFormattedOptions: getUserDataOptions,
+    },
+    wrapperProps: {
+      Wrapper: FieldWrapperWithLinkFallback,
+      getResourceId,
+      resourceName: "user",
+      uiResourceBaseUrl: "/dashboard/users",
+      disableToggleEdit: userNotAuthorized,
+      forceVisible: userIsAuthorized,
+      secondaryLabels: {
+        create: "Add team member",
+        edit: "Edit team member",
+      },
+    },
+  },
+  {
+    Component: SelectWithFetch,
+    label: "Assign representative:",
+    id: "assignedRepresentative",
+    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    fieldProps: {
+      url: USERS_BASE_API_URL,
+      getFormattedOptions: getCustomerSuccessOptions,
+    },
+  },
+];
 
 const CompanyDetails = () => {
   const params = useParams();
@@ -134,6 +169,7 @@ const CompanyDetails = () => {
     description: "",
     employees: [] as (ObjectId | Record<string, unknown> | string)[],
     newEmployee: "",
+    assignedRepresentative: "",
   };
 
   const handleChange = useCallback(
@@ -157,10 +193,10 @@ const CompanyDetails = () => {
         newFormData[target.name as keyof ICompanyDocument] = target.value;
         newFormData.employees = [
           ...(newFormData?.employees || []),
-          target.value as unknown as ObjectId | Record<string, unknown>,
+          target.value,
         ];
       } else {
-        // This is not an address property, update the main object
+        // This is not an edge case, update the main object
         newFormData[target.name as keyof ICompanyDocument] =
           target.type === "checkbox"
             ? (target as HTMLInputElement).checked
@@ -175,19 +211,15 @@ const CompanyDetails = () => {
   );
 
   return (
-    <>
-      <CompanyDetailsForm
-        resourceUrl={COMPANIES_BASE_API_URL}
-        resourceId={companyId as string}
-        resourceName={"company"}
-        onChange={handleChange}
-        formShape={formShape}
-      />
-      {/*
-       * TODO: Add new employee form or link if user is not admin
-       * <Link to="/dashboard/users/create">Add team member</Link>
-       */}
-    </>
+    <UpdatableDetailsForm
+      resourceUrl={COMPANIES_BASE_API_URL}
+      resourceId={companyId as string}
+      resourceName={"company"}
+      onChange={handleChange}
+      formShape={formShape}
+      fields={fields}
+      userRole={user?.role as UserRole}
+    />
   );
 };
 

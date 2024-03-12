@@ -13,8 +13,14 @@ export interface ResourceUpdatableFormProps<T> {
   title?: string;
 }
 
+export type SecondaryLabel = "view" | "create" | "edit" | "delete";
+
 export type WrapperWithLinkFallbackProps = PropsWithChildren<{
   resourceId?: string;
   resourceName: string;
   uiResourceBaseUrl?: string;
+  secondaryLabels?: Partial<{
+    [key in SecondaryLabel]: string;
+  }>;
+  forceVisible?: boolean;
 }>;

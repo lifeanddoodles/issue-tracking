@@ -20,6 +20,7 @@ export interface IUser {
   position?: string;
   department?: DepartmentTeam;
   avatarUrl?: string;
+  assignedAccounts?: (ObjectId | Record<string, unknown> | string)[];
 }
 
 export interface IUserDocument extends IUser, Document {

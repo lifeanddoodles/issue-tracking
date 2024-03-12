@@ -7,24 +7,30 @@ const FieldWrapperWithLinkFallback = ({
   resourceId,
   resourceName,
   uiResourceBaseUrl,
+  secondaryLabels,
+  forceVisible,
 }: WrapperWithLinkFallbackProps) => {
   const initialValueExists = resourceId !== undefined && resourceId !== "";
 
-  return initialValueExists ? (
+  return forceVisible || initialValueExists ? (
     <>
       {children}
-      <Link
-        className={`${getVariantClasses("link")}`}
-        to={`${uiResourceBaseUrl}/${resourceId}`}
-      >
-        {`Edit ${resourceName} details`}
-      </Link>
+      {resourceId && (
+        <Link
+          className={`${getVariantClasses("link")}`}
+          to={`${uiResourceBaseUrl}/${resourceId}`}
+        >
+          {secondaryLabels?.edit || `Edit ${resourceName} details`}
+        </Link>
+      )}
     </>
   ) : (
     <Link
       className={`${getVariantClasses("link")}`}
       to={`${uiResourceBaseUrl}/create`}
-    >{`Add ${resourceName}`}</Link>
+    >
+      {secondaryLabels?.create || `Add ${resourceName}`}
+    </Link>
   );
 };
 export default FieldWrapperWithLinkFallback;

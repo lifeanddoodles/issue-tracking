@@ -1,4 +1,5 @@
 import { Document, ObjectId } from "mongoose";
+import { Tier } from "./service.ts";
 
 export enum Industry {
   HEALTHCARE = "HEALTHCARE",
@@ -43,6 +44,8 @@ export interface ICompany {
   dba?: string;
   description?: string;
   industry?: Industry;
+  tier?: Tier;
+  assignedRepresentative?: ObjectId | Record<string, unknown> | string;
 }
 
 export interface ICompanyDocument extends ICompany, Document {}

@@ -43,6 +43,7 @@ const fieldsToTest = [
   { fieldId: "dba", newFieldValue: "New DBA" },
   { fieldId: "industry", newFieldValue: "1" },
   { fieldId: "newEmployee", newFieldValue: "1" },
+  { fieldId: "assignedRepresentative", newFieldValue: "0" },
 ];
 
 const fieldsToTestNoSelects = [
@@ -60,6 +61,10 @@ const fieldsToTestNoSelects = [
 describe("CompanyDetails", () => {
   let auth: IAuthContext;
   let useResourceInfoMockReturn: ResourceState<unknown>;
+
+  beforeAll(() => {
+    vi.clearAllMocks();
+  });
 
   describe("if company does not exist", async () => {
     beforeEach(async () => {
@@ -110,20 +115,21 @@ describe("CompanyDetails", () => {
     });
 
     test.each`
-      fieldId                 | findBy
-      ${"heading"}            | ${"role"}
-      ${"name"}               | ${"text"}
-      ${"subscriptionStatus"} | ${"text"}
-      ${"email"}              | ${"text"}
-      ${"address.street"}     | ${"text"}
-      ${"address.city"}       | ${"text"}
-      ${"address.state"}      | ${"text"}
-      ${"address.zip"}        | ${"text"}
-      ${"address.country"}    | ${"text"}
-      ${"dba"}                | ${"text"}
-      ${"industry"}           | ${"text"}
-      ${"description"}        | ${"text"}
-      ${"newEmployee"}        | ${"text"}
+      fieldId                     | findBy
+      ${"heading"}                | ${"role"}
+      ${"name"}                   | ${"text"}
+      ${"subscriptionStatus"}     | ${"text"}
+      ${"email"}                  | ${"text"}
+      ${"address.street"}         | ${"text"}
+      ${"address.city"}           | ${"text"}
+      ${"address.state"}          | ${"text"}
+      ${"address.zip"}            | ${"text"}
+      ${"address.country"}        | ${"text"}
+      ${"dba"}                    | ${"text"}
+      ${"industry"}               | ${"text"}
+      ${"description"}            | ${"text"}
+      ${"newEmployee"}            | ${"text"}
+      ${"assignedRepresentative"} | ${"text"}
     `(
       "renders $fieldId with the correct value",
       async ({ fieldId, findBy }) => {
@@ -194,6 +200,7 @@ describe("CompanyDetails", () => {
      * - subscriptionStatus
      * - industry
      * - newEmployee
+     * - assignedRepresentative
      */
     testEach(
       fieldsToTestNoSelects,
@@ -264,6 +271,7 @@ describe("CompanyDetails", () => {
      * - subscriptionStatus
      * - industry
      * - newEmployee
+     * - assignedRepresentative
      */
     testEach(
       fieldsToTestNoSelects,

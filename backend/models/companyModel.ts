@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
-import { ICompanyDocument, UserRole } from "../../shared/interfaces/index.js";
+import {
+  ICompanyDocument,
+  Tier,
+  UserRole,
+} from "../../shared/interfaces/index.js";
 import {
   idIsInIdsArray,
   isAlreadyListedAsEmployeeInACompany,
@@ -38,6 +42,11 @@ const companySchema = new mongoose.Schema(
         "CANCELLED",
         "CHURNED",
       ],
+    },
+    tier: {
+      type: String,
+      enum: [Tier.FREE, Tier.PRO, Tier.ENTERPRISE],
+      default: Tier.FREE,
     },
     email: {
       type: String,
@@ -87,6 +96,18 @@ const companySchema = new mongoose.Schema(
         "MANUFACTURING",
         "HOSPITALITY",
       ],
+    },
+    assignedRepresentative: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      validate: {
+        validator: function (value: string, doc: ICompanyDocument) {
+          if (doc.tier === Tier.FREE) {
+            return false;
+          }
+          return mongoose.Types.ObjectId.isValid(value);
+        },
+      },
     },
   },
   { timestamps: true }

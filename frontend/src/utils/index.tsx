@@ -371,6 +371,19 @@ export function getClientDataOptions(users: Partial<IUserDocument>[]) {
     }));
 }
 
+export function getCustomerSuccessOptions(users: Partial<IUserDocument>[]) {
+  return users
+    .filter(
+      (user) =>
+        user?.role !== UserRole.CLIENT &&
+        user?.department === DepartmentTeam.CUSTOMER_SUCCESS
+    )
+    .map((user) => ({
+      value: user._id as string,
+      label: getFullName(user.firstName!, user.lastName!),
+    }));
+}
+
 export function getTicketDataOptions(
   tickets: Partial<ITicketPopulatedDocument>[]
 ) {
@@ -537,6 +550,10 @@ export function getReadableInputName(id: string) {
       return "Add team member";
     case "newService":
       return "Add service";
+    case "newAssignedAccount":
+      return "Assign account";
+    case "assignedRepresentative":
+      return "Assign representative";
     case "assignToTeam":
       return "Assign to team";
     case "assignee":
@@ -697,12 +714,22 @@ export const objValuesAreFalsy: <T extends Record<string, unknown> | null>(
 export const userNotAuthorized = (
   userRole: UserRole,
   allowedRoles: UserRole[]
-) => !allowedRoles.includes(userRole);
+) => {
+  if (!allowedRoles) {
+    return false;
+  }
+  return !allowedRoles.includes(userRole);
+};
 
 export const userIsAuthorized = (
   userRole: UserRole,
   allowedRoles: UserRole[]
-) => allowedRoles.includes(userRole);
+) => {
+  if (!allowedRoles) {
+    return true;
+  }
+  return allowedRoles.includes(userRole);
+};
 
 export const getResourceId = <T extends Record<string, unknown>>(
   formData: T,
@@ -749,6 +776,7 @@ export const renderFields = <T,>(
           key={id}
           id={id}
           value={value}
+          permissions={permissions}
           disabled={disabledValue}
           pattern={patternAsString}
           options={formattedOptions}

@@ -12,12 +12,17 @@ import Form from "../../../../components/Form";
 import Heading from "../../../../components/Heading";
 import { EmailInput, TextInput, UrlInput } from "../../../../components/Input";
 import Select from "../../../../components/Select";
+import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import TextArea from "../../../../components/TextArea";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
-import { COMPANIES_BASE_API_URL } from "../../../../routes";
-import { getIndustryOptions, renderFields } from "../../../../utils";
+import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
+import {
+  getCustomerSuccessOptions,
+  getIndustryOptions,
+  renderFields,
+} from "../../../../utils";
 
 type CreateCompanyFormData = Partial<ICompany>;
 
@@ -89,6 +94,18 @@ const fields = [
     id: "description",
     required: true,
   },
+  {
+    Component: SelectWithFetch,
+    label: "Assign representative:",
+    id: "assignedRepresentative",
+    permissions: {
+      EDIT: [UserRole.ADMIN],
+    },
+    fieldProps: {
+      url: USERS_BASE_API_URL,
+      getFormattedOptions: getCustomerSuccessOptions,
+    },
+  },
 ];
 
 const CreateCompany = () => {
@@ -114,6 +131,7 @@ const CreateCompany = () => {
     employees: [],
     projects: [],
     dba: "",
+    assignedRepresentative: "",
   };
 
   const { validateField } = useValidation();
@@ -181,6 +199,10 @@ const CreateCompany = () => {
         employeeId: isClient ? user!._id : "",
       };
 
+      /**
+       * TODO: Update endpoint to add company ID
+       * to the corresponding CS Rep's assigned accounts (if not already included)
+       */
       onSubmit("POST", formDataBody);
     },
     [formData, isClient, onSubmit, user]

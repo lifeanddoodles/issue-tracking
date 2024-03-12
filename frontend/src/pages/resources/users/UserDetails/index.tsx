@@ -1,20 +1,26 @@
 import { useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { IUserDocument, UserRole } from "../../../../../../shared/interfaces";
+import {
+  DepartmentTeam,
+  IUserDocument,
+  UserRole,
+} from "../../../../../../shared/interfaces";
 import FieldWrapperWithLinkFallback from "../../../../components/FieldWrapperWithLinkFallback";
 import { EmailInput, TextInput } from "../../../../components/Input";
 import Select from "../../../../components/Select";
+import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import UpdatableDetailsForm from "../../../../components/UpdatableDetailsForm";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import { FormElement } from "../../../../interfaces";
-import { USERS_BASE_API_URL } from "../../../../routes";
+import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
+  getCompanyDataOptions,
   getDepartmentTeamOptions,
   getResourceId,
   userNotAuthorized,
 } from "../../../../utils";
 
-type UserFormData = Partial<IUserDocument>;
+type UserFormData = Partial<IUserDocument> & { newAssignedAccount?: string };
 
 const fields = [
   {
@@ -30,15 +36,6 @@ const fields = [
     required: true,
   },
   {
-    Component: Select,
-    label: "Department:",
-    id: "department",
-    required: true,
-    fieldProps: {
-      options: getDepartmentTeamOptions,
-    },
-  },
-  {
     Component: EmailInput,
     label: "Email:",
     id: "email",
@@ -51,19 +48,41 @@ const fields = [
     required: true,
   },
   {
-    /*
-     * TODO: Add SelectWithFetch for company field
-     * Modify the Option component's props to show company name instead of ID
-     */
-    Component: TextInput,
+    Component: SelectWithFetch,
     label: "Company:",
     id: "company",
+    permissions: {
+      EDIT: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+    },
+    fieldProps: {
+      url: COMPANIES_BASE_API_URL,
+      getFormattedOptions: getCompanyDataOptions,
+    },
     wrapperProps: {
       Wrapper: FieldWrapperWithLinkFallback,
       getResourceId,
       resourceName: "company",
       uiResourceBaseUrl: "/dashboard/companies",
       disableToggleEdit: userNotAuthorized,
+    },
+  },
+  {
+    Component: Select,
+    label: "Department:",
+    id: "department",
+    required: true,
+    fieldProps: {
+      options: getDepartmentTeamOptions,
+    },
+  },
+  {
+    Component: SelectWithFetch,
+    label: "Assign account:",
+    id: "newAssignedAccount",
+    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    fieldProps: {
+      url: COMPANIES_BASE_API_URL,
+      getFormattedOptions: getCompanyDataOptions,
     },
   },
 ];
@@ -78,7 +97,9 @@ const UserDetails = () => {
     lastName: "",
     email: "",
     company: "",
+    department: "" as DepartmentTeam,
     position: "",
+    newAssignedAccount: "",
   };
 
   const handleChange = useCallback(
