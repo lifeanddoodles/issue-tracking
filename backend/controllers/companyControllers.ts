@@ -9,6 +9,7 @@ import {
   UserRole,
 } from "../../shared/interfaces/index.js";
 import Company from "../models/companyModel.js";
+import User from "../models/userModel.js";
 import {
   getEmployees,
   idIsInIdsArray,
@@ -100,6 +101,20 @@ export const addCompany = asyncHandler(async (req: Request, res: Response) => {
   if (!newCompany) {
     res.status(400);
     throw new Error("Company not created");
+  }
+
+  if (newCompany.assignedRepresentative) {
+    await User.findByIdAndUpdate(
+      newCompany.assignedRepresentative,
+      {
+        $push: {
+          companies: newCompany._id,
+        },
+      },
+      {
+        runValidators: true,
+      }
+    );
   }
 
   // Handle success
@@ -202,6 +217,20 @@ export const updateCompany = asyncHandler(
     if (!updatedCompany) {
       res.status(400);
       throw new Error("Company not updated");
+    }
+
+    if (updatedCompany.assignedRepresentative) {
+      await User.findByIdAndUpdate(
+        updatedCompany.assignedRepresentative,
+        {
+          $push: {
+            assignedAccounts: updatedCompany._id,
+          },
+        },
+        {
+          runValidators: true,
+        }
+      );
     }
 
     // Handle success

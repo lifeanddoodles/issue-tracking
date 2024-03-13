@@ -99,7 +99,6 @@ const fields = [
     Component: Select,
     label: "Industry:",
     id: "industry",
-    required: true,
     fieldProps: {
       options: getIndustryOptions,
     },
@@ -121,6 +120,8 @@ const fields = [
     fieldProps: {
       url: USERS_BASE_API_URL,
       getFormattedOptions: getUserDataOptions,
+      showList: true,
+      pathToValue: "employees",
     },
     wrapperProps: {
       Wrapper: FieldWrapperWithLinkFallback,

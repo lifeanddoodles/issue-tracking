@@ -7,6 +7,7 @@ import {
   IUserDocument,
   UserRole,
 } from "../../shared/interfaces/index.js";
+import Company from "../models/companyModel.js";
 import User from "../models/userModel.js";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.ts";
 
@@ -25,6 +26,9 @@ export const addUser = asyncHandler(
       company,
       position,
       department,
+      avatarUrl,
+      assignedAccounts,
+      newAssignedAccount,
     } = req.body;
 
     // Handle user already exists
@@ -56,6 +60,8 @@ export const addUser = asyncHandler(
       company,
       position,
       department,
+      avatarUrl,
+      assignedAccounts,
     };
 
     // Request user creation
@@ -67,16 +73,24 @@ export const addUser = asyncHandler(
       throw new Error("User not created");
     }
 
+    if (newAssignedAccount) {
+      await Company.findByIdAndUpdate(
+        newAssignedAccount,
+        {
+          $set: {
+            assignedRepresentative: createdUser._id,
+          },
+        },
+        {
+          runValidators: true,
+        }
+      );
+    }
+
     // Handle success
+    const authUser: Partial<IUserDocument> | undefined = req.user;
 
-    // Generate JWT token
-    generateTokenAndSetCookie(res, createdUser._id);
-
-    req.login(createdUser, function (err) {
-      if (err) {
-        return next(err);
-      }
-
+    if (authUser) {
       res.status(201).json({
         _id: createdUser._id,
         firstName: createdUser.firstName,
@@ -87,8 +101,31 @@ export const addUser = asyncHandler(
         position: createdUser.position,
         department: createdUser.department,
         avatarUrl: createdUser.avatarUrl,
+        assignedAccounts: createdUser.assignedAccounts,
       });
-    });
+    } else {
+      // Generate JWT token
+      generateTokenAndSetCookie(res, createdUser._id);
+
+      req.login(createdUser, function (err) {
+        if (err) {
+          return next(err);
+        }
+
+        res.status(201).json({
+          _id: createdUser._id,
+          firstName: createdUser.firstName,
+          lastName: createdUser.lastName,
+          email: createdUser.email,
+          role: createdUser.role,
+          company: createdUser.company,
+          position: createdUser.position,
+          department: createdUser.department,
+          avatarUrl: createdUser.avatarUrl,
+          assignedAccounts: createdUser.assignedAccounts,
+        });
+      });
+    }
   }
 );
 
@@ -208,7 +245,7 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
 // @access  Private/Admin
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
-  const updatedUserData = req.body;
+  const { newAssignedAccount, ...updatedUserData } = req.body;
   const userId = req.params.userId;
 
   // Validation
@@ -224,6 +261,20 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   if (!updatedUser) {
     res.status(400);
     throw new Error("User not updated");
+  }
+
+  if (newAssignedAccount) {
+    await Company.findByIdAndUpdate(
+      newAssignedAccount,
+      {
+        $set: {
+          assignedRepresentative: updatedUser._id,
+        },
+      },
+      {
+        runValidators: true,
+      }
+    );
   }
 
   // Handle success

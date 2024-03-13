@@ -52,11 +52,8 @@ const userSchema = new mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Company",
       validate: {
-        validator: function (
-          value: [mongoose.Schema.Types.ObjectId],
-          doc: IUserDocument
-        ) {
-          if (doc.role === UserRole.CLIENT) {
+        validator: function (value: [mongoose.Schema.Types.ObjectId]) {
+          if ((this as IUserDocument).role === UserRole.CLIENT) {
             return false;
           }
           return value.every((id) =>

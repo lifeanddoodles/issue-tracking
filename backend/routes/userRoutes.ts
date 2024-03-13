@@ -8,7 +8,7 @@ import {
   updateUser,
   updateUserProfile,
 } from "../controllers/userControllers.js";
-import { ensureAuth, ensureGuest } from "../middleware/authMiddleware.ts";
+import { ensureAuth } from "../middleware/authMiddleware.ts";
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ const router = express.Router();
 // @desc Create user
 // @route POST /api/users/
 // @access Public
-router.post("/", ensureGuest, addUser);
+router.post("/", addUser);
 
 // READ
 // @desc Show all users

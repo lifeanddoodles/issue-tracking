@@ -19,6 +19,7 @@ import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
+import { FormElement, FormFieldWithProps } from "../../../../interfaces";
 import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
   getCompanyDataOptions,
@@ -30,6 +31,25 @@ import {
 type CreateUserFormData = Partial<IUserDocument> & {
   confirmPassword: string;
   newAssignedAccount?: ObjectId | Record<string, unknown> | string;
+};
+
+const getCompanyProps = (isClient: boolean) => {
+  return isClient
+    ? {
+        Component: TextInput,
+        permissions: { VIEW: [UserRole.CLIENT] },
+      }
+    : {
+        Component: SelectWithFetch,
+        required: true,
+        permissions: {
+          VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+        },
+        fieldProps: {
+          url: COMPANIES_BASE_API_URL,
+          getFormattedOptions: getCompanyDataOptions,
+        },
+      };
 };
 
 const fields = [
@@ -78,9 +98,9 @@ const fields = [
     },
   },
   {
-    Component: TextInput,
     label: "Company:",
     id: "company",
+    loadProps: getCompanyProps,
   },
   {
     Component: TextInput,
@@ -115,7 +135,8 @@ const fields = [
 
 const CreateUser = () => {
   const { user } = useAuthContext();
-  const isClient = user?.role === UserRole.CLIENT;
+  const userRole = user?.role as UserRole;
+  const isClient = userRole === UserRole.CLIENT;
   const navigate = useNavigate();
   const formDataShape: CreateUserFormData = {
     firstName: "",
@@ -132,6 +153,7 @@ const CreateUser = () => {
       | ObjectId
       | Record<string, unknown>
       | string,
+    assignedAccounts: [],
   };
   const { formData, setFormData, errors, setErrors, onSubmit, data } = useForm<
     CreateUserFormData,
@@ -163,13 +185,10 @@ const CreateUser = () => {
         let currentFormData = { ...prevFormData };
 
         if (target.name === "newAssignedAccount") {
-          currentFormData[target.name as keyof IUserDocument] = target.value;
+          currentFormData[target.name] = target.value;
           currentFormData.assignedAccounts = [
             ...(currentFormData?.assignedAccounts || []),
-            target.value as unknown as
-              | ObjectId
-              | Record<string, unknown>
-              | string,
+            target.value,
           ];
         } else {
           currentFormData = {
@@ -209,10 +228,6 @@ const CreateUser = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      /**
-       * TODO: Update endpoint to add CS Rep's ID
-       * to the corresponding company's assigned rep
-       */
       onSubmit("POST", formData);
     },
     [formData, onSubmit]
@@ -221,8 +236,13 @@ const CreateUser = () => {
   const fieldsWithFormProps = useCallback(
     (formShape: CreateUserFormData) =>
       fields.map((field) => {
+        let dynamicFieldProps: Record<string, unknown> = {};
+        if (field.loadProps) {
+          dynamicFieldProps = field.loadProps(isClient);
+        }
         return {
           ...field,
+          ...dynamicFieldProps,
           name: field.id,
           [typeof formShape![field.id as keyof typeof formShape] === "boolean"
             ? "checked"
@@ -234,13 +254,17 @@ const CreateUser = () => {
           setErrors,
         };
       }),
-    [errors, handleChange, setErrors]
+    [errors, handleChange, isClient, setErrors]
   );
 
   const getRenderedChildren = useCallback(
     (formShape: CreateUserFormData) =>
-      renderFields(fieldsWithFormProps(formShape), formShape),
-    [fieldsWithFormProps]
+      renderFields(
+        fieldsWithFormProps(formShape) as FormFieldWithProps<FormElement>[],
+        formShape,
+        userRole
+      ),
+    [fieldsWithFormProps, userRole]
   );
 
   const renderedChildren = useMemo(

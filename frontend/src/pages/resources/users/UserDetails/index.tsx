@@ -83,6 +83,8 @@ const fields = [
     fieldProps: {
       url: COMPANIES_BASE_API_URL,
       getFormattedOptions: getCompanyDataOptions,
+      showList: true,
+      pathToValue: "assignedAccounts",
     },
   },
 ];
@@ -100,18 +102,27 @@ const UserDetails = () => {
     department: "" as DepartmentTeam,
     position: "",
     newAssignedAccount: "",
+    assignedAccounts: [],
   };
 
   const handleChange = useCallback(
     (target: FormElement, updatedFormData: UserFormData) => {
       const newFormData = { ...updatedFormData };
 
-      newFormData[target.name as keyof IUserDocument] =
-        target.type === "checkbox"
-          ? (target as HTMLInputElement).checked
-          : target.value !== "" && target.value
-          ? target.value
-          : null;
+      if (target.name === "newAssignedAccount") {
+        newFormData[target.name] = target.value;
+        newFormData.assignedAccounts = [
+          ...(newFormData?.assignedAccounts || []),
+          target.value,
+        ];
+      } else {
+        newFormData[target.name as keyof IUserDocument] =
+          target.type === "checkbox"
+            ? (target as HTMLInputElement).checked
+            : target.value !== "" && target.value
+            ? target.value
+            : null;
+      }
 
       return newFormData;
     },

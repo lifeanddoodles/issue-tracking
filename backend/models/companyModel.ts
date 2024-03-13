@@ -101,8 +101,8 @@ const companySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       validate: {
-        validator: function (value: string, doc: ICompanyDocument) {
-          if (doc.tier === Tier.FREE) {
+        validator: function (value: string) {
+          if ((this as ICompanyDocument).tier === Tier.FREE) {
             return false;
           }
           return mongoose.Types.ObjectId.isValid(value);
