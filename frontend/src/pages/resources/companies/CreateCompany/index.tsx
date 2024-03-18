@@ -5,6 +5,7 @@ import {
   ICompany,
   Industry,
   SubscriptionStatus,
+  Tier,
   UserRole,
 } from "../../../../../../shared/interfaces";
 import Button from "../../../../components/Button";
@@ -17,14 +18,26 @@ import TextArea from "../../../../components/TextArea";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
+import { FormField } from "../../../../interfaces";
 import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
   getCustomerSuccessOptions,
   getIndustryOptions,
+  getSubscriptionStatusOptions,
+  getTierOptions,
   renderFields,
 } from "../../../../utils";
 
 type CreateCompanyFormData = Partial<ICompany>;
+
+const isFieldDisabled = (id: string, formData: CreateCompanyFormData) => {
+  switch (id) {
+    case "assignedRepresentative":
+      return formData?.tier === ("" as unknown) || formData?.tier === Tier.FREE;
+    default:
+      return;
+  }
+};
 
 const fields = [
   {
@@ -32,6 +45,24 @@ const fields = [
     label: "Name:",
     id: "name",
     required: true,
+  },
+  {
+    Component: Select,
+    label: "Status:",
+    id: "subscriptionStatus",
+    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    fieldProps: {
+      options: getSubscriptionStatusOptions,
+    },
+  },
+  {
+    Component: Select,
+    label: "Tier:",
+    id: "tier",
+    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    fieldProps: {
+      options: getTierOptions,
+    },
   },
   {
     Component: UrlInput,
@@ -98,8 +129,10 @@ const fields = [
     Component: SelectWithFetch,
     label: "Assign representative:",
     id: "assignedRepresentative",
+    disabled: isFieldDisabled,
     permissions: {
-      EDIT: [UserRole.ADMIN],
+      EDIT: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+      VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
     },
     fieldProps: {
       url: USERS_BASE_API_URL,
@@ -115,11 +148,12 @@ const CreateCompany = () => {
   const navigate = useNavigate();
   const formDataShape: CreateCompanyFormData = {
     name: "",
+    subscriptionStatus: "" as SubscriptionStatus,
+    tier: "" as Tier,
     url: "",
     phone: "",
     description: "",
     industry: "" as Industry,
-    subscriptionStatus: SubscriptionStatus.ONBOARDING,
     email: "",
     address: {
       street: "",
@@ -208,31 +242,21 @@ const CreateCompany = () => {
     [formData, isClient, onSubmit, user]
   );
 
-  const fieldsWithFormProps = useCallback(
-    (formShape: CreateCompanyFormData) =>
-      fields.map((field) => {
-        return {
-          ...field,
-          name: field.id,
-          value: formShape![field.id as keyof typeof formShape] as string,
-          onChange: handleChange,
-          errors,
-          setErrors,
-        };
-      }),
-    [errors, handleChange, setErrors]
-  );
+  const renderedChildren = useMemo(() => {
+    if (formData === null) return;
 
-  const getRenderedChildren = useCallback(
-    (formShape: CreateCompanyFormData) =>
-      renderFields(fieldsWithFormProps(formShape), formShape, userRole),
-    [fieldsWithFormProps, userRole]
-  );
+    const fieldsToRender = (fields as FormField<unknown>[]).map((field) => {
+      return {
+        ...field,
+        name: field.id,
+        onChange: handleChange,
+        errors,
+        setErrors,
+      };
+    });
 
-  const renderedChildren = useMemo(
-    () => formData !== null && getRenderedChildren(formData),
-    [formData, getRenderedChildren]
-  );
+    return renderFields(fieldsToRender, formData, userRole);
+  }, [errors, formData, handleChange, setErrors, userRole]);
 
   return (
     formData && (

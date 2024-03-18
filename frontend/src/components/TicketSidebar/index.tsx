@@ -4,6 +4,7 @@ import {
   UserRole,
 } from "../../../../shared/interfaces";
 import { useAuthContext } from "../../context/AuthProvider";
+import { IOnClickProps } from "../../interfaces";
 import { TICKETS_BASE_API_URL, USERS_BASE_API_URL } from "../../routes";
 import {
   getDepartmentTeamOptions,
@@ -29,7 +30,7 @@ interface ITicketSidebarProps {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => void;
-  onSave?: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onSave?: (e: IOnClickProps) => void;
   onDelete?: () => void;
   formData?: Partial<ITicketPopulatedDocument>;
   errors?: { [key: string]: string[] } | null;
@@ -74,13 +75,11 @@ const TicketSidebar = ({
     onDelete && onDelete();
   };
 
-  const handleSave = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const handleSave = (e: IOnClickProps) => {
     onSave && onSave(e);
   };
 
-  const handleRequestUpdate = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
+  const handleRequestUpdate = (e: IOnClickProps) => {
     console.log("handleRequestUpdate", e);
   };
 

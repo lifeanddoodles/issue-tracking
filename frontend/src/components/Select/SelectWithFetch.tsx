@@ -1,4 +1,4 @@
-import { Fragment, forwardRef, useCallback, useEffect } from "react";
+import { Fragment, forwardRef, useCallback, useEffect, useMemo } from "react";
 import Select from ".";
 import useFetch from "../../hooks/useFetch";
 import { ISelectWithFetchProps } from "../../interfaces";
@@ -35,6 +35,11 @@ const SelectWithFetch = forwardRef(
       sendRequest({ url: `${url}${query ? `?${query}` : ""}` });
     }, [url, query, sendRequest]);
 
+    const resourceOptions = useMemo(() => {
+      if (data !== null) return getFormattedOptions(data);
+      return [];
+    }, [data, getFormattedOptions]);
+
     useEffect(() => {
       getOptionsList();
     }, [getOptionsList]);
@@ -63,7 +68,6 @@ const SelectWithFetch = forwardRef(
       );
     }
 
-    const resourceOptions = getFormattedOptions(data);
     const Wrapper = ({ children }: { children: React.ReactNode }) =>
       showList ? (
         <div role="group" className="flex flex-col">

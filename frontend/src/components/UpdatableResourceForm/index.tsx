@@ -1,6 +1,7 @@
 import {
   Children,
   Dispatch,
+  Fragment,
   SetStateAction,
   cloneElement,
   isValidElement,
@@ -22,6 +23,7 @@ import withUpdatableResourceForm from "../withUpdatableResourceForm";
 const getFormattedFields = <T,>({
   children,
   errors,
+  data,
   formData,
   onCancel,
   onChange,
@@ -31,6 +33,7 @@ const getFormattedFields = <T,>({
 }: {
   children: JSX.Element | JSX.Element[];
   errors: { [key: string]: string[] } | null;
+  data: T;
   formData: T;
   onCancel: () => void;
   onChange: (target: FormElement, updates: Partial<T>) => Partial<T>;
@@ -53,7 +56,9 @@ const getFormattedFields = <T,>({
           : { value: getValue(id, formData) };
 
       const disableToggleEdit = wrapperProps?.disableToggleEdit
-        ? wrapperProps?.disableToggleEdit(userRole, permissions?.EDIT)
+        ? userRole && permissions?.EDIT
+          ? wrapperProps?.disableToggleEdit(userRole, permissions?.EDIT)
+          : wrapperProps?.disableToggleEdit(id, formData)
         : false;
 
       const forceVisible = wrapperProps?.forceVisible
@@ -73,7 +78,7 @@ const getFormattedFields = <T,>({
             ...rest,
             ...valueObj,
             ...(child.props?.showList && child?.props?.pathToValue
-              ? { currentList: getValue(child?.props?.pathToValue, formData) }
+              ? { currentList: getValue(child?.props?.pathToValue, data) }
               : {}),
             onChange,
             errors,
@@ -100,7 +105,7 @@ const getFormattedFields = <T,>({
         forceVisible?: boolean;
       }) => {
         if (!Wrapper) {
-          return;
+          return <Fragment key={id}>{newChild}</Fragment>;
         }
 
         const resourceId = getResourceId(formData, resourceName);
@@ -129,6 +134,7 @@ const getFormattedFields = <T,>({
 const UpdatableResourceForm = withUpdatableResourceForm(
   ({
     resourceName,
+    data,
     formData,
     errors,
     setErrors,
@@ -143,21 +149,23 @@ const UpdatableResourceForm = withUpdatableResourceForm(
     const formattedChildren = useMemo(() => {
       return getFormattedFields({
         children,
-        errors,
+        data,
         formData,
         onCancel,
         onChange,
         onSave,
+        errors,
         setErrors,
         userRole,
       });
     }, [
       children,
-      errors,
+      data,
       formData,
       onCancel,
       onChange,
       onSave,
+      errors,
       setErrors,
       userRole,
     ]);

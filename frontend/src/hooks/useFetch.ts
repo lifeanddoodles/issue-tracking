@@ -19,13 +19,20 @@ const useFetch = <T>(reqProps?: RequestProps | null): FetchState<T> => {
         if (!url) return;
 
         const response = await fetch(url, options);
+        const json = await response.json();
 
-        if (!response.ok) {
-          setError(new Error(`HTTP error! Status: ${response.status}`));
+        if (!response.ok || (json.success && !json.success)) {
+          setError(
+            new Error(
+              `Error: ${json.message}` ||
+                `${response.statusText}. Status: ${response.status}`
+            )
+          );
+          setData(null);
+        } else {
+          setData(json);
         }
 
-        const json = await response.json();
-        setData(json);
         setLoading(false);
       } catch (error) {
         setError(error as Error);

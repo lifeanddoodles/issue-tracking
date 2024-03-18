@@ -13,6 +13,7 @@ import Select from "../../../../components/Select";
 import TextArea from "../../../../components/TextArea";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
+import { FormField } from "../../../../interfaces";
 import { SERVICES_BASE_API_URL } from "../../../../routes";
 import { getTierOptions, renderFields } from "../../../../utils";
 
@@ -106,38 +107,30 @@ const CreateService = () => {
     [formData, onSubmit]
   );
 
-  const fieldsWithFormProps = useCallback(
-    (formShape: CreateServiceFormData) =>
-      fields.map((field) => {
-        return {
-          ...field,
-          name: field.id,
-          value: formShape![field.id as keyof typeof formShape] as string,
-          onChange: handleChange,
-          errors,
-          setErrors,
-        };
-      }),
-    [errors, handleChange, setErrors]
-  );
+  const renderedChildren = useMemo(() => {
+    if (formData === null) return;
 
-  const getRenderedChildren = useCallback(
-    (formShape: CreateServiceFormData) =>
-      renderFields(fieldsWithFormProps(formShape), formShape),
-    [fieldsWithFormProps]
-  );
+    const fieldsToRender = (fields as FormField<unknown>[]).map((field) => {
+      return {
+        ...field,
+        name: field.id,
+        onChange: handleChange,
+        errors,
+        setErrors,
+      };
+    });
 
-  const renderedChildren = useMemo(
-    () => formData !== null && getRenderedChildren(formData),
-    [formData, getRenderedChildren]
-  );
+    return renderFields(fieldsToRender, formData);
+  }, [errors, formData, handleChange, setErrors]);
 
   return (
-    <Form onSubmit={handleSubmit} className="ml-0">
-      <Heading text="Create service" level={1} />
-      {renderedChildren}
-      <Button type="submit">Submit</Button>
-    </Form>
+    formData && (
+      <Form onSubmit={handleSubmit} className="ml-0">
+        <Heading text="Create service" level={1} />
+        {renderedChildren}
+        <Button type="submit">Submit</Button>
+      </Form>
+    )
   );
 };
 

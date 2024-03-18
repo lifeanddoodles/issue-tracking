@@ -10,7 +10,7 @@ import { FormField } from "../../../interfaces";
 import { LOGIN_API_URL, getLoginUserOptions } from "../../../routes";
 import GoogleLoginButton from "./GoogleLoginButton";
 
-const fields: FormField[] = [
+const fields: FormField<unknown>[] = [
   {
     id: "email",
     label: "Email:",

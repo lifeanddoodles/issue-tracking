@@ -1,4 +1,3 @@
-import { FormElement } from "frontend/src/interfaces";
 import { ObjectId } from "mongoose";
 import { useCallback } from "react";
 import { useParams } from "react-router-dom";
@@ -7,6 +6,7 @@ import {
   ICompanyDocument,
   Industry,
   SubscriptionStatus,
+  Tier,
   UserRole,
 } from "../../../../../../shared/interfaces";
 import FieldWrapperWithLinkFallback from "../../../../components/FieldWrapperWithLinkFallback";
@@ -16,12 +16,14 @@ import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import TextArea from "../../../../components/TextArea";
 import UpdatableDetailsForm from "../../../../components/UpdatableDetailsForm";
 import { useAuthContext } from "../../../../context/AuthProvider";
+import { FormElement, FormField } from "../../../../interfaces";
 import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
   getCustomerSuccessOptions,
   getIndustryOptions,
   getResourceId,
   getSubscriptionStatusOptions,
+  getTierOptions,
   getUserDataOptions,
   userIsAuthorized,
   userNotAuthorized,
@@ -32,6 +34,15 @@ type CompanyFormData = Partial<
     newEmployee?: string;
   }
 >;
+
+const isFieldDisabled = (id: string, formData: CompanyFormData) => {
+  switch (id) {
+    case "assignedRepresentative":
+      return formData?.tier === ("" as Tier) || formData.tier === Tier.FREE;
+    default:
+      return;
+  }
+};
 
 const fields = [
   {
@@ -47,6 +58,15 @@ const fields = [
     required: true,
     fieldProps: {
       options: getSubscriptionStatusOptions,
+    },
+  },
+  {
+    Component: Select,
+    label: "Tier:",
+    id: "tier",
+    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    fieldProps: {
+      options: getTierOptions,
     },
   },
   {
@@ -145,6 +165,9 @@ const fields = [
       url: USERS_BASE_API_URL,
       getFormattedOptions: getCustomerSuccessOptions,
     },
+    wrapperProps: {
+      disableToggleEdit: isFieldDisabled,
+    },
   },
 ];
 
@@ -155,6 +178,7 @@ const CompanyDetails = () => {
   const formShape = {
     name: "",
     subscriptionStatus: "" as SubscriptionStatus,
+    tier: "",
     url: "",
     email: "",
     phone: "",
@@ -218,7 +242,7 @@ const CompanyDetails = () => {
       resourceName={"company"}
       onChange={handleChange}
       formShape={formShape}
-      fields={fields}
+      fields={fields as FormField<unknown>[]}
       userRole={user?.role as UserRole}
     />
   );

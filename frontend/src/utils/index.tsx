@@ -749,7 +749,7 @@ export const renderFields = <T,>(
       disabled = false,
       permissions,
       ...otherProps
-    }: FormFieldWithProps<FormElement>) => {
+    }) => {
       if (
         userRole &&
         permissions?.VIEW &&
@@ -758,10 +758,15 @@ export const renderFields = <T,>(
         return <Fragment key={id}></Fragment>;
 
       const value = formShape[id as keyof T];
-      const disabledValue =
-        userRole && permissions?.EDIT
-          ? !userIsAuthorized(userRole as UserRole, permissions.EDIT)
+
+      const disabledProp =
+        typeof disabled === "function"
+          ? disabled(id, formShape as Partial<T>)
           : disabled;
+      const disabledValue =
+        userRole && permissions?.EDIT && disabled === undefined
+          ? !userIsAuthorized(userRole as UserRole, permissions.EDIT)
+          : disabledProp;
 
       const { pattern, options, ...otherFieldProps } = fieldProps;
       const patternAsString = (pattern as RegExp)

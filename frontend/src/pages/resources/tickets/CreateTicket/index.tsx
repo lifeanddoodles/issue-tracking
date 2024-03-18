@@ -22,6 +22,7 @@ import Toggle from "../../../../components/Toggle";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
+import { FormField } from "../../../../interfaces";
 import { TICKETS_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
   getAssignableDepartmentTeamOptions,
@@ -40,16 +41,10 @@ const getDepartmentQuery = (assignToTeam: DepartmentTeam) => {
   return assignToTeam && assignToTeam ? `?department=${assignToTeam}` : "";
 };
 
-const isParentTaskDisabled = (subTaskExists: boolean = false) => {
-  return !subTaskExists;
-};
-
-const isFieldDisabled = (id: string, getArgs?: (id: string) => unknown) => {
-  let arg;
+const isFieldDisabled = (id: string, formData: CreateTicketFormData) => {
   switch (id) {
     case "parentTask":
-      arg = getArgs?.(id);
-      return isParentTaskDisabled(arg as boolean);
+      return !formData?.isSubtask;
     default:
       return;
   }
@@ -214,22 +209,6 @@ const CreateTicket = () => {
     return assignToTeam && getDepartmentQuery(assignToTeam);
   }, [assignToTeam]);
 
-  const hasSubtask = useMemo(() => {
-    return (formData as Partial<ITicket>)?.isSubtask || false;
-  }, [formData]);
-
-  const getIsFieldDisabledArgs = useCallback(
-    (id: string) => {
-      switch (id) {
-        case "parentTask":
-          return hasSubtask;
-        default:
-          return;
-      }
-    },
-    [hasSubtask]
-  );
-
   const handleChange = useCallback(
     (
       e: React.ChangeEvent<
@@ -263,42 +242,27 @@ const CreateTicket = () => {
     [formData, onSubmit]
   );
 
-  const fieldsWithFormProps = useCallback(
-    (formShape: CreateTicketFormData) =>
-      fields.map((field) => {
-        const isDisabled =
-          typeof field.disabled === "function"
-            ? field.disabled(field.id, getIsFieldDisabledArgs)
-            : field.disabled;
+  const renderedChildren = useMemo(() => {
+    if (formData === null) return;
 
-        return {
-          ...field,
-          name: field.id,
-          [typeof formShape![field.id as keyof typeof formShape] === "boolean"
-            ? "checked"
-            : "value"]: formShape![field.id as keyof typeof formShape] as
-            | string
-            | boolean,
-          onChange: handleChange,
-          disabled: isDisabled,
-          errors,
-          setErrors,
-          ...(field?.fieldProps?.query ? { query: departmentQuery } : {}),
-        };
-      }),
-    [departmentQuery, errors, getIsFieldDisabledArgs, handleChange, setErrors]
-  );
+    const fieldsToRender = (fields as FormField<unknown>[]).map((field) => {
+      return {
+        ...field,
+        name: field.id,
+        [typeof formData![field.id as keyof typeof formData] === "boolean"
+          ? "checked"
+          : "value"]: formData![field.id as keyof typeof formData] as
+          | string
+          | boolean,
+        onChange: handleChange,
+        errors,
+        setErrors,
+        ...(field?.fieldProps?.query ? { query: departmentQuery } : {}),
+      };
+    });
 
-  const getRenderedChildren = useCallback(
-    (formShape: CreateTicketFormData) =>
-      renderFields(fieldsWithFormProps(formShape), formShape, userRole),
-    [fieldsWithFormProps, userRole]
-  );
-
-  const renderedChildren = useMemo(
-    () => formData !== null && getRenderedChildren(formData),
-    [formData, getRenderedChildren]
-  );
+    return renderFields(fieldsToRender, formData, userRole);
+  }, [departmentQuery, errors, formData, handleChange, setErrors, userRole]);
 
   return (
     formData && (

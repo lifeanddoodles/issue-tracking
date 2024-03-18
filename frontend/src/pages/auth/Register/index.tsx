@@ -51,7 +51,7 @@ const Register = () => {
     loading: newCompanyLoading,
     sendRequest,
   } = useFetch<ICompanyDocument>();
-  const fields: FormField[] = useMemo(
+  const fields: FormField<unknown>[] = useMemo(
     () => [
       {
         id: "firstName",

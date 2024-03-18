@@ -13,10 +13,10 @@ const UpdatableDetailsForm = <T extends Record<string, unknown>>({
   userRole,
   title,
 }: ResourceUpdatableFormProps<T> & {
-  fields: FormField[];
+  fields: FormField<unknown>[];
   userRole?: UserRole;
 }) => {
-  const renderedChildren = renderFields(fields, formShape, userRole);
+  const renderedChildren = renderFields<T>(fields, formShape as T, userRole);
 
   return (
     <UpdatableResourceForm

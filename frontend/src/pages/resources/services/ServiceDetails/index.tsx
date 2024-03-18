@@ -46,7 +46,7 @@ const fields = [
     id: "tier",
     required: true,
     fieldProps: {
-      options: getTierOptions(),
+      options: getTierOptions,
     },
   },
 ];

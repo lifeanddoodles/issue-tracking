@@ -29,7 +29,11 @@ export type PermissionType = "VIEW" | "EDIT";
 
 export type Permissions = Partial<{ [key in PermissionType]: UserRole[] }>;
 
-export interface FormField {
+export type GetDisabledValueArgs<T> =
+  | ((id?: string, cb?: (id: string) => unknown) => boolean)
+  | Partial<T>;
+
+export interface FormField<T> {
   id: string;
   Component: ElementType;
   label?: string;
@@ -41,11 +45,11 @@ export interface FormField {
   permissions?: Permissions;
   disabled?:
     | boolean
-    | ((id: string, getArgs?: (id: string) => unknown) => boolean);
+    | ((id: string, getArgs?: GetDisabledValueArgs<T>) => boolean);
 }
 
 export interface FormFieldWithProps<T>
-  extends FormField,
+  extends FormField<T>,
     Partial<Omit<IFormStateProps, "id">>,
     Partial<Omit<IFormControlProps<T>, "id">> {}
 

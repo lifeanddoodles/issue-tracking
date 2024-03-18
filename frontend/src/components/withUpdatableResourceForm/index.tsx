@@ -128,6 +128,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
       () => ({
         resourceName,
         formData,
+        data,
         loading,
         error,
         errors,
@@ -143,6 +144,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
       [
         resourceName,
         children,
+        data,
         error,
         errors,
         handleCancel,
@@ -174,7 +176,7 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
           />
         )}
         {error && <Heading text={error.message} role="status" />}
-        {formData && <Component {...resourceProps} />}
+        {data && formData && <Component {...resourceProps} />}
       </>
     );
   };

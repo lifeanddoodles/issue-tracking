@@ -39,8 +39,8 @@ const useResourceInfo = <T>(): ResourceState<T> => {
 
   return {
     data: useMemo(() => data, [data]),
-    loading,
-    error,
+    loading: useMemo(() => loading, [loading]),
+    error: useMemo(() => error, [error]),
     requestGetResource,
     requestPostResource,
     requestUpdateResource,

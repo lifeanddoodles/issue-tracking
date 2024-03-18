@@ -19,7 +19,7 @@ import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
-import { FormElement, FormFieldWithProps } from "../../../../interfaces";
+import { FormField } from "../../../../interfaces";
 import { COMPANIES_BASE_API_URL, USERS_BASE_API_URL } from "../../../../routes";
 import {
   getCompanyDataOptions,
@@ -233,45 +233,35 @@ const CreateUser = () => {
     [formData, onSubmit]
   );
 
-  const fieldsWithFormProps = useCallback(
-    (formShape: CreateUserFormData) =>
-      fields.map((field) => {
-        let dynamicFieldProps: Record<string, unknown> = {};
-        if (field.loadProps) {
-          dynamicFieldProps = field.loadProps(isClient);
-        }
-        return {
-          ...field,
-          ...dynamicFieldProps,
-          name: field.id,
-          [typeof formShape![field.id as keyof typeof formShape] === "boolean"
-            ? "checked"
-            : "value"]: formShape![field.id as keyof typeof formShape] as
-            | string
-            | boolean,
-          onChange: handleChange,
-          errors,
-          setErrors,
-        };
-      }),
-    [errors, handleChange, isClient, setErrors]
-  );
+  const renderedChildren = useMemo(() => {
+    if (formData === null) return;
 
-  const getRenderedChildren = useCallback(
-    (formShape: CreateUserFormData) =>
-      renderFields(
-        fieldsWithFormProps(formShape) as FormFieldWithProps<FormElement>[],
-        formShape,
-        userRole
-      ),
-    [fieldsWithFormProps, userRole]
-  );
+    const fieldsToRender = (
+      fields as (FormField<unknown> & {
+        loadProps?: (isClient: boolean) => Record<string, unknown>;
+      })[]
+    ).map((field) => {
+      let dynamicFieldProps: Record<string, unknown> = {};
+      if (field.loadProps) {
+        dynamicFieldProps = field.loadProps(isClient);
+      }
+      return {
+        ...field,
+        ...dynamicFieldProps,
+        name: field.id,
+        [typeof formData![field.id as keyof typeof formData] === "boolean"
+          ? "checked"
+          : "value"]: formData![field.id as keyof typeof formData] as
+          | string
+          | boolean,
+        onChange: handleChange,
+        errors,
+        setErrors,
+      };
+    });
 
-  const renderedChildren = useMemo(
-    () =>
-      formData !== null && getRenderedChildren(formData as CreateUserFormData),
-    [formData, getRenderedChildren]
-  );
+    return renderFields(fieldsToRender, formData, userRole);
+  }, [errors, formData, handleChange, isClient, setErrors, userRole]);
 
   return (
     <Form onSubmit={handleSubmit} className="ml-0">

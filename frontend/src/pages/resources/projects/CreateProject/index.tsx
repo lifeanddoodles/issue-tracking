@@ -14,6 +14,7 @@ import TextArea from "../../../../components/TextArea";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useForm from "../../../../hooks/useForm";
 import useValidation from "../../../../hooks/useValidation";
+import { FormField } from "../../../../interfaces";
 import {
   COMPANIES_BASE_API_URL,
   PROJECTS_BASE_API_URL,
@@ -169,32 +170,22 @@ const CreateProject = () => {
     [formData, onSubmit]
   );
 
-  const fieldsWithFormProps = useCallback(
-    (formShape: CreateProjectFormData) =>
-      fields.map((field) => {
-        return {
-          ...field,
-          name: field.id,
-          value: formShape![field.id as keyof typeof formShape] as string,
-          onChange: handleChange,
-          errors,
-          setErrors,
-          ...(field?.fieldProps?.query ? { query: companyQuery } : {}),
-        };
-      }),
-    [companyQuery, errors, handleChange, setErrors]
-  );
+  const renderedChildren = useMemo(() => {
+    if (formData === null) return;
 
-  const getRenderedChildren = useCallback(
-    (formShape: CreateProjectFormData) =>
-      renderFields(fieldsWithFormProps(formShape), formShape, userRole),
-    [fieldsWithFormProps, userRole]
-  );
+    const fieldsToRender = (fields as FormField<unknown>[]).map((field) => {
+      return {
+        ...field,
+        name: field.id,
+        onChange: handleChange,
+        errors,
+        setErrors,
+        ...(field?.fieldProps?.query ? { query: companyQuery } : {}),
+      };
+    });
 
-  const renderedChildren = useMemo(
-    () => formData !== null && getRenderedChildren(formData),
-    [formData, getRenderedChildren]
-  );
+    return renderFields(fieldsToRender, formData, userRole);
+  }, [formData, userRole, companyQuery, errors, handleChange, setErrors]);
 
   return (
     formData && (
