@@ -3,8 +3,10 @@ import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { RootQuerySelector, Types } from "mongoose";
 import {
+  DepartmentTeam,
   IUser,
   IUserDocument,
+  Tier,
   UserRole,
 } from "../../shared/interfaces/index.js";
 import Company from "../models/companyModel.js";
@@ -243,7 +245,7 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
 // @access  Private/Admin
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   // Prepare request variables (body, params, user, etc.)
-  const { newAssignedAccount, ...updatedUserData } = req.body;
+  const { newAssignedAccount, assignedAccounts, ...updatedUserData } = req.body;
   const userId = req.params.userId;
 
   // Validation
@@ -254,6 +256,7 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const updatedUser = (await User.findById(userId).select(
     "-password"
   )) as IUserDocument;
+  const companyToBeAssigned = await Company.findById(newAssignedAccount);
 
   // Handle user update error
   if (!updatedUser) {
@@ -261,10 +264,14 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("User not found");
   }
 
+  const canBeAssignedAccounts =
+    updatedUser.department === DepartmentTeam.CUSTOMER_SUCCESS &&
+    companyToBeAssigned?.tier !== Tier.FREE;
+
   // Update user
   updatedUser.set({
     ...updatedUserData,
-    ...(newAssignedAccount
+    ...(newAssignedAccount && canBeAssignedAccounts
       ? {
           assignedAccounts: Array.from(
             new Set([
@@ -283,13 +290,11 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
 
   // Add assigned representative to company
   if (newAssignedAccount) {
-    const companyToUpdate = await Company.findById(newAssignedAccount);
-
-    companyToUpdate?.set({
+    companyToBeAssigned?.set({
       assignedRepresentative: updatedUser._id,
     });
 
-    await companyToUpdate?.save({
+    await companyToBeAssigned?.save({
       validateBeforeSave: true,
     });
   }
