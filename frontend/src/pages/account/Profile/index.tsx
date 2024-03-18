@@ -51,13 +51,16 @@ const fields = [
     id: "department",
     required: true,
     fieldProps: {
-      options: getDepartmentTeamOptions(),
+      options: getDepartmentTeamOptions,
     },
   },
   {
     Component: TextInput,
     label: "Company:",
     id: "company",
+    permissions: {
+      EDIT: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+    },
     wrapperProps: {
       Wrapper: FieldWrapperWithLinkFallback,
       getResourceId,

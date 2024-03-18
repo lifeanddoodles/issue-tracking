@@ -72,14 +72,15 @@ userSchema.methods.matchPassword = async function (enteredPassword: string) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Encrypt password using bcrypt
 userSchema.pre("save", async function (next) {
-  if (this.isModified("assignedAccounts")) {
-    if (this.department !== DepartmentTeam.CUSTOMER_SUCCESS) {
-      throw new Error("User cannot have accounts assigned");
-    }
+  if (
+    this.isModified("assignedAccounts") &&
+    this.department !== DepartmentTeam.CUSTOMER_SUCCESS
+  ) {
+    throw new Error("User cannot have accounts assigned");
   }
 
+  // Encrypt password using bcrypt
   if (!this.isModified("password")) {
     next();
   }
