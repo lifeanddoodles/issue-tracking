@@ -103,18 +103,17 @@ export const addCompany = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Company not created");
   }
 
+  // Add account to assigned representative
   if (newCompany.assignedRepresentative) {
-    await User.findByIdAndUpdate(
-      newCompany.assignedRepresentative,
-      {
-        $push: {
-          companies: newCompany._id,
-        },
-      },
-      {
-        runValidators: true,
-      }
-    );
+    const userToAssignAsRepresentative = await User.findById(
+      newCompany?.assignedRepresentative
+    ).select("department assignedAccounts");
+
+    userToAssignAsRepresentative?.assignedAccounts?.push(newCompany._id);
+
+    await userToAssignAsRepresentative?.save({
+      validateBeforeSave: true,
+    });
   }
 
   // Handle success
@@ -199,38 +198,45 @@ export const updateCompany = asyncHandler(
     // Prepare updated company data
     const updatedCompanyData = req.body;
 
-    // Request company update
-    const updatedCompany = await Company.findByIdAndUpdate(
-      companyId,
-      {
-        ...updatedCompanyData,
-        employees: getEmployees(updatedCompanyData.employees, newEmployeeId),
-      },
-      {
-        user: authUser,
-        employeeId: newEmployeeId,
-        new: true,
-      }
-    );
+    // Find company
+    const updatedCompany = (await Company.findById(
+      companyId
+    )) as ICompanyDocument;
 
-    // Handle company update error
+    // Handle company not found
     if (!updatedCompany) {
       res.status(400);
-      throw new Error("Company not updated");
+      throw new Error("Company not found");
     }
 
-    if (updatedCompany.assignedRepresentative) {
-      await User.findByIdAndUpdate(
-        updatedCompany.assignedRepresentative,
-        {
-          $push: {
-            assignedAccounts: updatedCompany._id,
-          },
-        },
-        {
-          runValidators: true,
-        }
-      );
+    // Update company
+    updatedCompany.set({
+      ...updatedCompanyData,
+      ...(newEmployeeId
+        ? {
+            employees: Array.from(
+              new Set([...(updatedCompanyData.employees || []), newEmployeeId])
+            ),
+          }
+        : {}),
+    });
+
+    // Save updates to company
+    await updatedCompany.save({
+      validateBeforeSave: true,
+    });
+
+    // Add account to assigned representative
+    if (updatedCompanyData?.assignedRepresentative) {
+      const userToAssignAsRepresentative = await User.findById(
+        updatedCompanyData?.assignedRepresentative
+      ).select("department assignedAccounts");
+
+      userToAssignAsRepresentative?.assignedAccounts?.push(companyId);
+
+      await userToAssignAsRepresentative?.save({
+        validateBeforeSave: true,
+      });
     }
 
     // Handle success

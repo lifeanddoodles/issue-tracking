@@ -51,7 +51,7 @@ export const addUser = asyncHandler(
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser: Partial<IUserDocument> = {
+    const newUserData: Partial<IUserDocument> = {
       firstName,
       lastName,
       email,
@@ -65,7 +65,7 @@ export const addUser = asyncHandler(
     };
 
     // Request user creation
-    const createdUser = await User.create(newUser);
+    const createdUser = await User.create(newUserData);
 
     // Handle user creation error
     if (!createdUser) {
@@ -74,17 +74,15 @@ export const addUser = asyncHandler(
     }
 
     if (newAssignedAccount) {
-      await Company.findByIdAndUpdate(
-        newAssignedAccount,
-        {
-          $set: {
-            assignedRepresentative: createdUser._id,
-          },
-        },
-        {
-          runValidators: true,
-        }
-      );
+      const companyToUpdate = await Company.findById(newAssignedAccount);
+
+      companyToUpdate?.set({
+        assignedRepresentative: createdUser._id,
+      });
+
+      await companyToUpdate?.save({
+        validateBeforeSave: true,
+      });
     }
 
     // Handle success
@@ -253,28 +251,47 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   // Handle authenticated user not authorized for request
 
   // Request find user by ID and update
-  const updatedUser = await User.findByIdAndUpdate(userId, {
-    ...updatedUserData,
-  }).select("-password");
+  const updatedUser = (await User.findById(userId).select(
+    "-password"
+  )) as IUserDocument;
 
   // Handle user update error
   if (!updatedUser) {
     res.status(400);
-    throw new Error("User not updated");
+    throw new Error("User not found");
   }
 
+  // Update user
+  updatedUser.set({
+    ...updatedUserData,
+    ...(newAssignedAccount
+      ? {
+          assignedAccounts: Array.from(
+            new Set([
+              ...(updatedUser.assignedAccounts || []),
+              newAssignedAccount,
+            ])
+          ),
+        }
+      : {}),
+  });
+
+  // Save updates to user
+  await updatedUser.save({
+    validateBeforeSave: true,
+  });
+
+  // Add assigned representative to company
   if (newAssignedAccount) {
-    await Company.findByIdAndUpdate(
-      newAssignedAccount,
-      {
-        $set: {
-          assignedRepresentative: updatedUser._id,
-        },
-      },
-      {
-        runValidators: true,
-      }
-    );
+    const companyToUpdate = await Company.findById(newAssignedAccount);
+
+    companyToUpdate?.set({
+      assignedRepresentative: updatedUser._id,
+    });
+
+    await companyToUpdate?.save({
+      validateBeforeSave: true,
+    });
   }
 
   // Handle success

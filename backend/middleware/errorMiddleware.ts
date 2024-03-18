@@ -9,7 +9,8 @@ export const handleError = (
   const statusCode = res.statusCode < 400 ? 500 : res.statusCode;
 
   res.status(statusCode).json({
-    message: error.message,
+    success: false,
+    message: error.message || error,
     stack: process.env.NODE_ENV === "production" ? null : error.stack,
   });
 };

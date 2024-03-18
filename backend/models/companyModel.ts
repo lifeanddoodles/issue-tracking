@@ -102,9 +102,6 @@ const companySchema = new mongoose.Schema(
       ref: "User",
       validate: {
         validator: function (value: string) {
-          if ((this as ICompanyDocument).tier === Tier.FREE) {
-            return false;
-          }
           return mongoose.Types.ObjectId.isValid(value);
         },
       },
@@ -160,6 +157,14 @@ companySchema.pre("findOneAndUpdate", async function (next) {
   } catch (error: unknown) {
     throw new Error((error as Error).message); // Pass any errors to the next middleware
   }
+});
+
+companySchema.pre("save", async function (next) {
+  if (this.assignedRepresentative && this?.tier === Tier.FREE) {
+    throw new Error("Company cannot have a representative assigned");
+  }
+
+  next();
 });
 
 export default mongoose.model<ICompanyDocument>("Company", companySchema);

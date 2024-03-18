@@ -1,6 +1,9 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-import { IUserDocument, UserRole } from "../../shared/interfaces/index.js";
+import {
+  DepartmentTeam,
+  IUserDocument,
+} from "../../shared/interfaces/index.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -53,13 +56,11 @@ const userSchema = new mongoose.Schema(
       ref: "Company",
       validate: {
         validator: function (value: [mongoose.Schema.Types.ObjectId]) {
-          if ((this as IUserDocument).role === UserRole.CLIENT) {
-            return false;
-          }
           return value.every((id) =>
             mongoose.Types.ObjectId.isValid(id.toString())
           );
         },
+        message: "Invalid company ID",
       },
     },
   },
@@ -73,6 +74,12 @@ userSchema.methods.matchPassword = async function (enteredPassword: string) {
 
 // Encrypt password using bcrypt
 userSchema.pre("save", async function (next) {
+  if (this.isModified("assignedAccounts")) {
+    if (this.department !== DepartmentTeam.CUSTOMER_SUCCESS) {
+      throw new Error("User cannot have accounts assigned");
+    }
+  }
+
   if (!this.isModified("password")) {
     next();
   }
