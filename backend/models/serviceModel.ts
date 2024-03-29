@@ -22,6 +22,10 @@ const serviceSchema = new mongoose.Schema(
       type: String,
       enum: ["FREE", "PRO", "ENTERPRISE"],
     },
+    tickets: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Ticket",
+    },
   },
   { timestamps: true }
 );

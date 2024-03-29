@@ -44,7 +44,6 @@ export interface ITicket extends ITicketBase {
   reporter?: ObjectId | Record<string, unknown> | string;
   status: Status;
   priority: Priority;
-  moveToDevSprint?: boolean;
   originalTicket?: ObjectId | Record<string, unknown>;
   assignToTeam: DepartmentTeam;
   ticketType: TicketType;

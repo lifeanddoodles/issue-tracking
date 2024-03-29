@@ -44,12 +44,9 @@ const ticketSchema = new mongoose.Schema(
       enum: ["LOW", "MEDIUM", "HIGH"],
       required: true,
     },
-    moveToDevSprint: {
-      type: Boolean,
-    },
     assignToTeam: {
       type: String,
-      enum: ["DEV", "TESTING", "PRODUCT"],
+      enum: ["DEVELOPMENT", "TESTING", "PRODUCT", "CUSTOMER_SUCCESS"],
     },
     ticketType: {
       type: String,
