@@ -21,6 +21,7 @@ export const fakeUsers = [
     _id: "admin-001",
     firstName: "Sebastian",
     lastName: "Blake",
+    department: DepartmentTeam.MANAGEMENT,
     position: "Chief Technology Officer",
     email: "sebastian.blake@saascompany.com",
     password: "12345678",
@@ -41,10 +42,11 @@ export const fakeUsers = [
     _id: "dev-001",
     firstName: "Jane",
     lastName: "Doe",
+    department: DepartmentTeam.DEVELOPMENT,
     position: "Fullstack Developer",
     email: "jane.doe@saascompany.com",
     password: "esTkitT1r",
-    role: UserRole.DEVELOPER,
+    role: UserRole.STAFF,
     company: "company-000",
   },
   {
@@ -61,10 +63,11 @@ export const fakeUsers = [
     _id: "dev-002",
     firstName: "Mark",
     lastName: "Holmes",
+    department: DepartmentTeam.DEVELOPMENT,
     position: "Fullstack Developer",
     email: "mark.holmes@saascompany.com",
     password: "VYaG1Ew",
-    role: UserRole.DEVELOPER,
+    role: UserRole.STAFF,
     company: "company-000",
   },
   {
@@ -122,7 +125,7 @@ export const newFakeUser = {
 };
 
 export const fakeDevUsers = () =>
-  fakeUsers.filter((user) => user.role === UserRole.DEVELOPER);
+  fakeUsers.filter((user) => user.department === DepartmentTeam.DEVELOPMENT);
 
 export const fakeStaffUsers = () =>
   fakeUsers.filter((user) => user.role === UserRole.STAFF);

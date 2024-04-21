@@ -50,7 +50,9 @@ const fields = [
     Component: Select,
     label: "Status:",
     id: "subscriptionStatus",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       options: getSubscriptionStatusOptions,
     },
@@ -59,7 +61,9 @@ const fields = [
     Component: Select,
     label: "Tier:",
     id: "tier",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       options: getTierOptions,
     },
@@ -131,8 +135,8 @@ const fields = [
     id: "assignedRepresentative",
     disabled: isFieldDisabled,
     permissions: {
-      EDIT: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
-      VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+      EDIT: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
     },
     fieldProps: {
       url: USERS_BASE_API_URL,

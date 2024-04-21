@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ["CLIENT", "STAFF", "DEVELOPER", "ADMIN"],
+      enum: ["CLIENT", "STAFF", "ADMIN", "SUPER_ADMIN"],
       default: "CLIENT",
     },
     company: {
@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema(
       enum: [
         "CUSTOMER_SUCCESS",
         "DEVELOPMENT",
-        "TESTING",
+        "QUALITY_ASSURANCE",
         "PRODUCT",
         "MANAGEMENT",
       ],

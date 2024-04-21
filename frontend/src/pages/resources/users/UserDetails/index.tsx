@@ -52,7 +52,7 @@ const fields = [
     label: "Company:",
     id: "company",
     permissions: {
-      EDIT: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+      EDIT: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
     },
     fieldProps: {
       url: COMPANIES_BASE_API_URL,
@@ -79,7 +79,9 @@ const fields = [
     Component: SelectWithFetch,
     label: "Assign account:",
     id: "newAssignedAccount",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       url: COMPANIES_BASE_API_URL,
       getFormattedOptions: getCompanyDataOptions,

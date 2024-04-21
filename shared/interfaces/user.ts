@@ -4,8 +4,8 @@ import { DepartmentTeam } from "./ticket.ts";
 export enum UserRole {
   CLIENT = "CLIENT",
   STAFF = "STAFF",
-  DEVELOPER = "DEVELOPER",
   ADMIN = "ADMIN",
+  SUPER_ADMIN = "SUPER_ADMIN",
 }
 
 export interface IUser {

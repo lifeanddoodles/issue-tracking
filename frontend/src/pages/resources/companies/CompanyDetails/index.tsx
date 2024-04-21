@@ -64,7 +64,9 @@ const fields = [
     Component: Select,
     label: "Tier:",
     id: "tier",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       options: getTierOptions,
     },
@@ -134,8 +136,8 @@ const fields = [
     label: "Add employee:",
     id: "newEmployee",
     permissions: {
-      VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
-      EDIT: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+      EDIT: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
     },
     fieldProps: {
       url: USERS_BASE_API_URL,
@@ -160,7 +162,9 @@ const fields = [
     Component: SelectWithFetch,
     label: "Assign representative:",
     id: "assignedRepresentative",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       url: USERS_BASE_API_URL,
       getFormattedOptions: getCustomerSuccessOptions,

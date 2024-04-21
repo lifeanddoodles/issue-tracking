@@ -75,7 +75,9 @@ const fields = [
     label: "Assign to team:",
     id: "assignToTeam",
     required: true,
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       options: getAssignableDepartmentTeamOptions,
     },
@@ -84,7 +86,9 @@ const fields = [
     Component: SelectWithFetch,
     label: "Assignee:",
     id: "assignee",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       url: USERS_BASE_API_URL,
       getFormattedOptions: getUserDataOptions,
@@ -95,7 +99,9 @@ const fields = [
     Component: SelectWithFetch,
     label: "Reporter:",
     id: "reporter",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       url: USERS_BASE_API_URL,
       getFormattedOptions: getNonClientDataOptions,
@@ -106,7 +112,9 @@ const fields = [
     label: "Status:",
     id: "status",
     required: true,
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       options: getStatusOptions,
     },
@@ -116,7 +124,9 @@ const fields = [
     label: "Priority:",
     id: "priority",
     required: true,
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       options: getPriorityOptions,
     },
@@ -126,7 +136,9 @@ const fields = [
     label: "Type:",
     id: "ticketType",
     required: true,
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       options: getTicketTypeOptions,
     },
@@ -135,26 +147,34 @@ const fields = [
     Component: TextInput,
     label: "Estimated time:",
     id: "estimatedTime",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
   },
   {
     Component: TextInput,
     label: "Deadline:",
     id: "deadline",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
   },
   {
     Component: Toggle,
     label: "Is subtask:",
     id: "isSubtask",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
   },
   {
     Component: SelectWithFetch,
     label: "Parent task:",
     id: "parentTask",
     disabled: isFieldDisabled,
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.DEVELOPER, UserRole.STAFF] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       url: TICKETS_BASE_API_URL,
       getFormattedOptions: getTicketDataOptions,
@@ -173,6 +193,7 @@ const CreateTicket = () => {
         description: "",
         externalReporter: user!._id,
         attachments: [],
+        ticketType: TicketType.FOLLOW_UP,
       }
     : {
         title: "",

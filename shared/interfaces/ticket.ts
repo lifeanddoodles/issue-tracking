@@ -16,11 +16,12 @@ export enum TicketType {
   ISSUE = "ISSUE",
   BUG = "BUG",
   FEATURE_REQUEST = "FEATURE_REQUEST",
+  FOLLOW_UP = "FOLLOW_UP",
 }
 
 export enum DepartmentTeam {
   DEVELOPMENT = "DEVELOPMENT",
-  TESTING = "TESTING",
+  QUALITY_ASSURANCE = "QUALITY_ASSURANCE",
   PRODUCT = "PRODUCT",
   CUSTOMER_SUCCESS = "CUSTOMER_SUCCESS",
   MANAGEMENT = "MANAGEMENT",
@@ -44,7 +45,6 @@ export interface ITicket extends ITicketBase {
   reporter?: ObjectId | Record<string, unknown> | string;
   status: Status;
   priority: Priority;
-  originalTicket?: ObjectId | Record<string, unknown>;
   assignToTeam: DepartmentTeam;
   ticketType: TicketType;
   estimatedTime?: number;

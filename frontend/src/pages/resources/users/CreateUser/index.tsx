@@ -43,7 +43,7 @@ const getCompanyProps = (isClient: boolean) => {
         Component: SelectWithFetch,
         required: true,
         permissions: {
-          VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+          VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
         },
         fieldProps: {
           url: COMPANIES_BASE_API_URL,
@@ -91,7 +91,9 @@ const fields = [
     label: "Role:",
     id: "role",
     required: true,
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       options: getUserRoleOptions,
       direction: "col",
@@ -123,7 +125,9 @@ const fields = [
     Component: SelectWithFetch,
     label: "Assign account:",
     id: "newAssignedAccount",
-    permissions: { VIEW: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER] },
+    permissions: {
+      VIEW: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
+    },
     fieldProps: {
       url: COMPANIES_BASE_API_URL,
       getFormattedOptions: getCompanyDataOptions,

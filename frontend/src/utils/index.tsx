@@ -240,8 +240,8 @@ export function getDepartmentTeamText<DepartmentTeam>(
   switch (enumName) {
     case DepartmentTeam.DEVELOPMENT:
       return "Development";
-    case DepartmentTeam.TESTING:
-      return "Testing";
+    case DepartmentTeam.QUALITY_ASSURANCE:
+      return "Quality assurance";
     case DepartmentTeam.PRODUCT:
       return "Product";
     case DepartmentTeam.MANAGEMENT:
@@ -312,8 +312,6 @@ export function getUserRoleText<UserRole>(enumName: UserRole): string {
   switch (enumName) {
     case UserRole.ADMIN:
       return "Admin";
-    case UserRole.DEVELOPER:
-      return "Developer";
     case UserRole.STAFF:
       return "Staff";
     case UserRole.CLIENT:

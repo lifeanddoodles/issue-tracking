@@ -38,6 +38,7 @@ export const loginWithEmailAndPassword = (
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        department: user.department,
         company: user.company,
         position: user.position,
         avatarUrl: user.avatarUrl,

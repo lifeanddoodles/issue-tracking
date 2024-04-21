@@ -46,12 +46,12 @@ const ticketSchema = new mongoose.Schema(
     },
     assignToTeam: {
       type: String,
-      enum: ["DEVELOPMENT", "TESTING", "PRODUCT", "CUSTOMER_SUCCESS"],
+      enum: ["DEVELOPMENT", "QUALITY_ASSURANCE", "PRODUCT", "CUSTOMER_SUCCESS"],
     },
     ticketType: {
       type: String,
       default: "ISSUE",
-      enum: ["ISSUE", "BUG", "FEATURE_REQUEST"],
+      enum: ["ISSUE", "BUG", "FEATURE_REQUEST", "FOLLOW_UP"],
     },
     estimatedTime: {
       type: Number,

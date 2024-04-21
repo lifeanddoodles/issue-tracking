@@ -31,6 +31,10 @@ function getDeadlineAutoFill(priority: string) {
 // @route POST /api/tickets/
 // @access Private
 export const addTicket = asyncHandler(async (req: Request, res: Response) => {
+  // Get authenticated user
+  const authUser: Partial<IUserDocument> | undefined = req.user;
+  const isClient = authUser?.role === UserRole.CLIENT;
+
   // Prepare request variables (body, params, user, etc.)
   const {
     title,
@@ -38,11 +42,10 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
     assignee,
     reporter,
     externalReporter,
-    originalTicket,
     status = Status.OPEN,
     priority = Priority.LOW,
     assignToTeam,
-    ticketType = TicketType.ISSUE,
+    ticketType = isClient ? TicketType.FOLLOW_UP : TicketType.ISSUE,
     estimatedTime,
     deadline,
     isSubtask = false,
@@ -70,7 +73,6 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
     assignee,
     reporter,
     externalReporter,
-    originalTicket,
     status,
     priority,
     assignToTeam,

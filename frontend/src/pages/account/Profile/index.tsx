@@ -59,7 +59,7 @@ const fields = [
     label: "Company:",
     id: "company",
     permissions: {
-      EDIT: [UserRole.ADMIN, UserRole.STAFF, UserRole.DEVELOPER],
+      EDIT: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.STAFF],
     },
     wrapperProps: {
       Wrapper: FieldWrapperWithLinkFallback,
