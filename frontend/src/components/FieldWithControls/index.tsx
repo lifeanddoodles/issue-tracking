@@ -35,7 +35,7 @@ const FieldWithControls = withControls(
     setResetFieldValue: Dispatch<SetStateAction<boolean>>;
     disableToggleEdit: boolean;
   }) => {
-    const formattedLabel = getReadableInputName(label.replace(":", ""));
+    const formattedLabel = getReadableInputName(label?.replace(":", ""));
     const childWithNewProps = useMemo(() => {
       const childElement = Children.only(children) as JSX.Element;
 

@@ -24,7 +24,7 @@ const useFetch = <T>(reqProps?: RequestProps | null): FetchState<T> => {
         if (!response.ok || (json.success && !json.success)) {
           setError(
             new Error(
-              `Error: ${json.message}` ||
+              `${json.message}` ||
                 `${response.statusText}. Status: ${response.status}`
             )
           );

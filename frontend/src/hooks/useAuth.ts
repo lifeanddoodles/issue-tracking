@@ -14,14 +14,14 @@ const useAuth = () => {
   const navigate = useNavigate();
 
   const authUserReq = useCallback(
-    (url: string, options?: RequestInit) => {
-      sendRequest({ url, options });
+    async (url: string, options?: RequestInit) => {
+      await sendRequest({ url, options });
     },
     [sendRequest]
   );
 
-  const logoutUserReq = useCallback(() => {
-    sendRequest({ url: LOGOUT_API_URL });
+  const logoutUserReq = useCallback(async () => {
+    await sendRequest({ url: LOGOUT_API_URL });
     localStorage.removeItem("user");
     navigate("/login");
   }, [navigate, sendRequest]);

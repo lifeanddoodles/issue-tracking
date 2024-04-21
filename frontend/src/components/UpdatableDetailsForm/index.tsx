@@ -28,7 +28,7 @@ const UpdatableDetailsForm = <T extends Record<string, unknown>>({
       userRole={userRole}
       title={title}
     >
-      {renderedChildren}
+      {renderedChildren as JSX.Element[]}
     </UpdatableResourceForm>
   );
 };

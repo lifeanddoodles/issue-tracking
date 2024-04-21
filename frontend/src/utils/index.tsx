@@ -1,5 +1,4 @@
 import { ObjectId } from "mongoose";
-import { Fragment } from "react";
 import {
   DepartmentTeam,
   ICompanyDocument,
@@ -753,7 +752,7 @@ export const renderFields = <T,>(
         permissions?.VIEW &&
         !userIsAuthorized(userRole as UserRole, permissions.VIEW)
       )
-        return <Fragment key={id}></Fragment>;
+        return;
 
       const value = formShape[id as keyof T];
 

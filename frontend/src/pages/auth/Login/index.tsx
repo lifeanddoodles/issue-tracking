@@ -103,6 +103,7 @@ const Login = () => {
         <Button type="submit" disabled={disableSubmit}>
           Submit
         </Button>
+        {error && <p className="mt-4 text-red-500">{error?.message}</p>}
       </Form>
       <GoogleLoginButton />
     </>

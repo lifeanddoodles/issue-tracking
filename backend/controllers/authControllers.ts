@@ -27,9 +27,13 @@ export const loginWithEmailAndPassword = (
     },
     function (err: unknown, user: IUserDocument | null, info: string) {
       const error = err || info;
-      if (error) return res.json({ message: error });
-      if (!user)
-        return res.status(401).json({ message: "Authentication failed" });
+
+      if (error || !user)
+        return res.status(401).json({
+          message: `Authentication failed. ${
+            (error as Error)?.message || error
+          }`,
+        });
       generateTokenAndSetCookie(res, user._id);
 
       res.status(200).json({

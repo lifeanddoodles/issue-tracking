@@ -19,7 +19,7 @@ const withControls = (Component: JSX.ElementType) => {
     disableToggleEdit?: boolean;
   }) => {
     const [resetFieldValue, setResetFieldValue] = useState(false);
-    const formattedLabel = getReadableInputName(label.replace(":", ""));
+    const formattedLabel = getReadableInputName(label?.replace(":", ""));
     const { isEditable, setIsEditable, onToggleEdit } = useFormFieldControls();
 
     const handleToggleEdit = useCallback(() => {

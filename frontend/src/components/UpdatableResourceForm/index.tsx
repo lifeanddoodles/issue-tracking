@@ -13,7 +13,7 @@ import {
   SecondaryLabel,
   WrapperWithLinkFallbackProps,
 } from "../../interfaces";
-import { getValue, toCapital } from "../../utils";
+import { getValue, toCapital, userIsAuthorized } from "../../utils";
 import Button from "../Button";
 import FieldWithControls from "../FieldWithControls";
 import Form from "../Form";
@@ -50,6 +50,14 @@ const getFormattedFields = <T,>({
         permissions,
         ...rest
       } = child.props;
+
+      if (
+        userRole &&
+        permissions?.VIEW &&
+        !userIsAuthorized(userRole as UserRole, permissions.VIEW)
+      )
+        return;
+
       const valueObj =
         child.props?.checked !== undefined
           ? { checked: getValue(id, formData) }
