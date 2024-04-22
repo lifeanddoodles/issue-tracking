@@ -232,7 +232,7 @@ export const updateCompany = asyncHandler(
         updatedCompanyData?.assignedRepresentative
       ).select("department assignedAccounts");
 
-      userToAssignAsRepresentative?.assignedAccounts?.push(companyId);
+      userToAssignAsRepresentative?.assignedAccounts?.push(companyId!);
 
       await userToAssignAsRepresentative?.save({
         validateBeforeSave: true,
