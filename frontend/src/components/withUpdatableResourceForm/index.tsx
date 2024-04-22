@@ -84,7 +84,6 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
         url: `${resourceUrl}/${resourceId}`,
         body: changedFormData as Partial<U>,
       });
-      getResourceInfo();
       setInitialFormData({ ...(formData as Partial<T>) });
       /*
        * TODO: Reset fields after submit
@@ -93,7 +92,6 @@ const withUpdatableResourceForm = <T, U extends Record<string, unknown>>(
     }, [
       changedFormData,
       formData,
-      getResourceInfo,
       requestUpdateResource,
       resourceId,
       resourceUrl,
