@@ -1,13 +1,17 @@
 import { PassportStatic } from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
+import {
+  ExtractJwt,
+  Strategy as JwtStrategy,
+  StrategyOptionsWithoutRequest,
+} from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { IUserDocument } from "../interfaces/user.ts";
 import User from "../models/userModel.ts";
 
-const opts = {
+const opts: StrategyOptionsWithoutRequest = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET, // Replace with your secret key
+  secretOrKey: process.env.JWT_SECRET as string, // Replace with your secret key
 };
 
 export default function (passport: PassportStatic) {
@@ -60,10 +64,10 @@ export default function (passport: PassportStatic) {
         const newUser = {
           googleId: profile.id,
           displayName: profile.displayName,
-          email: profile.emails !== undefined && profile?.emails[0].value,
+          email: profile.emails !== undefined && profile?.emails[0]?.value,
           firstName: profile?.name?.givenName,
           lastName: profile?.name?.familyName,
-          imageUrl: profile.photos !== undefined && profile?.photos[0].value,
+          imageUrl: profile.photos !== undefined && profile?.photos[0]?.value,
         };
 
         let user = (await User.findOne({
