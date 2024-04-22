@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { RootQuerySelector } from "mongoose";
+import { RootQuerySelector, Types } from "mongoose";
 import {
   IProjectBase,
   IProjectDocument,
@@ -56,15 +56,22 @@ export const getProjects = asyncHandler(async (req: Request, res: Response) => {
 
   for (const key in req.query) {
     if (key === "services") {
-      query[key as keyof IProjectDocument] = {
-        services: { $in: req.query[key] },
+      query.services = {
+        $in: [req.query[key]],
       };
+    } else if (key === "company") {
+      query.company = new Types.ObjectId(
+        req.query[key] as keyof IProjectDocument
+      );
     } else {
       query[key as keyof IProjectDocument] = req.query[key];
     }
   }
 
-  const projects = await Project.find(query);
+  const projects = await Project.find(query).populate({
+    path: "company",
+    select: "name",
+  });
 
   // Handle projects not found
   if (!projects) {

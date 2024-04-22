@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { useCallback, useEffect, useState } from "react";
 import { IProjectDocument } from "../../../../../../shared/interfaces";
 import Button from "../../../../components/Button";
@@ -28,7 +29,15 @@ const AllProjects = () => {
     loading,
     error,
     sendRequest,
-  } = useFetch<IProjectDocument[] | []>();
+  } = useFetch<
+    | (Omit<IProjectDocument, "company"> & {
+        company: {
+          _id: ObjectId | Record<string, unknown> | string;
+          name: string;
+        };
+      })[]
+    | []
+  >();
   const [filters, setFilters] = useState<
     Partial<{
       name: string;
@@ -85,7 +94,7 @@ const AllProjects = () => {
         id: project._id.toString(),
         data: {
           name: project.name,
-          company: project.company,
+          company: project.company?.name,
           url: project.url,
           services: project.services,
         },
@@ -99,7 +108,7 @@ const AllProjects = () => {
       <div className="filters mb-8">
         <Row className="gap-2">
           <SelectWithFetch
-            id="teamMember"
+            id="company"
             value={filters.company || ""}
             onChange={handleChangeFilters}
             url={COMPANIES_BASE_API_URL}

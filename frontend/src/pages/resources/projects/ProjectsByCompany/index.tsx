@@ -1,3 +1,4 @@
+import { Schema } from "mongoose";
 import { useCallback, useEffect, useState } from "react";
 import {
   IProjectDocument,
@@ -26,24 +27,15 @@ enum TableColumns {
   services = "Services",
 }
 
-const useProjectsFetch = () => {
-  const { data, loading, error, sendRequest } = useFetch<
-    IProjectDocument[] | []
-  >();
-
-  const getProjectsRows = useCallback(
-    async (companyId: string, query: string) => {
-      await sendRequest({
-        url: `${PROJECTS_BASE_API_URL}?company=${companyId}${
-          query ? `&${query}` : ""
-        }`,
-      });
-    },
-    [sendRequest]
-  );
-
-  return { data, loading, error, getProjectsRows };
+type PopulatedCompany = {
+  _id: Schema.Types.ObjectId | string;
+  name: string;
+  id: string;
 };
+
+interface IProjectDocumentPopulated extends Omit<IProjectDocument, "company"> {
+  company: PopulatedCompany;
+}
 
 const useServicesFetch = () => {
   const { data, loading, error, sendRequest } = useFetch<
@@ -59,9 +51,28 @@ const useServicesFetch = () => {
   return { data, loading, error, getServices };
 };
 
+const useProjectsFetch = () => {
+  const { data, loading, error, sendRequest } = useFetch<
+    IProjectDocumentPopulated[] | []
+  >();
+
+  const getProjectsRows = useCallback(
+    async (companyId?: string, query?: string) => {
+      await sendRequest({
+        url: `${PROJECTS_BASE_API_URL}${companyId || query ? "?" : ""}${
+          companyId ? `company=${companyId}` : ""
+        }${query ? `&${query}` : ""}`,
+      });
+    },
+    [sendRequest]
+  );
+
+  return { data, loading, error, getProjectsRows };
+};
+
 const ProjectsByCompany = () => {
   const { user } = useAuthContext();
-  const companyId = user?.company!.toString();
+  const companyId = user?.company?.toString();
   const {
     data: services,
     loading: servicesLoading,
@@ -82,6 +93,10 @@ const ProjectsByCompany = () => {
   >({});
   const [query, setQuery] = useState(``);
 
+  const getRows = useCallback(async () => {
+    getProjectsRows(companyId, query);
+  }, [companyId, getProjectsRows, query]);
+
   const applyFilters: () => void = useCallback(() => {
     const queryString = objectToQueryString<
       Partial<{
@@ -98,10 +113,6 @@ const ProjectsByCompany = () => {
     setQuery("");
     // TODO: Reset controllers to select empty option
   }, []);
-
-  const getRows = useCallback(async () => {
-    getProjectsRows(companyId!, query);
-  }, [companyId, getProjectsRows, query]);
 
   const handleChangeFilters = (
     e: React.ChangeEvent<
@@ -122,19 +133,17 @@ const ProjectsByCompany = () => {
     getRows();
   }, [getRows]);
 
-  const formattedProjects =
-    !projectsLoading &&
-    projects?.map((project) => {
-      return {
-        id: project._id.toString(),
-        data: {
-          name: project.name,
-          company: project.company,
-          url: project.url,
-          services: project.services,
-        },
-      };
-    });
+  const formattedProjects = projects?.map((project) => {
+    return {
+      id: project._id.toString(),
+      data: {
+        name: project.name,
+        company: project.company.name,
+        url: project.url,
+        services: project.services,
+      },
+    };
+  });
 
   if (projectsError) return <h3 role="status">{projectsError.message}</h3>;
 
