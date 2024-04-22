@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Website Builder",
+    "description": "Drag n' Drop website builder.",
+    "url": "https://website-builder.saasagency.com",
+    "version": "1.0.0",
+    "tier": "FREE"
+  },
+  {
+    "name": "Email Campaign Manager",
+    "description": "Dashboard to create and manage email campaigns.",
+    "url": "https://email-campaigns.saasagency.com",
+    "version": "1.0.0",
+    "tier": "PRO"
+  },
+  {
+    "name": "Analytics Dashboard",
+    "description": "Dashboard for important metrics and insights to your business.",
+    "url": "https://analytics-dashboard.saasagency.com",
+    "version": "1.0.0",
+    "tier": "PRO"
+  },
+  {
+    "name": "Inventory Manager",
+    "description": "Dashboard to manage your inventory.",
+    "url": "https://inventory-manager.saasagency.com",
+    "version": "1.0.0",
+    "tier": "ENTERPRISE"
+  }
+]

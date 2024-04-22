@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Enterprise project - enterprisetiercompany.com",
+    "url": "https://enterprise.enterprisetiercompany.com",
+    "description": "Demo project that requires services in the Enterprise tier.\n- Inventory Manager\n- Analytics Dashboard\n- Email Campaign Manager\n- Website Builder",
+    "services": [],
+    "team": [],
+    "tickets": [],
+    "company": null
+  },
+  {
+    "name": "Pro project - enterprisetiercompany.com",
+    "url": "https://pro.enterprisetiercompany.com",
+    "description": "Demo project that requires services in the Pro tier.\n-Email Campaign Manager\n- Website Builder",
+    "services": [],
+    "team": [],
+    "tickets": [],
+    "company": null
+  },
+  {
+    "name": "Pro project - protiercompany.com",
+    "url": "https://pro.protiercompany.com",
+    "description": "Demo project that requires services in the Pro tier.\n-Email Campaign Manager\n- Analytics Dashboard",
+    "services": [],
+    "team": [],
+    "tickets": [],
+    "company": null
+  },
+  {
+    "name": "Free project - freetiercompany.com",
+    "url": "https://free.freetiercompany.com",
+    "description": "Demo project that requires services in the Free tier.\n- Website Builder",
+    "services": [],
+    "team": [],
+    "tickets": [],
+    "company": null
+  }
+]

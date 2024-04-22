@@ -1,0 +1,59 @@
+[
+  {
+    "name": "Enterprise Tier Company",
+    "subscriptionStatus": "ACTIVE",
+    "employees": [],
+    "projects": [],
+    "industry": "FINANCE",
+    "address": {
+      "street": "123 Sesame Street",
+      "city": "New York",
+      "state": "",
+      "zip": "",
+      "country": "US"
+    },
+    "email": "info@enterprisetiercompany.com",
+    "phone": "8675309",
+    "url": "https://enterprisetiercompany.com",
+    "dba": "Enterprise Company LLC",
+    "description": "Demo company in the enterprise tier and subscription status of active."
+  },
+  {
+    "name": "Pro Tier Company",
+    "subscriptionStatus": "TRIAL",
+    "employees": [],
+    "projects": [],
+    "industry": "HEALTHCARE",
+    "address": {
+      "street": "221B Baker Street",
+      "city": "London",
+      "state": "",
+      "zip": "",
+      "country": "UK"
+    },
+    "email": "info@protiercompany.com",
+    "phone": "5555555555",
+    "url": "https://protiercompany.com",
+    "dba": "Pro Tier Company LLC",
+    "description": "Demo company in the pro tier and subscription status of trial."
+  },
+  {
+    "name": "Free Tier Company",
+    "subscriptionStatus": "ONBOARDING",
+    "employees": [],
+    "projects": [],
+    "industry": "E_COMMERCE",
+    "address": {
+      "street": "742 Evergreen Terrace",
+      "city": "Springfield",
+      "state": "",
+      "zip": "",
+      "country": "US"
+    },
+    "email": "info@freetiercompany.com",
+    "phone": "1234567890",
+    "url": "https://freetiercompany.com",
+    "dba": "Free Tier Company LLC",
+    "description": "Demo company in the free tier and subscription status of onboarding."
+  }
+]

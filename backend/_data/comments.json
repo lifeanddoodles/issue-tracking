@@ -1,0 +1,80 @@
+[
+  {
+    "author": "Charlotte Mueller",
+    "message": "Hello development team, could you please provide an update on the progress of the profile picture feature? Our users are eager to see this enhancement in action.\nAdd user profile picture support",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Olivia Halvorson",
+    "message": "Hi devs, any news on the password reset feature? It's an important usability improvement. Our customer success team is looking forward to sharing this with our users.\nImplement password reset functionality",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Emily Rath",
+    "message": "Progress report: The password reset workflow is underway. Working on the email trigger and reset link generation.\nImplement password reset functionality",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Emily Rath",
+    "message": "Update: Password reset emails are now being sent with secure links. Next, implementing the link validation and password update flow.\nImplement password reset functionality",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Terry Jacobs",
+    "message": "Hello team, can you provide an update on the search algorithm optimization? Our users have been reporting slow search speeds, and we'd love to have good news to share.\nImprove search performance",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Patrick Ernser",
+    "message": "Feature development started: Designing the UI for bounce rate tracking. Users will soon be able to view their bounce rates.\nTrack user bounce rates",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Joan Mills",
+    "message": "Hey developers, how's the bounce rate tracking feature coming along?\nTrack user bounce rates",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Patrick Ernser",
+    "message": "Progress update: bounce rate tracking UI is functional. Integrating data storage and planning to add progress visualization.\nTrack user bounce rates",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Terry Jacobs",
+    "message": "Hi team, any updates on the billing system integration? Our support team is getting inquiries about the new payment methods, and we'd like to provide accurate information.\nUpdate billing system integration",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Jason Schultz",
+    "message": "Update: Links fixed, will deploy soon.\nFix broken links",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Keith Gottlieb",
+    "message": "Got it, thanks for the update!\nFix broken links",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Adam Schmidt",
+    "message": "Infrastructure upgrade initiated: Planning the migration to improve performance. Setting up testing environments.\nUpgrade server infrastructure",
+    "ticketId": null,
+    "isEdited": false
+  },
+  {
+    "author": "Adam Schmidt",
+    "message": "Significant progress: Migration completed successfully. Initial observations show improved response times and stability.\nUpgrade server infrastructure",
+    "ticketId": null,
+    "isEdited": false
+  }
+]

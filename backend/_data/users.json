@@ -1,0 +1,203 @@
+[
+  {
+    "firstName": "Demo",
+    "lastName": "Admin",
+    "email": "demo.admin@saasagency.com",
+    "password": "123456",
+    "role": "ADMIN",
+    "department": "MANAGEMENT",
+    "position": "IT Manager"
+  },
+  {
+    "firstName": "Demo",
+    "lastName": "CS",
+    "email": "demo.cs@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "CUSTOMER_SUCCESS",
+    "position": "Customer Success Manager"
+  },
+  {
+    "firstName": "Maya",
+    "lastName": "Thompson",
+    "email": "maya.thompson@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "CUSTOMER_SUCCESS",
+    "position": "Customer Success Manager"
+  },
+  {
+    "firstName": "Connor",
+    "lastName": "Nguyen",
+    "email": "connor.nguyen@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "CUSTOMER_SUCCESS",
+    "position": "Customer Support Specialist"
+  },
+  {
+    "firstName": "Keith",
+    "lastName": "Gottlieb",
+    "email": "keith.gottlieb@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "MANAGEMENT",
+    "position": "Project Manager"
+  },
+  {
+    "firstName": "Jason",
+    "lastName": "Schultz",
+    "email": "jason.schultz@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "DEVELOPMENT",
+    "position": "Frontend Developer"
+  },
+  {
+    "firstName": "Emily",
+    "lastName": "Rath",
+    "email": "emily.rath@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "DEVELOPMENT",
+    "position": "Fullstack Developer"
+  },
+  {
+    "firstName": "Patrick",
+    "lastName": "Ernser",
+    "email": "patrick.ernser@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "DEVELOPMENT",
+    "position": "Fullstack Developer II"
+  },
+  {
+    "firstName": "Adam",
+    "lastName": "Schmidt",
+    "email": "adam.schmidt@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "DEVELOPMENT",
+    "position": "Programmer Analyst IV"
+  },
+  {
+    "firstName": "Joan",
+    "lastName": "Mills",
+    "email": "joan.mills@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "DEVELOPMENT",
+    "position": "Analyst Programmer"
+  },
+  {
+    "firstName": "Terry",
+    "lastName": "Jacobs",
+    "email": "terry.jacobs@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "DEVELOPMENT",
+    "position": "Automation Specialist"
+  },
+  {
+    "firstName": "Olivia",
+    "lastName": "Halvorson",
+    "email": "olivia.halvorson@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "QUALITY_ASSURANCE",
+    "position": "Software Test Engineer II"
+  },
+  {
+    "firstName": "Jasmine",
+    "lastName": "Patel",
+    "email": "jasmine.patel@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "QUALITY_ASSURANCE",
+    "position": "QA Engineer"
+  },
+  {
+    "firstName": "Zachary",
+    "lastName": "Lee",
+    "email": "zachary.lee@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "QUALITY_ASSURANCE",
+    "position": "Test Analyst"
+  },
+  {
+    "firstName": "Charlotte",
+    "lastName": "Mueller",
+    "email": "charlotte.mueller@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "PRODUCT",
+    "position": "Lead Graphic Designer"
+  },
+  {
+    "firstName": "Emily",
+    "lastName": "Foster",
+    "email": "emily.foster@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "PRODUCT",
+    "position": "Product Manager"
+  },
+  {
+    "firstName": "Lucas",
+    "lastName": "Hernandez",
+    "email": "lucas.hernandez@saasagency.com",
+    "password": "123456",
+    "role": "STAFF",
+    "department": "PRODUCT",
+    "position": "Product Designer"
+  },
+  {
+    "firstName": "Enterprise",
+    "lastName": "Client",
+    "email": "enterprise.client@enterprisetiercompany.com",
+    "password": "123456",
+    "role": "CLIENT",
+    "position": "Marketing Manager"
+  },
+  {
+    "firstName": "Second",
+    "lastName": "Employee",
+    "email": "second.employee@enterprisetiercompany.com",
+    "password": "123456",
+    "role": "CLIENT",
+    "position": "Designer"
+  },
+  {
+    "firstName": "Third",
+    "lastName": "Employee",
+    "email": "third.employee@enterprisetiercompany.com",
+    "password": "123456",
+    "role": "CLIENT",
+    "position": "Copywriter"
+  },
+  {
+    "firstName": "Pro",
+    "lastName": "Client",
+    "email": "pro.client@protiercompany.com",
+    "password": "123456",
+    "role": "CLIENT",
+    "position": "Marketing Manager"
+  },
+  {
+    "firstName": "Free",
+    "lastName": "Client",
+    "email": "free.user@freetiercompany.com",
+    "password": "123456",
+    "role": "CLIENT",
+    "position": "Web Designer"
+  },
+  {
+    "firstName": "Freelancer",
+    "lastName": "User",
+    "email": "freelancer.user@nocompany.com",
+    "password": "123456",
+    "role": "CLIENT",
+    "position": "Freelancer"
+  }
+]

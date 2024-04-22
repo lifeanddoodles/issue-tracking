@@ -17,20 +17,46 @@ const ticketSchema = new mongoose.Schema(
       required: true,
     },
     assignee: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.Mixed,
       ref: "User",
+      validate: {
+        validator: function (value: string | mongoose.Types.ObjectId) {
+          // Check if value is either a string or an ObjectId
+          return (
+            typeof value === "string" ||
+            value instanceof mongoose.Types.ObjectId
+          );
+        },
+        message: "Assignee must be either a string or an ObjectId",
+      },
     },
     reporter: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.Mixed,
       ref: "User",
+      validate: {
+        validator: function (value: string | mongoose.Types.ObjectId) {
+          // Check if value is either a string or an ObjectId
+          return (
+            typeof value === "string" ||
+            value instanceof mongoose.Types.ObjectId
+          );
+        },
+        message: "Reporter must be either a string or an ObjectId",
+      },
     },
     externalReporter: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.Mixed,
       ref: "User",
-    },
-    originalTicket: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Ticket",
+      validate: {
+        validator: function (value: string | mongoose.Types.ObjectId) {
+          // Check if value is either a string or an ObjectId
+          return (
+            typeof value === "string" ||
+            value instanceof mongoose.Types.ObjectId
+          );
+        },
+        message: "External reporter must be either a string or an ObjectId",
+      },
     },
     status: {
       type: String,
