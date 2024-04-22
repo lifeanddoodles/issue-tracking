@@ -1,3 +1,4 @@
+export * from "./charts";
 export * from "./components";
 export * from "./hoc";
 export * from "./hooks";
