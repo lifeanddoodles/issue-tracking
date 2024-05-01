@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { RootQuerySelector } from "mongoose";
+import { RootQuerySelector, Types } from "mongoose";
 import {
   IPersonInfo,
   ITicket,
   ITicketDocument,
   ITicketPopulatedDocument,
+  ITicketWithStatics,
   IUserDocument,
   Priority,
   Status,
@@ -104,19 +105,34 @@ export const getTickets = asyncHandler(async (req: Request, res: Response) => {
   const query: RootQuerySelector<ITicketDocument> = {};
 
   for (const key in req.query) {
-    query[key as keyof ITicketDocument] = req.query[key];
+    if (key === "company") {
+      query["projectInfo.company._id"] = new Types.ObjectId(
+        req.query[key] as keyof ITicketDocument
+      );
+    } else if (key === "service") {
+      query["serviceInfo._id"] = new Types.ObjectId(
+        req.query[key] as keyof ITicketDocument
+      );
+    } else {
+      query[key as keyof ITicketDocument] = req.query[key];
+    }
   }
 
-  const tickets = await Ticket.find(query)
-    .populate("assignee", "_id firstName lastName")
-    .populate("reporter", "_id firstName lastName")
-    .populate("externalReporter", "_id firstName lastName");
+  const tickets = await (Ticket as unknown as ITicketWithStatics)
+    .aggregateTicketsWithProjectsAndServices!(query);
 
   // Handle tickets not found
-  if (!tickets) {
+  if (!tickets || tickets.length === 0) {
     res.status(404);
     throw new Error("Tickets not found");
   }
+
+  // Populate assignee, reporter, and externalReporter fields
+  await Ticket.populate(tickets, [
+    { path: "assignee", select: "_id firstName lastName" },
+    { path: "reporter", select: "_id firstName lastName" },
+    { path: "externalReporter", select: "_id firstName lastName" },
+  ]);
 
   // Handle success
   res.status(200).send(tickets);

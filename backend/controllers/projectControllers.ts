@@ -5,6 +5,7 @@ import {
   IProjectBase,
   IProjectDocument,
   IUserDocument,
+  UserRole,
 } from "../../shared/interfaces/index.js";
 import Project from "../models/projectModel.js";
 
@@ -51,6 +52,10 @@ export const addProject = asyncHandler(async (req: Request, res: Response) => {
 // @route GET /api/projects/
 // @access Public
 export const getProjects = asyncHandler(async (req: Request, res: Response) => {
+  // Get authenticated user
+  const authUser: Partial<IUserDocument> | undefined = req.user;
+  const isClient = authUser?.role === UserRole.CLIENT;
+
   // Find projects
   const query: RootQuerySelector<IProjectDocument> = {};
 
@@ -66,6 +71,11 @@ export const getProjects = asyncHandler(async (req: Request, res: Response) => {
     } else {
       query[key as keyof IProjectDocument] = req.query[key];
     }
+  }
+
+  // Restrict query to user's company
+  if (isClient) {
+    query.company = authUser?.company;
   }
 
   const projects = await Project.find(query).populate({

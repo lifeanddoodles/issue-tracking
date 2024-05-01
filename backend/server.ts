@@ -59,8 +59,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/tickets", ensureAuth, ticketRoutes);
 app.use("/api/comments", ensureAuth, commentRoutes);
 app.use("/api/companies", companyRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/services", serviceRoutes);
+app.use("/api/projects", ensureAuth, projectRoutes);
+app.use("/api/services", ensureAuth, serviceRoutes);
 
 // Error handler
 app.use(handleError);

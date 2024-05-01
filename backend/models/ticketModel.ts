@@ -97,4 +97,120 @@ const ticketSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+ticketSchema.statics.aggregateTicketsWithProjectsAndServices = async function (
+  query
+) {
+  const pipeline = [];
+
+  const projectLookup = [
+    {
+      $lookup: {
+        from: "projects",
+        let: { ticketId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $in: ["$$ticketId", "$tickets"],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              company: 1,
+            },
+          },
+        ],
+        as: "projectInfo",
+      },
+    },
+    {
+      $unwind: { path: "$projectInfo", preserveNullAndEmptyArrays: true },
+    },
+    {
+      $lookup: {
+        from: "companies",
+        let: { companyId: "$projectInfo.company" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$_id", "$$companyId"],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              employees: 1,
+            },
+          },
+        ],
+        as: "projectInfo.company",
+      },
+    },
+    {
+      $unwind: {
+        path: "$projectInfo.company",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        projectInfo: {
+          $cond: {
+            if: { $eq: ["$projectInfo", {}] },
+            then: "$$REMOVE",
+            else: "$projectInfo",
+          },
+        },
+      },
+    },
+  ];
+
+  const serviceLookup = [
+    {
+      $lookup: {
+        from: "services",
+        let: { ticketId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $in: ["$$ticketId", "$tickets"],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              name: "$name",
+            },
+          },
+        ],
+        as: "serviceInfo",
+      },
+    },
+    {
+      $unwind: {
+        path: "$serviceInfo",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ];
+
+  pipeline.push(...projectLookup);
+  pipeline.push(...serviceLookup);
+
+  if (query) {
+    pipeline.push({
+      $match: query,
+    });
+  }
+
+  return this.aggregate(pipeline);
+};
+
 export default mongoose.model<ITicketDocument>("Ticket", ticketSchema);

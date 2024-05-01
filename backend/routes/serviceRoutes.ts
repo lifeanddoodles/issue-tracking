@@ -6,6 +6,7 @@ import {
   getServices,
   updateService,
 } from "../controllers/serviceControllers.js";
+import { isAdmin } from "../middleware/authMiddleware.ts";
 
 const router = express.Router();
 
@@ -32,6 +33,6 @@ router.patch("/:serviceId", updateService);
 // @desc Delete service
 // @route DELETE /api/services/:serviceId
 // @access Private
-router.delete("/:serviceId", deleteService);
+router.delete("/:serviceId", isAdmin, deleteService);
 
 export default router;

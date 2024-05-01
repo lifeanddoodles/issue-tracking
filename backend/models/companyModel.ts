@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import {
   ICompanyDocument,
+  ICompanyWithStatics,
   Tier,
   UserRole,
 } from "../../shared/interfaces/index.js";
@@ -110,6 +111,55 @@ const companySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+companySchema.statics.getTicketsByCompany = async function (companyId) {
+  const pipeline = [
+    ...(companyId
+      ? [
+          {
+            $match: {
+              _id: new Schema.Types.ObjectId(companyId),
+            },
+          },
+        ]
+      : []),
+    {
+      $lookup: {
+        from: "projects",
+        localField: "_id",
+        foreignField: "company",
+        as: "projects",
+      },
+    },
+    {
+      $unwind: "$projects",
+    },
+    {
+      $group: {
+        _id: "$_id",
+        totalTickets: { $sum: { $size: "$projects.tickets" } },
+      },
+    },
+  ];
+
+  const filteredPipeline = pipeline.filter((stage) => !!stage);
+
+  const result = await this.aggregate(filteredPipeline);
+
+  try {
+    if (result[0]) {
+      await this.findByIdAndUpdate(companyId, {
+        totalTickets: result[0].totalTickets,
+      });
+    } else {
+      await this.findByIdAndUpdate(companyId, {
+        totalTickets: undefined,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 companySchema.pre("findOneAndUpdate", async function (next) {
   try {
     // Access the query object to get the ID of the document being updated
@@ -165,6 +215,12 @@ companySchema.pre("save", async function (next) {
   }
 
   next();
+});
+
+companySchema.post("save", async function () {
+  await (
+    this.constructor as unknown as ICompanyWithStatics
+  ).getTicketsByCompany(this._id.toString());
 });
 
 export default mongoose.model<ICompanyDocument>("Company", companySchema);

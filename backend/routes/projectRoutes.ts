@@ -6,6 +6,7 @@ import {
   getProjects,
   updateProject,
 } from "../controllers/projectControllers.js";
+import { isAdmin } from "../middleware/authMiddleware.ts";
 
 const router = express.Router();
 
@@ -32,6 +33,6 @@ router.patch("/:projectId", updateProject);
 // @desc Delete project
 // @route DELETE /api/projects/:projectId
 // @access Private
-router.delete("/:projectId", deleteProject);
+router.delete("/:projectId", isAdmin, deleteProject);
 
 export default router;

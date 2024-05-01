@@ -1,4 +1,4 @@
-import { Document, ObjectId } from "mongoose";
+import { Document, ObjectId, RootQuerySelector } from "mongoose";
 
 export enum Priority {
   HIGH = "HIGH",
@@ -57,6 +57,12 @@ export interface ITicketDocument extends ITicket, Document {
   createdAt: Date | string;
   lastModifiedAt: Date | string;
 }
+
+export type ITicketWithStatics = ITicketDocument & {
+  aggregateTicketsWithProjectsAndServices?(
+    query: RootQuerySelector<ITicketDocument>
+  ): Promise<any[]>;
+};
 
 export type ITicketPopulatedDocument = ITicketDocument & {
   assignee: IPersonInfo;
