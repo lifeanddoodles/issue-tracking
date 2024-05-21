@@ -118,6 +118,7 @@ ticketSchema.statics.aggregateTicketsWithProjectsAndServices = async function (
           {
             $project: {
               _id: 1,
+              name: 1,
               company: 1,
             },
           },

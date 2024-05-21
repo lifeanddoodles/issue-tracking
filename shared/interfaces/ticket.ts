@@ -53,10 +53,26 @@ export interface ITicket extends ITicketBase {
   parentTask?: ObjectId | Record<string, unknown> | string;
 }
 
-export interface ITicketDocument extends ITicket, Document {
-  createdAt: Date | string;
-  lastModifiedAt: Date | string;
-}
+export type ITicketAggregations = {
+  projectInfo?: {
+    _id: string | ObjectId | Record<string, unknown>;
+    name: string;
+    company: {
+      _id: string | ObjectId | Record<string, unknown>;
+      name: string;
+      employees: [IPersonInfo];
+    };
+  };
+  serviceInfo?: {
+    _id: string | ObjectId | Record<string, unknown>;
+    name: string;
+  };
+};
+
+export interface ITicketDocument
+  extends ITicket,
+    Document,
+    ITicketAggregations {}
 
 export type ITicketWithStatics = ITicketDocument & {
   aggregateTicketsWithProjectsAndServices?(

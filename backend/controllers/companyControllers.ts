@@ -125,7 +125,6 @@ export const addCompany = asyncHandler(async (req: Request, res: Response) => {
 // @access Private
 export const getCompanies = asyncHandler(
   async (req: Request, res: Response) => {
-    // Validation
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
     const isClient = authUser?.role === UserRole.CLIENT;
@@ -142,7 +141,16 @@ export const getCompanies = asyncHandler(
     for (const key in req.query) {
       query[key as keyof ICompanyDocument] = req.query[key];
     }
-    const companies: ICompanyDocument[] = await Company.find(query);
+
+    const companies: ICompanyDocument[] = await Company.find(query)
+      .populate({
+        path: "projects",
+        select: "name",
+      })
+      .populate({
+        path: "employees",
+        select: "firstName lastName -company",
+      });
 
     // Handle companies not found
     if (!companies) {
@@ -174,7 +182,15 @@ export const getCompany = asyncHandler(async (req: Request, res: Response) => {
   const companyId = req.params.companyId;
 
   // Find company
-  const company = await Company.findById(companyId);
+  const company = await Company.findById(companyId)
+    .populate({
+      path: "projects",
+      select: "name",
+    })
+    .populate({
+      path: "employees",
+      select: "firstName lastName -company",
+    });
 
   // Handle company not found
   if (!company) {
@@ -199,9 +215,7 @@ export const updateCompany = asyncHandler(
     const updatedCompanyData = req.body;
 
     // Find company
-    const updatedCompany = (await Company.findById(
-      companyId
-    )) as ICompanyDocument;
+    const updatedCompany = await Company.findById(companyId);
 
     // Handle company not found
     if (!updatedCompany) {

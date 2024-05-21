@@ -146,12 +146,18 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   const ticketId = req.params.ticketId;
 
   // Find ticket
-  const ticket: ITicketPopulatedDocument | null = await Ticket.findById(
-    ticketId
-  )
-    .populate("assignee", "_id firstName lastName")
-    .populate("reporter", "_id firstName lastName")
-    .populate("externalReporter", "_id firstName lastName");
+  const aggregatedTickets = await (Ticket as unknown as ITicketWithStatics)
+    .aggregateTicketsWithProjectsAndServices!({
+    _id: new Types.ObjectId(ticketId),
+  });
+
+  const ticket: ITicketWithStatics = aggregatedTickets[0];
+
+  const populatedTicket = await Ticket.populate(ticket, [
+    { path: "assignee", select: "_id firstName lastName" },
+    { path: "reporter", select: "_id firstName lastName" },
+    { path: "externalReporter", select: "_id firstName lastName" },
+  ]);
 
   const comments = await Comment.find({ ticketId })
     .select("-ticketId, -__v")
@@ -168,10 +174,18 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
   const isClient = authUser?.role === UserRole.CLIENT;
-  const externalReporter = ticket?.externalReporter as IPersonInfo;
+  const externalReporter = (populatedTicket as ITicketPopulatedDocument)
+    ?.externalReporter as IPersonInfo;
+  const userIsCompanyEmployee =
+    populatedTicket?.projectInfo?.company?.employees?.some((employee) => {
+      return employee.toString() === authUser?._id.toString();
+    });
+  const clientCanRead =
+    isClient &&
+    (authUser._id === externalReporter?._id || userIsCompanyEmployee);
 
   // Handle authenticated user not authorized for request
-  if (isClient && authUser._id !== externalReporter?._id) {
+  if (!clientCanRead) {
     res.status(401);
     throw new Error("Not Authorized");
   }

@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
-import { IProjectDocument } from "../../shared/interfaces/index.js";
+import {
+  ICompanyWithStatics,
+  IProjectDocument,
+} from "../../shared/interfaces/index.js";
+import Company from "./companyModel.ts";
 
 const projectSchema = new mongoose.Schema(
   {
@@ -71,6 +75,27 @@ projectSchema.pre("validate", async function (next) {
       );
       throw Error("Team members must be employees of the same company.");
     }
+  }
+
+  next();
+});
+
+projectSchema.post("updateOne", async function (doc, next) {
+  try {
+    const projectId = this.getQuery()._id; // Get the _id of the updated document
+    const project = await this.model.findOne({ _id: projectId }); // Find the updated project document to access the company field
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    const companyId = project.company;
+
+    await (Company as unknown as ICompanyWithStatics).getTicketsByCompany(
+      companyId
+    );
+  } catch (err) {
+    console.error("Error aggregating tickets:", err);
   }
 
   next();

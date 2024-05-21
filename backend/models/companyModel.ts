@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import {
   ICompanyDocument,
   ICompanyWithStatics,
@@ -72,14 +72,6 @@ const companySchema = new mongoose.Schema(
         type: String,
       },
     },
-    employees: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "User",
-    },
-    projects: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Project",
-    },
     dba: {
       type: String,
       trim: true,
@@ -107,9 +99,29 @@ const companySchema = new mongoose.Schema(
         },
       },
     },
+    totalTickets: {
+      type: Number,
+      default: 0,
+    },
   },
-  { timestamps: true }
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    timestamps: true,
+  }
 );
+
+companySchema.virtual("projects", {
+  ref: "Project",
+  localField: "_id",
+  foreignField: "company",
+});
+
+companySchema.virtual("employees", {
+  ref: "User",
+  localField: "_id",
+  foreignField: "company",
+});
 
 companySchema.statics.getTicketsByCompany = async function (companyId) {
   const pipeline = [
@@ -117,7 +129,10 @@ companySchema.statics.getTicketsByCompany = async function (companyId) {
       ? [
           {
             $match: {
-              _id: new Schema.Types.ObjectId(companyId),
+              _id:
+                typeof companyId === "string"
+                  ? new mongoose.Schema.Types.ObjectId(companyId)
+                  : companyId,
             },
           },
         ]
@@ -147,12 +162,8 @@ companySchema.statics.getTicketsByCompany = async function (companyId) {
 
   try {
     if (result[0]) {
-      await this.findByIdAndUpdate(companyId, {
+      await mongoose.model("Company").findByIdAndUpdate(companyId, {
         totalTickets: result[0].totalTickets,
-      });
-    } else {
-      await this.findByIdAndUpdate(companyId, {
-        totalTickets: undefined,
       });
     }
   } catch (err) {
