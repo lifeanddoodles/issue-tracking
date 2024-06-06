@@ -1,6 +1,5 @@
 import {
   DepartmentTeam,
-  ICommentPopulatedDocument,
   ITicket,
   ITicketDocument,
   ITicketPopulatedDocument,
@@ -449,7 +448,7 @@ export const fakePopulatedTickets: (
   },
 ];
 
-export const fakeComments: ICommentPopulatedDocument[] = [
+export const fakeComments = [
   {
     _id: "ticket-001-001",
     ticketId: "ticket-001",

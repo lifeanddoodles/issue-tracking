@@ -2,13 +2,7 @@ import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { RootQuerySelector, Types } from "mongoose";
-import {
-  DepartmentTeam,
-  IUser,
-  IUserDocument,
-  Tier,
-  UserRole,
-} from "../../shared/interfaces/index.js";
+import { IUser, IUserDocument } from "../../shared/interfaces/index.js";
 import Company from "../models/companyModel.js";
 import User from "../models/userModel.js";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.ts";
@@ -24,7 +18,7 @@ export const addUser = asyncHandler(
       lastName,
       email,
       password,
-      role = UserRole.CLIENT,
+      role = "CLIENT",
       company,
       position,
       department,
@@ -136,7 +130,7 @@ export const getUsers = asyncHandler(async (req: Request, res: Response) => {
   // Validation
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === UserRole.CLIENT;
+  const isClient = authUser?.role === "CLIENT";
 
   // Handle authenticated user not authorized for request
   if (isClient) {
@@ -265,8 +259,8 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const canBeAssignedAccounts =
-    updatedUser.department === DepartmentTeam.CUSTOMER_SUCCESS &&
-    companyToBeAssigned?.tier !== Tier.FREE;
+    updatedUser.department === "CUSTOMER_SUCCESS" &&
+    companyToBeAssigned?.tier !== "FREE";
 
   // Update user
   updatedUser.set({

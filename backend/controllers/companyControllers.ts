@@ -5,8 +5,6 @@ import {
   ICompany,
   ICompanyDocument,
   IUserDocument,
-  SubscriptionStatus,
-  UserRole,
 } from "../../shared/interfaces/index.js";
 import Company from "../models/companyModel.js";
 import User from "../models/userModel.js";
@@ -21,7 +19,7 @@ const authorizeCompanyUpdate = async (req: Request, res: Response) => {
 
   const authUser: Partial<IUserDocument> | undefined = req.user;
   const authUserId = authUser?._id as string;
-  const isAdmin = authUser?.role === UserRole.ADMIN;
+  const isAdmin = authUser?.role === "ADMIN";
 
   const newEmployeeId = req?.body?.employeeId || authUserId;
 
@@ -60,8 +58,8 @@ export const addCompany = asyncHandler(async (req: Request, res: Response) => {
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
   const authUserId = authUser?._id as string;
-  const isAdmin = authUser?.role === UserRole.ADMIN;
-  const isClient = authUser?.role === UserRole.CLIENT;
+  const isAdmin = authUser?.role === "ADMIN";
+  const isClient = authUser?.role === "CLIENT";
 
   // Prepare request variables (body, params, user, etc.)
   const newCompanyDataBody = req.body;
@@ -88,7 +86,7 @@ export const addCompany = asyncHandler(async (req: Request, res: Response) => {
   // Prepare new company data
   const newCompanyData: Partial<ICompany> = {
     ...newCompanyDataBody,
-    subscriptionStatus: SubscriptionStatus.TRIAL,
+    subscriptionStatus: "TRIAL",
     employees: isClient
       ? getEmployees(newCompanyDataBody.employees, authUserId)
       : newCompanyDataBody.employees,
@@ -129,7 +127,7 @@ export const getCompanies = asyncHandler(
   async (req: Request, res: Response) => {
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const isClient = authUser?.role === UserRole.CLIENT;
+    const isClient = authUser?.role === "CLIENT";
 
     // Find companies
     const query: RootQuerySelector<ICompanyDocument> = {};
@@ -171,7 +169,7 @@ export const getCompany = asyncHandler(async (req: Request, res: Response) => {
   // Validation
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === UserRole.CLIENT;
+  const isClient = authUser?.role === "CLIENT";
 
   // Handle if user is not authorized for request
   if (isClient) {
@@ -280,7 +278,7 @@ export const deleteCompany = asyncHandler(
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
     const authUserId = authUser?._id as string;
-    const isClient = authUser?.role === UserRole.CLIENT;
+    const isClient = authUser?.role === "CLIENT";
 
     // Handle authenticated user not authorized for request
     const authUserIsEmployee = idIsInIdsArray(company.employees, authUserId);

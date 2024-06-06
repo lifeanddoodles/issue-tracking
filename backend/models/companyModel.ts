@@ -2,9 +2,7 @@ import mongoose from "mongoose";
 import {
   ICompanyDocument,
   ICompanyWithStatics,
-  Tier,
-  UserRole,
-} from "../../shared/interfaces/index.js";
+} from "../../shared/interfaces/company.js";
 import {
   idIsInIdsArray,
   isAlreadyListedAsEmployeeInACompany,
@@ -46,8 +44,8 @@ const companySchema = new mongoose.Schema(
     },
     tier: {
       type: String,
-      enum: [Tier.FREE, Tier.PRO, Tier.ENTERPRISE],
-      default: Tier.FREE,
+      enum: ["FREE", "PRO", "ENTERPRISE"],
+      default: "FREE",
     },
     email: {
       type: String,
@@ -178,7 +176,7 @@ companySchema.pre("findOneAndUpdate", async function (next) {
     const authUser = this.getOptions().user;
     const employeeId = this.getOptions().employeeId;
     const authUserId = authUser?._id.toString();
-    const isAdmin = authUser?.role === UserRole.ADMIN;
+    const isAdmin = authUser?.role === "ADMIN";
 
     if (employeeId) {
       const newEmployeeId = employeeId;
@@ -221,7 +219,7 @@ companySchema.pre("findOneAndUpdate", async function (next) {
 });
 
 companySchema.pre("save", async function (next) {
-  if (this.assignedRepresentative && this?.tier === Tier.FREE) {
+  if (this.assignedRepresentative && this?.tier === "FREE") {
     throw new Error("Company cannot have a representative assigned");
   }
 

@@ -1,5 +1,5 @@
 import { Document, Model, ObjectId, SchemaTimestampsConfig } from "mongoose";
-import { Tier } from "./service.ts";
+import { Tier } from "./service.js";
 
 export enum Industry {
   HEALTHCARE = "HEALTHCARE",

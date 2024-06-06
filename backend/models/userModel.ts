@@ -1,9 +1,6 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-import {
-  DepartmentTeam,
-  IUserDocument,
-} from "../../shared/interfaces/index.js";
+import { IUserDocument } from "../../shared/interfaces/index.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -75,7 +72,7 @@ userSchema.methods.matchPassword = async function (enteredPassword: string) {
 userSchema.pre("save", async function (next) {
   if (
     this.isModified("assignedAccounts") &&
-    this.department !== DepartmentTeam.CUSTOMER_SUCCESS
+    this.department !== "CUSTOMER_SUCCESS"
   ) {
     throw new Error("User cannot have accounts assigned");
   }

@@ -8,10 +8,6 @@ import {
   ITicketPopulatedDocument,
   ITicketWithStatics,
   IUserDocument,
-  Priority,
-  Status,
-  TicketType,
-  UserRole,
 } from "../../shared/interfaces/index.js";
 import Comment from "../models/commentModel.js";
 import Ticket from "../models/ticketModel.js";
@@ -34,7 +30,7 @@ function getDeadlineAutoFill(priority: string) {
 export const addTicket = asyncHandler(async (req: Request, res: Response) => {
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === UserRole.CLIENT;
+  const isClient = authUser?.role === "CLIENT";
 
   // Prepare request variables (body, params, user, etc.)
   const {
@@ -43,10 +39,10 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
     assignee,
     reporter,
     externalReporter,
-    status = Status.OPEN,
-    priority = Priority.LOW,
+    status = "OPEN",
+    priority = "LOW",
     assignToTeam,
-    ticketType = isClient ? TicketType.FOLLOW_UP : TicketType.ISSUE,
+    ticketType = isClient ? "FOLLOW_UP" : "ISSUE",
     estimatedTime,
     deadline,
     isSubtask = false,
@@ -103,7 +99,7 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
 export const getTickets = asyncHandler(async (req: Request, res: Response) => {
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === UserRole.CLIENT;
+  const isClient = authUser?.role === "CLIENT";
 
   // Find tickets
   const query: RootQuerySelector<ITicketDocument> = {};
@@ -181,7 +177,7 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   // Validation
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === UserRole.CLIENT;
+  const isClient = authUser?.role === "CLIENT";
   const externalReporter = (populatedTicket as ITicketPopulatedDocument)
     ?.externalReporter as IPersonInfo;
   const clientCanRead = isClient && authUser._id === externalReporter?._id;
@@ -204,7 +200,7 @@ export const getTicketsByUser = asyncHandler(
     // Find user
     const authUser: Partial<IUserDocument> | undefined = req.user;
     const authUserId = authUser?._id;
-    const isClient = authUser?.role === UserRole.CLIENT;
+    const isClient = authUser?.role === "CLIENT";
     const query = isClient
       ? { externalReporter: authUserId }
       : { reporter: authUserId };
@@ -244,7 +240,7 @@ export const updateTicket = asyncHandler(
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
     const authUserId = authUser?._id;
-    const isClient = authUser?.role === UserRole.CLIENT;
+    const isClient = authUser?.role === "CLIENT";
     const externalReporterId = ticket?.externalReporter;
 
     // Handle authenticated user not authorized for request
@@ -286,7 +282,7 @@ export const deleteTicket = asyncHandler(
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
     const authUserId = authUser?._id;
-    const isClient = authUser?.role === UserRole.CLIENT;
+    const isClient = authUser?.role === "CLIENT";
     const externalReporterId = ticket?.externalReporter?.toString();
 
     // Handle authenticated user not authorized for request

@@ -5,7 +5,6 @@ import {
   IServiceBase,
   IServiceDocument,
   IUserDocument,
-  UserRole,
 } from "../../shared/interfaces/index.js";
 import Service from "../models/serviceModel.js";
 
@@ -17,7 +16,7 @@ export const addService = asyncHandler(async (req: Request, res: Response) => {
 
   // Validation
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === UserRole.CLIENT;
+  const isClient = authUser?.role === "CLIENT";
 
   // Client is not authorized for request
   if (isClient) {
@@ -105,7 +104,7 @@ export const updateService = asyncHandler(
 
     // Validation
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const isClient = authUser?.role === UserRole.CLIENT;
+    const isClient = authUser?.role === "CLIENT";
 
     // Client is not authorized for request
     if (isClient) {
@@ -139,7 +138,7 @@ export const deleteService = asyncHandler(
     // Validation
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const isAdmin = authUser?.role === UserRole.ADMIN;
+    const isAdmin = authUser?.role === "ADMIN";
 
     // Handle authenticated user not authorized for request
     if (!isAdmin) {

@@ -5,7 +5,6 @@ import {
   IProjectBase,
   IProjectDocument,
   IUserDocument,
-  UserRole,
 } from "../../shared/interfaces/index.js";
 import Project from "../models/projectModel.js";
 
@@ -54,7 +53,7 @@ export const addProject = asyncHandler(async (req: Request, res: Response) => {
 export const getProjects = asyncHandler(async (req: Request, res: Response) => {
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === UserRole.CLIENT;
+  const isClient = authUser?.role === "CLIENT";
 
   // Find projects
   const query: RootQuerySelector<IProjectDocument> = {};
