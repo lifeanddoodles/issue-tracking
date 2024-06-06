@@ -105,7 +105,7 @@ export const addUser = asyncHandler(
       });
     } else {
       // Generate JWT token
-      generateTokenAndSetCookie(res, createdUser._id);
+      generateTokenAndSetCookie(res, createdUser._id as string);
 
       req.login(createdUser, function (err) {
         if (err) {

@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import {
   DepartmentTeam,
   ICompanyDocument,
@@ -38,10 +37,10 @@ export const isFalsy = (value: unknown) => {
 };
 
 export const getAuthorInfo: (
-  author: string | ObjectId | Record<string, unknown>
-) => Promise<
-  IUser & { _id: string | ObjectId | Record<string, unknown> }
-> = async (author) => {
+  author: string | Record<string, unknown>
+) => Promise<IUser & { _id: string | Record<string, unknown> }> = async (
+  author
+) => {
   try {
     const authorId = typeof author !== "string" ? author!.toString() : author;
 
@@ -343,14 +342,18 @@ export function getAssignableDepartmentTeamOptions(noSelectionText?: string) {
   });
 }
 
-export function getUserDataOptions(users: Partial<IUserDocument>[]) {
+export function getUserDataOptions(
+  users: (Partial<IUserDocument> & { _id: string })[]
+) {
   return users?.map((user) => ({
     value: user._id as string,
     label: getFullName(user.firstName!, user.lastName!),
   }));
 }
 
-export function getNonClientDataOptions(users: Partial<IUserDocument>[]) {
+export function getNonClientDataOptions(
+  users: (Partial<IUserDocument> & { _id: string })[]
+) {
   return users
     .filter((user) => user?.role !== UserRole.CLIENT)
     .map((user) => ({
@@ -359,7 +362,9 @@ export function getNonClientDataOptions(users: Partial<IUserDocument>[]) {
     }));
 }
 
-export function getClientDataOptions(users: Partial<IUserDocument>[]) {
+export function getClientDataOptions(
+  users: (Partial<IUserDocument> & { _id: string })[]
+) {
   return users
     .filter((user) => user?.role === UserRole.CLIENT)
     .map((user) => ({
@@ -368,7 +373,9 @@ export function getClientDataOptions(users: Partial<IUserDocument>[]) {
     }));
 }
 
-export function getCustomerSuccessOptions(users: Partial<IUserDocument>[]) {
+export function getCustomerSuccessOptions(
+  users: (Partial<IUserDocument> & { _id: string })[]
+) {
   return users
     .filter(
       (user) =>
@@ -382,7 +389,7 @@ export function getCustomerSuccessOptions(users: Partial<IUserDocument>[]) {
 }
 
 export function getTicketDataOptions(
-  tickets: Partial<ITicketPopulatedDocument>[]
+  tickets: (Partial<ITicketPopulatedDocument> & { _id: string })[]
 ) {
   return tickets.map((ticket) => ({
     value: ticket._id as string,
@@ -390,14 +397,18 @@ export function getTicketDataOptions(
   }));
 }
 
-export function getCompanyDataOptions(companies: Partial<ICompanyDocument>[]) {
+export function getCompanyDataOptions(
+  companies: (Partial<ICompanyDocument> & { _id: string })[]
+) {
   return companies.map((company) => ({
     value: company._id as string,
     label: company.name || (company._id as string),
   }));
 }
 
-export function getServiceDataOptions(services: Partial<IServiceDocument>[]) {
+export function getServiceDataOptions(
+  services: (Partial<IServiceDocument> & { _id: string })[]
+) {
   return services.map((service) => ({
     value: service._id as string,
     label: service.name || (service._id as string),
@@ -448,9 +459,8 @@ export const objectToQueryString: <
     | number
     | boolean
     | string[]
-    | ObjectId
     | Record<string, unknown>
-    | (ObjectId | Record<string, unknown>)[]
+    | Record<string, unknown>[]
   >
 >(
   obj: Partial<T>

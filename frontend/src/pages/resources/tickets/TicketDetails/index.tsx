@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import { useCallback, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -36,10 +35,8 @@ const TicketDetails = () => {
       title: "",
       description: "",
       attachments: [],
-      assignee: "" as (string | ObjectId | Record<string, unknown>) &
-        IPersonInfo,
-      reporter: "" as (string | ObjectId | Record<string, unknown>) &
-        IPersonInfo,
+      assignee: "" as (string | Record<string, unknown>) & IPersonInfo,
+      reporter: "" as (string | Record<string, unknown>) & IPersonInfo,
       status: "" as Status,
       priority: "" as Priority,
       assignToTeam: "" as DepartmentTeam,
@@ -47,7 +44,7 @@ const TicketDetails = () => {
       estimatedTime: "" as unknown as number,
       deadline: "",
       isSubtask: false,
-      parentTask: "" as unknown as ObjectId | Record<string, unknown>,
+      parentTask: "" as unknown as Record<string, unknown>,
     }),
     []
   );

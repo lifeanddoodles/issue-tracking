@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./dist/",
     /* Base Options: */
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -12,12 +13,10 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     /* If transpiling with TypeScript: */
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
-    "rootDirs": [
-      "backend",
-      "shared"
-    ] /* Allow multiple folders to be treated as one when resolving modules. */,
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "baseUrl": "../",
+    "rootDir": "../",
     "types": [
       "node",
       "express",
@@ -28,13 +27,19 @@
     // "outDir": "dist",
     "noEmit": true /* Disable emitting files from a compilation. */,
     "allowImportingTsExtensions": true,
+    "importsNotUsedAsValues": "remove",
+    // "declarationMap": true,
     "sourceMap": true,
     /* If your code runs in the DOM: */
-    "lib": ["es2022", "dom", "dom.iterable"]
+    "lib": ["ESNext", "es2022", "dom", "dom.iterable"]
   },
-  "exclude": ["node_modules", "frontend", "**/*.test.ts", "**/*.test.tsx"],
+  "include": ["../backend", "../shared"],
+  "exclude": ["node_modules", "frontend", "**/*.test.ts"],
   "ts-node": {
     "esm": true,
-    "transpileOnly": true
+    "files": true,
+    "transpileOnly": true,
+    "experimentalResolver": true,
+    "experimentalSpecifierResolution": "node"
   }
 }

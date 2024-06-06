@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import { useCallback, useEffect, useState } from "react";
 import { IProjectDocument } from "../../../../../../shared/interfaces";
 import Button from "../../../../components/Button";
@@ -32,7 +31,7 @@ const AllProjects = () => {
   } = useFetch<
     | (Omit<IProjectDocument, "company"> & {
         company: {
-          _id: ObjectId | Record<string, unknown> | string;
+          _id: Record<string, unknown> | string;
           name: string;
         };
       })[]

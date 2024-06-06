@@ -21,7 +21,9 @@ describe("TableFromDocuments", () => {
     subscriptionStatus = "Status",
     industry = "Industry",
   }
-  const formatCompanies = (companiesList: Partial<ICompanyDocument>[]) => {
+  const formatCompanies = (
+    companiesList: (Partial<ICompanyDocument> & { _id: string })[]
+  ) => {
     return companiesList?.map((company) => {
       return {
         id: company._id.toString(),
@@ -35,7 +37,7 @@ describe("TableFromDocuments", () => {
     });
   };
   let formattedCompanies = formatCompanies(
-    fakeCompanies as Partial<ICompanyDocument>[]
+    fakeCompanies as Partial<ICompanyDocument> & { _id: string }[]
   );
   const filteredCompanies = fakeCompanies.filter(
     (company) => company.subscriptionStatus === SubscriptionStatus.ACTIVE

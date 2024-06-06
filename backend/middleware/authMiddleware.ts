@@ -15,7 +15,9 @@ const ensureAuth = asyncHandler(
           token,
           process.env.JWT_SECRET as Secret
         ) as JwtPayload;
-        req.user = await User.findById(decoded.userId).select("-password");
+        req.user = (await User.findById(decoded.userId).select(
+          "-password"
+        )) as IUserDocument;
         next();
       } catch (error) {
         res.status(401);
@@ -40,7 +42,9 @@ const ensureGuest = asyncHandler(
           token,
           process.env.JWT_SECRET as Secret
         ) as JwtPayload;
-        req.user = await User.findById(decoded.userId).select("-password");
+        req.user = (await User.findById(decoded.userId).select(
+          "-password"
+        )) as IUserDocument;
         res.send({ message: "User already logged in" });
       } catch (error) {
         next();

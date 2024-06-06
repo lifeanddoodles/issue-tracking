@@ -1,19 +1,17 @@
 {
-  "name": "issue-tracking",
-  "type": "module",
+  "name": "issue-tracking-backend",
   "version": "1.0.0",
-  "description": "Fullstack app for issue tracking using the MERN stack.",
+  "description": "Backend for an issue tracking app using the MERN stack.",
   "main": "server.ts",
+  "type": "module",
+  "exports": "./dist/server.js",
+  "types": "./dist/server.d.ts",
   "scripts": {
-    "start": "ts-node backend/server.ts",
-    "server": "nodemon backend/server.ts",
-    "client": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "test": "npm run test --prefix frontend"
+    "start": "node --no-warnings=ExperimentalWarning --loader ts-node/esm -r dotenv/config ./server.ts",
+    "server": "nodemon --watch ./ -e ts --exec \"npm run start\""
   },
   "keywords": [
     "node",
-    "react",
     "mongodb",
     "express",
     "typescript"
@@ -51,7 +49,6 @@
     "nodemon": "^3.1.0",
     "passport": "^0.7.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.3",
-    "vitest-preview": "^0.0.1"
+    "typescript": "^5.4.3"
   }
 }

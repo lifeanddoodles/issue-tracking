@@ -24,7 +24,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "../shared", "./vitest.setup.ts"],
-  "exclude": ["backend"],
+  "include": ["src", "../shared", "./vitest.setup.ts", "**/*.test.[ts|tsx]"],
+  "exclude": ["node_modules", "../backend"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

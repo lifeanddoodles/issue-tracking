@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import { useCallback } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -196,7 +195,7 @@ const CompanyDetails = () => {
     dba: "",
     industry: "" as Industry,
     description: "",
-    employees: [] as (ObjectId | Record<string, unknown> | string)[],
+    employees: [] as (Record<string, unknown> | string)[],
     newEmployee: "",
     assignedRepresentative: "",
   };

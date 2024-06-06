@@ -1,4 +1,3 @@
-import { Schema } from "mongoose";
 import { useCallback, useEffect, useState } from "react";
 import {
   IProjectDocument,
@@ -28,7 +27,7 @@ enum TableColumns {
 }
 
 type PopulatedCompany = {
-  _id: Schema.Types.ObjectId | string;
+  _id: string;
   name: string;
   id: string;
 };

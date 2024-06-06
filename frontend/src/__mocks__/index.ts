@@ -308,7 +308,7 @@ export const newFakeProject = {
   tickets: [],
 };
 
-export const fakeTickets: Partial<ITicketDocument>[] = [
+export const fakeTickets: (Partial<ITicketDocument> & { _id: string })[] = [
   {
     _id: "ticket-001",
     title: "Fix login page alignment",
@@ -360,7 +360,7 @@ export const newFakeClientTicket: Partial<ITicket> = {
   externalReporter: "client-001",
 };
 
-export const newFakeTicket: Partial<ITicketDocument> = {
+export const newFakeTicket: Partial<ITicketDocument> & { _id: string } = {
   _id: "ticket-004",
   ...newFakeClientTicket,
   assignToTeam: DepartmentTeam.DEVELOPMENT,
@@ -376,8 +376,8 @@ export const newFakeTicket: Partial<ITicketDocument> = {
 };
 
 export const fakePopulatedTickets: (
-  | Partial<ITicketPopulatedDocument>
-  | ITicketPopulatedDocument
+  | (Partial<ITicketPopulatedDocument> & { _id: string })
+  | (ITicketPopulatedDocument & { _id: string })
 )[] = [
   {
     _id: "ticket-001",
@@ -401,7 +401,6 @@ export const fakePopulatedTickets: (
     estimatedTime: 10,
     deadline: "2023-08-30T22:22:30.440Z",
     isSubtask: false,
-    createdAt: "2023-08-29T00:21:32.520+00:00",
   },
   {
     _id: "ticket-002",

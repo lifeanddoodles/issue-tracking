@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import { ElementType } from "react";
 import { UserRole } from "../../../shared/interfaces";
 import { ButtonVariant } from "../utils";
@@ -17,7 +16,6 @@ export type nonBooleanValueType =
   | string
   | number
   | readonly string[]
-  | ObjectId
   | Record<string, unknown>;
 
 export type FormElement =
@@ -138,7 +136,7 @@ export interface ISelectWithFetchProps<T>
   query?: string;
   getFormattedOptions: (data: T[]) => { value: string; label: string }[];
   showList?: true;
-  currentList?: (ObjectId | Record<string, unknown> | string)[];
+  currentList?: (Record<string, unknown> | string)[];
   pathToValue?: string;
   resetFieldValue?: boolean;
   setResetFieldValue?: React.Dispatch<React.SetStateAction<boolean>>;

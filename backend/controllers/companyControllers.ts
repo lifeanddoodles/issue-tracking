@@ -20,7 +20,9 @@ const authorizeCompanyUpdate = async (req: Request, res: Response) => {
   const companyId = req.params.companyId;
 
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const authUserId = authUser?._id.toString();
+  const authUserId = (
+    authUser as Partial<IUserDocument> & { _id: string }
+  )?._id.toString();
   const isAdmin = authUser?.role === UserRole.ADMIN;
 
   const newEmployeeId = req?.body?.employeeId || authUserId;
@@ -59,7 +61,9 @@ const authorizeCompanyUpdate = async (req: Request, res: Response) => {
 export const addCompany = asyncHandler(async (req: Request, res: Response) => {
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const authUserId = authUser?._id.toString();
+  const authUserId = (
+    authUser as Partial<IUserDocument> & { _id: string }
+  )?._id.toString();
   const isAdmin = authUser?.role === UserRole.ADMIN;
   const isClient = authUser?.role === UserRole.CLIENT;
 
@@ -109,7 +113,9 @@ export const addCompany = asyncHandler(async (req: Request, res: Response) => {
       newCompany?.assignedRepresentative
     ).select("department assignedAccounts");
 
-    userToAssignAsRepresentative?.assignedAccounts?.push(newCompany._id);
+    userToAssignAsRepresentative?.assignedAccounts?.push(
+      newCompany._id as string
+    );
 
     await userToAssignAsRepresentative?.save({
       validateBeforeSave: true,
@@ -129,17 +135,16 @@ export const getCompanies = asyncHandler(
     const authUser: Partial<IUserDocument> | undefined = req.user;
     const isClient = authUser?.role === UserRole.CLIENT;
 
-    // Handle if user is not authorized for request
-    if (isClient) {
-      res.status(401);
-      throw new Error("Not Authorized");
-    }
-
     // Find companies
     const query: RootQuerySelector<ICompanyDocument> = {};
 
     for (const key in req.query) {
       query[key as keyof ICompanyDocument] = req.query[key];
+    }
+
+    // Handle if user is not authorized for request
+    if (isClient && !Object.hasOwn(req.query, "company")) {
+      query._id = authUser?.company;
     }
 
     const companies: ICompanyDocument[] = await Company.find(query)
@@ -278,7 +283,9 @@ export const deleteCompany = asyncHandler(
     // Validation
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const authUserId = authUser?._id.toString();
+    const authUserId = (
+      authUser as Partial<IUserDocument> & { _id: string }
+    )?._id.toString();
     const isClient = authUser?.role === UserRole.CLIENT;
 
     // Handle authenticated user not authorized for request

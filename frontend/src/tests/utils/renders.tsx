@@ -16,7 +16,7 @@ export const authBase = {
 export const adminAuth = {
   user: {
     ...fakeAdminUser,
-  } as IUserDocument,
+  },
   ...authBase,
 };
 

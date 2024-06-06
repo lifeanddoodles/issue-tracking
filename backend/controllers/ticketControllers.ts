@@ -101,6 +101,10 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
 // @route GET /api/tickets/
 // @access Public
 export const getTickets = asyncHandler(async (req: Request, res: Response) => {
+  // Get authenticated user
+  const authUser: Partial<IUserDocument> | undefined = req.user;
+  const isClient = authUser?.role === UserRole.CLIENT;
+
   // Find tickets
   const query: RootQuerySelector<ITicketDocument> = {};
 
@@ -116,6 +120,10 @@ export const getTickets = asyncHandler(async (req: Request, res: Response) => {
     } else {
       query[key as keyof ITicketDocument] = req.query[key];
     }
+  }
+
+  if (isClient && !Object.hasOwn(req.query, "company")) {
+    query["projectInfo.company._id"] = authUser?.company;
   }
 
   const tickets = await (Ticket as unknown as ITicketWithStatics)
@@ -176,13 +184,7 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   const isClient = authUser?.role === UserRole.CLIENT;
   const externalReporter = (populatedTicket as ITicketPopulatedDocument)
     ?.externalReporter as IPersonInfo;
-  const userIsCompanyEmployee =
-    populatedTicket?.projectInfo?.company?.employees?.some((employee) => {
-      return employee.toString() === authUser?._id.toString();
-    });
-  const clientCanRead =
-    isClient &&
-    (authUser._id === externalReporter?._id || userIsCompanyEmployee);
+  const clientCanRead = isClient && authUser._id === externalReporter?._id;
 
   // Handle authenticated user not authorized for request
   if (!clientCanRead) {

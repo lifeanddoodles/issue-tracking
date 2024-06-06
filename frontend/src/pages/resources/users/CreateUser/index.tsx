@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -30,7 +29,7 @@ import {
 
 type CreateUserFormData = Partial<IUserDocument> & {
   confirmPassword: string;
-  newAssignedAccount?: ObjectId | Record<string, unknown> | string;
+  newAssignedAccount?: Record<string, unknown> | string;
 };
 
 const getCompanyProps = (isClient: boolean) => {
@@ -149,19 +148,16 @@ const CreateUser = () => {
     password: "",
     confirmPassword: "",
     role: "",
-    company: "" as unknown as ObjectId | Record<string, unknown> | string,
+    company: "" as unknown as Record<string, unknown> | string,
     position: "",
     department: "" as DepartmentTeam,
     avatarUrl: "",
-    newAssignedAccount: "" as unknown as
-      | ObjectId
-      | Record<string, unknown>
-      | string,
+    newAssignedAccount: "" as unknown as Record<string, unknown> | string,
     assignedAccounts: [],
   };
   const { formData, setFormData, errors, setErrors, onSubmit, data } = useForm<
     CreateUserFormData,
-    IUserDocument
+    IUserDocument & { _id: string }
   >({
     formShape: formDataShape,
     url: USERS_BASE_API_URL,

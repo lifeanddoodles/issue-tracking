@@ -68,7 +68,7 @@ describe("UserDetails", () => {
 
       auth = {
         ...adminAuth,
-      };
+      } as unknown as IAuthContext;
     });
 
     test("renders error", async () => {
@@ -88,9 +88,9 @@ describe("UserDetails", () => {
     beforeEach(async () => {
       auth = {
         ...adminAuth,
-      };
+      } as unknown as IAuthContext;
 
-      fakeUser = fakeCustomerSuccessUser as IUserDocument;
+      fakeUser = fakeCustomerSuccessUser as unknown as IUserDocument;
 
       useResourceInfoMockReturn =
         useResourceInfoMockReturnWithSuccess(fakeUser);
@@ -286,7 +286,7 @@ describe("UserDetails", () => {
     beforeEach(async () => {
       auth = {
         ...adminAuth,
-      };
+      } as unknown as IAuthContext;
 
       fakeUser = fakeClientUserNoCompany as IUserDocument;
 

@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import { getErrorMessage } from "../../shared/utils/index.js";
+import { getErrorMessage } from "../utils/index.js";
 
 dotenv.config();
 

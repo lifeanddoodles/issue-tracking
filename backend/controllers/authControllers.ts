@@ -34,7 +34,7 @@ export const loginWithEmailAndPassword = (
             (error as Error)?.message || error
           }`,
         });
-      generateTokenAndSetCookie(res, user._id);
+      generateTokenAndSetCookie(res, user._id as string);
 
       res.status(200).json({
         _id: user._id,

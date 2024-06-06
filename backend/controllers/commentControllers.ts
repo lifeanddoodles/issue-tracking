@@ -89,7 +89,7 @@ export const getComment = asyncHandler(async (req: Request, res: Response) => {
 export const getCommentsByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const authUserId = authUser?._id.toString();
+    const authUserId = (authUser?._id as string).toString();
 
     // Request comments by user
     const comments = await Comment.find({ author: authUserId });

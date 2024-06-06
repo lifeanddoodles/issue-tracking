@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import { useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -19,8 +18,8 @@ import {
 import { getServiceDataOptions, getUserDataOptions } from "../../../../utils";
 
 type ProjectFormData = Partial<IProjectDocument> & {
-  newService?: ObjectId | Record<string, unknown>;
-  newTeamMember?: ObjectId | Record<string, unknown>;
+  newService?: string | Record<string, unknown>;
+  newTeamMember?: string | Record<string, unknown>;
 };
 
 const fields = [
@@ -75,8 +74,8 @@ const ProjectDetails = () => {
     name: "",
     description: "",
     url: "",
-    newService: "" as unknown as ObjectId,
-    newTeamMember: "" as unknown as ObjectId,
+    newService: "" as unknown as string | Record<string, unknown>,
+    newTeamMember: "" as unknown as string | Record<string, unknown>,
     services: [],
   };
 
@@ -88,13 +87,13 @@ const ProjectDetails = () => {
         newFormData[target.name as keyof IProjectDocument] = target.value;
         newFormData.team = [
           ...(newFormData?.team || []),
-          target.value as unknown as ObjectId | Record<string, unknown>,
+          target.value as unknown as string | Record<string, unknown>,
         ];
       } else if (target.name === "newService") {
         newFormData[target.name as keyof IProjectDocument] = target.value;
         newFormData.services = [
           ...(newFormData?.services || []),
-          target.value as unknown as ObjectId | Record<string, unknown>,
+          target.value as unknown as string | Record<string, unknown>,
         ];
       } else {
         newFormData[target.name as keyof IProjectDocument] =
