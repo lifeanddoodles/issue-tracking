@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, SchemaTimestampsConfig } from "mongoose";
 
 export enum Tier {
   FREE = "FREE",
@@ -14,4 +14,7 @@ export interface IServiceBase {
   tier?: Tier;
 }
 
-export interface IServiceDocument extends IServiceBase, Document {}
+export interface IServiceDocument
+  extends IServiceBase,
+    Document,
+    SchemaTimestampsConfig {}

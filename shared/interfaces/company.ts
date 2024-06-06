@@ -1,4 +1,4 @@
-import { Document, Model, ObjectId } from "mongoose";
+import { Document, Model, ObjectId, SchemaTimestampsConfig } from "mongoose";
 import { Tier } from "./service.ts";
 
 export enum Industry {
@@ -48,7 +48,10 @@ export interface ICompany {
   assignedRepresentative?: ObjectId | Record<string, unknown> | string;
 }
 
-export interface ICompanyDocument extends ICompany, Document {}
+export interface ICompanyDocument
+  extends ICompany,
+    Document,
+    SchemaTimestampsConfig {}
 
 export interface ICompanyWithStatics extends Model<ICompanyDocument> {
   getTicketsByCompany(companyId?: string): Promise<any[]>;

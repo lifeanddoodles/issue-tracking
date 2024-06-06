@@ -43,15 +43,13 @@ const AllCompanies = () => {
   const [query, setQuery] = useState("");
 
   const applyFilters: () => void = useCallback(() => {
-    const queryString = objectToQueryString<
-      Partial<{
-        name: string;
-        url?: string;
-        subscriptionStatus: SubscriptionStatus;
-        email?: string;
-        industry?: Industry;
-      }>
-    >(filters);
+    const queryString = objectToQueryString<{
+      name: string;
+      url?: string;
+      subscriptionStatus: SubscriptionStatus;
+      email?: string;
+      industry?: Industry;
+    }>(filters);
     setQuery(queryString);
   }, [filters]);
 
@@ -86,7 +84,7 @@ const AllCompanies = () => {
     !loading &&
     companies?.map((company) => {
       return {
-        id: company._id.toString(),
+        id: company._id as string,
         data: {
           name: company.name,
           subscriptionStatus: company.subscriptionStatus,

@@ -342,18 +342,14 @@ export function getAssignableDepartmentTeamOptions(noSelectionText?: string) {
   });
 }
 
-export function getUserDataOptions(
-  users: (Partial<IUserDocument> & { _id: string })[]
-) {
+export function getUserDataOptions(users: Partial<IUserDocument>[]) {
   return users?.map((user) => ({
     value: user._id as string,
     label: getFullName(user.firstName!, user.lastName!),
   }));
 }
 
-export function getNonClientDataOptions(
-  users: (Partial<IUserDocument> & { _id: string })[]
-) {
+export function getNonClientDataOptions(users: Partial<IUserDocument>[]) {
   return users
     .filter((user) => user?.role !== UserRole.CLIENT)
     .map((user) => ({
@@ -362,9 +358,7 @@ export function getNonClientDataOptions(
     }));
 }
 
-export function getClientDataOptions(
-  users: (Partial<IUserDocument> & { _id: string })[]
-) {
+export function getClientDataOptions(users: Partial<IUserDocument>[]) {
   return users
     .filter((user) => user?.role === UserRole.CLIENT)
     .map((user) => ({
@@ -373,9 +367,7 @@ export function getClientDataOptions(
     }));
 }
 
-export function getCustomerSuccessOptions(
-  users: (Partial<IUserDocument> & { _id: string })[]
-) {
+export function getCustomerSuccessOptions(users: Partial<IUserDocument>[]) {
   return users
     .filter(
       (user) =>
@@ -389,7 +381,7 @@ export function getCustomerSuccessOptions(
 }
 
 export function getTicketDataOptions(
-  tickets: (Partial<ITicketPopulatedDocument> & { _id: string })[]
+  tickets: Partial<ITicketPopulatedDocument>[]
 ) {
   return tickets.map((ticket) => ({
     value: ticket._id as string,
@@ -397,18 +389,14 @@ export function getTicketDataOptions(
   }));
 }
 
-export function getCompanyDataOptions(
-  companies: (Partial<ICompanyDocument> & { _id: string })[]
-) {
+export function getCompanyDataOptions(companies: Partial<ICompanyDocument>[]) {
   return companies.map((company) => ({
     value: company._id as string,
     label: company.name || (company._id as string),
   }));
 }
 
-export function getServiceDataOptions(
-  services: (Partial<IServiceDocument> & { _id: string })[]
-) {
+export function getServiceDataOptions(services: Partial<IServiceDocument>[]) {
   return services.map((service) => ({
     value: service._id as string,
     label: service.name || (service._id as string),
@@ -452,19 +440,7 @@ export const getColumnTitles: <T>(
   });
 };
 
-export const objectToQueryString: <
-  T extends Record<
-    string,
-    | string
-    | number
-    | boolean
-    | string[]
-    | Record<string, unknown>
-    | Record<string, unknown>[]
-  >
->(
-  obj: Partial<T>
-) => string = (obj) => {
+export const objectToQueryString: <T>(obj: Partial<T>) => string = (obj) => {
   const queryParams: string[] = [];
 
   for (const key in obj) {

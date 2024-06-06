@@ -1,4 +1,4 @@
-import { Document, ObjectId } from "mongoose";
+import { Document, ObjectId, SchemaTimestampsConfig } from "mongoose";
 import { DepartmentTeam } from "./ticket.ts";
 
 export enum UserRole {
@@ -23,6 +23,6 @@ export interface IUser {
   assignedAccounts?: (ObjectId | Record<string, unknown> | string)[];
 }
 
-export interface IUserDocument extends IUser, Document {
+export interface IUserDocument extends IUser, Document, SchemaTimestampsConfig {
   matchPassword: (enteredPassword: string) => Promise<boolean>;
 }

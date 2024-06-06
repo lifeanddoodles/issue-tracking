@@ -5,7 +5,6 @@ import {
   ITicket,
   ITicketBase,
   ITicketDocument,
-  IUserDocument,
   Priority,
   Status,
   TicketType,
@@ -191,7 +190,7 @@ const CreateTicket = () => {
     ? {
         title: "",
         description: "",
-        externalReporter: (user as IUserDocument & { _id: string })!._id,
+        externalReporter: user!._id,
         attachments: [],
         ticketType: TicketType.FOLLOW_UP,
       }
@@ -200,7 +199,7 @@ const CreateTicket = () => {
         description: "",
         attachments: [],
         assignee: "",
-        reporter: (user as IUserDocument & { _id: string })._id,
+        reporter: user?._id,
         status: Status.OPEN,
         priority: Priority.MEDIUM,
         assignToTeam: "",
@@ -217,9 +216,7 @@ const CreateTicket = () => {
     formShape: formDataShape as Partial<ITicketBase | ITicket>,
     url: TICKETS_BASE_API_URL,
     onSuccess: () => {
-      navigate(
-        `/dashboard/tickets/${(data as ITicketDocument & { _id: string })?._id}`
-      );
+      navigate(`/dashboard/tickets/${data?._id}`);
     },
   });
   const { validateField } = useValidation();

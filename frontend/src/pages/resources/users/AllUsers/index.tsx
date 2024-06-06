@@ -34,7 +34,7 @@ const AllUsers = () => {
   const [query, setQuery] = useState("");
 
   const applyFilters: () => void = useCallback(() => {
-    const queryString = objectToQueryString<Partial<IUser>>(filters);
+    const queryString = objectToQueryString<IUser>(filters);
     setQuery(queryString);
   }, [filters]);
 
@@ -70,7 +70,7 @@ const AllUsers = () => {
     users &&
     users?.map((user) => {
       return {
-        id: user._id.toString(),
+        id: user._id as string,
         data: {
           firstName: user.firstName,
           lastName: user.lastName,

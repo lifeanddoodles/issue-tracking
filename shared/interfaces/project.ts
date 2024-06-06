@@ -1,4 +1,4 @@
-import { Document, ObjectId } from "mongoose";
+import { Document, ObjectId, SchemaTimestampsConfig } from "mongoose";
 
 export interface IProjectBase {
   name: string;
@@ -10,4 +10,7 @@ export interface IProjectBase {
   tickets?: (ObjectId | Record<string, unknown> | string)[];
 }
 
-export interface IProjectDocument extends IProjectBase, Document {}
+export interface IProjectDocument
+  extends IProjectBase,
+    Document,
+    SchemaTimestampsConfig {}

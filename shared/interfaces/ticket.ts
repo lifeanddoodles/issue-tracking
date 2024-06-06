@@ -1,4 +1,9 @@
-import { Document, ObjectId, RootQuerySelector } from "mongoose";
+import {
+  Document,
+  ObjectId,
+  RootQuerySelector,
+  SchemaTimestampsConfig,
+} from "mongoose";
 
 export enum Priority {
   HIGH = "HIGH",
@@ -72,6 +77,7 @@ export type ITicketAggregations = {
 export interface ITicketDocument
   extends ITicket,
     Document,
+    SchemaTimestampsConfig,
     ITicketAggregations {}
 
 export type ITicketWithStatics = ITicketDocument & {

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import {
-  ITicket,
+  ITicketDocument,
   ITicketPopulatedDocument,
 } from "../../../../shared/interfaces";
 import {
@@ -12,7 +12,7 @@ import Badge from "../Badge";
 import Heading from "../Heading";
 
 interface ITicketsListProps {
-  tickets: (ITicket & { _id: string })[] | ITicketPopulatedDocument[] | [];
+  tickets: ITicketDocument[] | ITicketPopulatedDocument[];
 }
 const TicketsList = ({ tickets }: ITicketsListProps) => {
   if (tickets.length === 0) return <Heading text="No tickets" level={1} />;
@@ -22,8 +22,7 @@ const TicketsList = ({ tickets }: ITicketsListProps) => {
   return (
     <ul>
       {tickets.map((ticket) => {
-        const ticketId =
-          typeof ticket._id === "string" ? ticket._id : ticket._id.toString();
+        const ticketId = ticket._id as string;
 
         return (
           <li key={ticketId} className="ticket mb-4">

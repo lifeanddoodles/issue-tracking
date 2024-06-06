@@ -20,9 +20,7 @@ const authorizeCompanyUpdate = async (req: Request, res: Response) => {
   const companyId = req.params.companyId;
 
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const authUserId = (
-    authUser as Partial<IUserDocument> & { _id: string }
-  )?._id.toString();
+  const authUserId = authUser?._id as string;
   const isAdmin = authUser?.role === UserRole.ADMIN;
 
   const newEmployeeId = req?.body?.employeeId || authUserId;
@@ -61,9 +59,7 @@ const authorizeCompanyUpdate = async (req: Request, res: Response) => {
 export const addCompany = asyncHandler(async (req: Request, res: Response) => {
   // Get authenticated user
   const authUser: Partial<IUserDocument> | undefined = req.user;
-  const authUserId = (
-    authUser as Partial<IUserDocument> & { _id: string }
-  )?._id.toString();
+  const authUserId = authUser?._id as string;
   const isAdmin = authUser?.role === UserRole.ADMIN;
   const isClient = authUser?.role === UserRole.CLIENT;
 
@@ -283,9 +279,7 @@ export const deleteCompany = asyncHandler(
     // Validation
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const authUserId = (
-      authUser as Partial<IUserDocument> & { _id: string }
-    )?._id.toString();
+    const authUserId = authUser?._id as string;
     const isClient = authUser?.role === UserRole.CLIENT;
 
     // Handle authenticated user not authorized for request

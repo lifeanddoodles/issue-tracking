@@ -9,7 +9,7 @@ import {
   IServiceDocument,
   ITicketDocument,
   IUserDocument,
-} from "./interfaces/index.ts";
+} from "../shared/interfaces";
 
 // Load env vars
 dotenv.config();

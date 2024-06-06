@@ -203,7 +203,7 @@ export const getTicketsByUser = asyncHandler(
   async (req: Request, res: Response) => {
     // Find user
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const authUserId = authUser?._id.toString();
+    const authUserId = authUser?._id;
     const isClient = authUser?.role === UserRole.CLIENT;
     const query = isClient
       ? { externalReporter: authUserId }
@@ -243,9 +243,9 @@ export const updateTicket = asyncHandler(
     // Validation
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const authUserId = authUser?._id.toString();
+    const authUserId = authUser?._id;
     const isClient = authUser?.role === UserRole.CLIENT;
-    const externalReporterId = ticket?.externalReporter?.toString();
+    const externalReporterId = ticket?.externalReporter;
 
     // Handle authenticated user not authorized for request
     if (
@@ -285,7 +285,7 @@ export const deleteTicket = asyncHandler(
     // Validation
     // Get authenticated user
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const authUserId = authUser?._id.toString();
+    const authUserId = authUser?._id;
     const isClient = authUser?.role === UserRole.CLIENT;
     const externalReporterId = ticket?.externalReporter?.toString();
 

@@ -157,7 +157,7 @@ const CreateUser = () => {
   };
   const { formData, setFormData, errors, setErrors, onSubmit, data } = useForm<
     CreateUserFormData,
-    IUserDocument & { _id: string }
+    IUserDocument
   >({
     formShape: formDataShape,
     url: USERS_BASE_API_URL,

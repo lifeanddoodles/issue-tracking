@@ -89,7 +89,7 @@ export const getComment = asyncHandler(async (req: Request, res: Response) => {
 export const getCommentsByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const authUser: Partial<IUserDocument> | undefined = req.user;
-    const authUserId = (authUser?._id as string).toString();
+    const authUserId = authUser?._id;
 
     // Request comments by user
     const comments = await Comment.find({ author: authUserId });
@@ -117,12 +117,12 @@ export const updateComment = asyncHandler(
     // Validation
     // Get authenticated user
     // const authUser: Partial<IUserDocument> | undefined = req.user;
-    // const authUserId = authUser?._id.toString();
+    // const authUserId = authUser?._id;
     // const isAdmin = authUser?.role === UserRole.ADMIN;
 
     // Handle authenticated user not authorized for request
     // TODO: Add as middleware?
-    // if(!isAdmin && authUserId !== comment.author.toString()) {
+    // if(!isAdmin && authUserId !== comment.author) {
     //   res.status(401)
     //   throw new Error ("Not Authorized")
     // }
@@ -168,12 +168,12 @@ export const deleteComment = asyncHandler(
     // Validation
     // Get authenticated user
     // const authUser: Partial<IUserDocument> | undefined = req.user;
-    // const authUserId = authUser?._id.toString();
+    // const authUserId = authUser?._id;
     // const isAdmin = authUser?.role === UserRole.ADMIN;
 
     // Handle authenticated user not authorized for request
     // TODO: Add as middleware?
-    // if(!isAdmin && authUserId !== comment.author.toString()) {
+    // if(!isAdmin && authUserId !== comment.author) {
     //   res.status(401)
     //   throw new Error ("Not Authorized")
     // }

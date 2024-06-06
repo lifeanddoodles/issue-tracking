@@ -48,14 +48,12 @@ const AllProjects = () => {
   const [query, setQuery] = useState("");
 
   const applyFilters: () => void = useCallback(() => {
-    const queryString = objectToQueryString<
-      Partial<{
-        name: string;
-        company: string;
-        url?: string;
-        services?: string[];
-      }>
-    >(filters);
+    const queryString = objectToQueryString<{
+      name: string;
+      company: string;
+      url?: string;
+      services?: string[];
+    }>(filters);
     setQuery(queryString);
   }, [filters]);
 
@@ -90,7 +88,7 @@ const AllProjects = () => {
     !loading &&
     projects?.map((project) => {
       return {
-        id: project._id.toString(),
+        id: project._id as string,
         data: {
           name: project.name,
           company: project.company?.name,

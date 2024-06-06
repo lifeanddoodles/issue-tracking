@@ -97,13 +97,11 @@ const ProjectsByCompany = () => {
   }, [companyId, getProjectsRows, query]);
 
   const applyFilters: () => void = useCallback(() => {
-    const queryString = objectToQueryString<
-      Partial<{
-        name: string;
-        url?: string;
-        service?: string;
-      }>
-    >(filters);
+    const queryString = objectToQueryString<{
+      name: string;
+      url?: string;
+      service?: string;
+    }>(filters);
     setQuery(queryString);
   }, [filters]);
 
@@ -134,7 +132,7 @@ const ProjectsByCompany = () => {
 
   const formattedProjects = projects?.map((project) => {
     return {
-      id: project._id.toString(),
+      id: project._id as string,
       data: {
         name: project.name,
         company: project.company.name,

@@ -6,7 +6,7 @@ import {
   StrategyOptionsWithoutRequest,
 } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
-import { IUserDocument } from "../interfaces/user.ts";
+import { IUserDocument } from "../../shared/interfaces";
 import User from "../models/userModel.ts";
 
 const opts: StrategyOptionsWithoutRequest = {

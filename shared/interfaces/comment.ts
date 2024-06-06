@@ -1,12 +1,10 @@
-import { Document, ObjectId } from "mongoose";
+import { Document, ObjectId, SchemaTimestampsConfig } from "mongoose";
 
 export interface IComment {
   ticketId: ObjectId | Record<string, unknown> | string;
   author: ObjectId | Record<string, unknown> | string;
   message: string;
   isEdited: boolean;
-  createdAt: Date | string;
-  lastModifiedAt?: Date | string;
 }
 
 export interface IAuthorInfo {
@@ -16,7 +14,10 @@ export interface IAuthorInfo {
   avatarUrl?: string;
 }
 
-export interface ICommentDocument extends IComment, Document {}
+export interface ICommentDocument
+  extends IComment,
+    Document,
+    SchemaTimestampsConfig {}
 
 export type ICommentPopulatedDocument = IComment & {
   _id: string | ObjectId | Record<string, unknown>;

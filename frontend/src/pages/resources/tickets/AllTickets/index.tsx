@@ -46,15 +46,13 @@ const AllTickets = () => {
   const [query, setQuery] = useState("");
 
   const applyFilters: () => void = useCallback(() => {
-    const queryString = objectToQueryString<
-      Partial<{
-        title: string;
-        status: Status;
-        ticketType: TicketType;
-        assignee: string;
-        priority: Priority;
-      }>
-    >(filters);
+    const queryString = objectToQueryString<{
+      title: string;
+      status: Status;
+      ticketType: TicketType;
+      assignee: string;
+      priority: Priority;
+    }>(filters);
     setQuery(queryString);
   }, [filters]);
 
@@ -89,7 +87,7 @@ const AllTickets = () => {
     !loading &&
     tickets?.map((ticket) => {
       return {
-        id: ticket._id.toString(),
+        id: ticket._id as string,
         data: {
           title: ticket.title,
           status: ticket.status,

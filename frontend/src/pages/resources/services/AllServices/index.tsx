@@ -34,7 +34,7 @@ const AllServices = () => {
   const [query, setQuery] = useState("");
 
   const applyFilters: () => void = useCallback(() => {
-    const queryString = objectToQueryString<Partial<IServiceBase>>(filters);
+    const queryString = objectToQueryString<IServiceBase>(filters);
     setQuery(queryString);
   }, [filters]);
 
@@ -69,7 +69,7 @@ const AllServices = () => {
     !loading &&
     services?.map((project) => {
       return {
-        id: project._id.toString(),
+        id: project._id as string,
         data: {
           name: project.name,
           url: project.url,

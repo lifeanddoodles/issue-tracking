@@ -1,4 +1,4 @@
-import { ITicket, ITicketPopulatedDocument } from "shared/interfaces";
+import { ITicketDocument, ITicketPopulatedDocument } from "shared/interfaces";
 import { DepartmentTeam, UserRole } from "../../../../../shared/interfaces";
 import ChartsSection from "../../../components/ChartsSection";
 import Heading from "../../../components/Heading";
@@ -94,9 +94,9 @@ const Dashboard = () => {
     data: tickets,
     loading: loadingTickets,
     error: ticketsError,
-  } = useFetch<(ITicket & { _id: string })[] | ITicketPopulatedDocument[] | []>(
-    { url: ticketsUrl }
-  );
+  } = useFetch<ITicketDocument[] | ITicketPopulatedDocument[] | []>({
+    url: ticketsUrl,
+  });
 
   const projectsQuery = getProjectsQuery(
     user?.role as UserRole,
