@@ -180,7 +180,16 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
   const isClient = authUser?.role === "CLIENT";
   const externalReporter = (populatedTicket as ITicketPopulatedDocument)
     ?.externalReporter as IPersonInfo;
-  const clientCanRead = isClient && authUser._id === externalReporter?._id;
+  const userIsCompanyEmployee =
+    populatedTicket?.projectInfo?.company?.employees?.some((employee) => {
+      return (
+        employee._id.toString() ===
+        (authUser as Partial<IUserDocument>)?._id?.toString()
+      );
+    });
+  const clientCanRead =
+    isClient &&
+    (authUser._id === externalReporter?._id || userIsCompanyEmployee);
 
   // Handle authenticated user not authorized for request
   if (!clientCanRead) {

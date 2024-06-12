@@ -19,8 +19,6 @@ export interface ICommentDocument
     Document,
     SchemaTimestampsConfig {}
 
-export type ICommentPopulatedDocument = IComment & {
-  _id: string | ObjectId | Record<string, unknown>;
-} & {
+export type ICommentPopulatedDocument = ICommentDocument & {
   author: IAuthorInfo;
 };

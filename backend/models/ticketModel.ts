@@ -145,7 +145,6 @@ ticketSchema.statics.aggregateTicketsWithProjectsAndServices = async function (
             $project: {
               _id: 1,
               name: 1,
-              employees: 1,
             },
           },
         ],
@@ -156,6 +155,23 @@ ticketSchema.statics.aggregateTicketsWithProjectsAndServices = async function (
       $unwind: {
         path: "$projectInfo.company",
         preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "projectInfo.company._id",
+        foreignField: "company",
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              firstName: 1,
+              lastName: 1,
+            },
+          },
+        ],
+        as: "projectInfo.company.employees",
       },
     },
     {
