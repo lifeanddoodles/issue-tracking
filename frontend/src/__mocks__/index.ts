@@ -145,10 +145,6 @@ export const fakeClientUserNoCompany = fakeUsers.filter(
   (user) => user.role === UserRole.CLIENT && !user.company
 )[0];
 
-export const fakeClientUserWithCompany = fakeUsers.filter(
-  (user) => user.role === UserRole.CLIENT && user.company
-)[0];
-
 export const fakeCustomerSuccessUser = fakeUsers.filter(
   (user) =>
     user.role === UserRole.STAFF &&
@@ -201,6 +197,7 @@ export const fakeCompanies = [
       zip: "",
       country: "",
     },
+    tier: Tier.ENTERPRISE,
   },
   {
     _id: "company-001",
@@ -220,12 +217,13 @@ export const fakeCompanies = [
       zip: "",
       country: "",
     },
+    tier: Tier.ENTERPRISE,
   },
   {
     _id: "company-002",
     name: "Client Company",
-    url: "clientcompany.com",
-    email: "contact@clientcompany.com",
+    url: "clientcompany2.com",
+    email: "contact@clientcompany2.com",
     subscriptionStatus: SubscriptionStatus.ONBOARDING,
     employees: ["client-003"],
     projects: [],
@@ -239,6 +237,7 @@ export const fakeCompanies = [
       zip: "",
       country: "",
     },
+    tier: Tier.FREE,
   },
 ];
 
@@ -261,6 +260,19 @@ export const newFakeCompany = {
     zip: "12345",
     country: "US",
   },
+  tier: Tier.PRO,
+};
+
+export const companyWithTier = (tier: Tier) => {
+  return fakeCompanies.filter((company) => company.tier === tier)[0];
+};
+
+export const fakeClientUserWithSpecificTier = (tier: Tier) => {
+  const enterpriseCompany = companyWithTier(tier);
+  return fakeUsers.filter(
+    (user) =>
+      user.role === UserRole.CLIENT && user.company === enterpriseCompany._id
+  )[0];
 };
 
 export const fakeProjects = [

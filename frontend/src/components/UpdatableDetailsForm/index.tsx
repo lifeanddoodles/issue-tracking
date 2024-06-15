@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { UserRole } from "../../../../shared/interfaces";
 import { FormField, ResourceUpdatableFormProps } from "../../interfaces";
 import { renderFields } from "../../utils";
@@ -16,7 +17,10 @@ const UpdatableDetailsForm = <T extends Record<string, unknown>>({
   fields: FormField<unknown>[];
   userRole?: UserRole;
 }) => {
-  const renderedChildren = renderFields<T>(fields, formShape as T, userRole);
+  const renderedChildren = useMemo(
+    () => renderFields<T>(fields, formShape as T, userRole),
+    [fields, formShape, userRole]
+  );
 
   return (
     <UpdatableResourceForm

@@ -44,7 +44,7 @@ export interface ICompany {
   dba?: string;
   description?: string;
   industry?: Industry;
-  tier?: Tier;
+  tier: Tier;
   assignedRepresentative?: ObjectId | Record<string, unknown> | string;
 }
 

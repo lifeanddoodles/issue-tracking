@@ -16,7 +16,8 @@
     "phone": "8675309",
     "url": "https://enterprisetiercompany.com",
     "dba": "Enterprise Company LLC",
-    "description": "Demo company in the enterprise tier and subscription status of active."
+    "description": "Demo company in the enterprise tier and subscription status of active.",
+    "tier": "ENTERPRISE"
   },
   {
     "name": "Pro Tier Company",
@@ -35,7 +36,8 @@
     "phone": "5555555555",
     "url": "https://protiercompany.com",
     "dba": "Pro Tier Company LLC",
-    "description": "Demo company in the pro tier and subscription status of trial."
+    "description": "Demo company in the pro tier and subscription status of trial.",
+    "tier": "PRO"
   },
   {
     "name": "Free Tier Company",
@@ -54,6 +56,7 @@
     "phone": "1234567890",
     "url": "https://freetiercompany.com",
     "dba": "Free Tier Company LLC",
-    "description": "Demo company in the free tier and subscription status of onboarding."
+    "description": "Demo company in the free tier and subscription status of onboarding.",
+    "tier": "FREE"
   }
 ]

@@ -25,7 +25,7 @@ export type IAuthContext = {
   loading: boolean;
   authUserReq: () => void;
   logoutUserReq: () => void;
-  user: IUserDocument;
+  user: Partial<IUserDocument>;
 };
 
 export const componentWithAuthContext = <T extends ReactElement>(
