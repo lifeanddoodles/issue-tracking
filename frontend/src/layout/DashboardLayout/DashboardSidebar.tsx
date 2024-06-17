@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 import { UserRole } from "../../../../shared/interfaces";
 import Heading from "../../components/Heading";
 import { useAuthContext } from "../../context/AuthProvider";
@@ -109,39 +110,90 @@ const menuItems = {
   },
 };
 
-const DashboardSidebar = () => {
+const clientMenuItems = {
+  account: {
+    title: "My Account",
+    items: [
+      {
+        title: "Dashboard",
+        link: "/dashboard",
+      },
+      {
+        title: "Board",
+        link: "/dashboard/board",
+      },
+      {
+        title: "My Team",
+        link: "/dashboard/my-team",
+      },
+      {
+        title: "Add User",
+        link: "/dashboard/users/create",
+      },
+      {
+        title: "My Company",
+        link: "/dashboard/my-company",
+      },
+      {
+        title: "My Projects",
+        link: "/dashboard/my-projects",
+      },
+      {
+        title: "Add Project",
+        link: "/dashboard/projects/create",
+      },
+      {
+        title: "My Tickets",
+        link: "/dashboard/my-tickets",
+      },
+      {
+        title: "Add Ticket",
+        link: "/dashboard/tickets/create",
+      },
+    ],
+  },
+};
+
+const DashboardSidebar = ({ className }: { className?: string }) => {
   const variantClasses = getVariantClasses("transparent");
   const { user } = useAuthContext();
   const isClient = user?.role === UserRole.CLIENT;
+  const classes = twMerge("dashboard-sidebar flex flex-col", className);
 
   return (
-    <nav className="dashboard-sidebar__nav flex flex-col">
-      {Object.entries(menuItems).map(([key, value]) => {
-        return (
-          <Fragment key={key}>
-            <Heading text={value.title} className="text-lg" marginBottom={2} />
-            {value.items.map(
-              (item: {
-                title: string;
-                link: string;
-                restrictAccess?: boolean;
-              }) => {
-                return (
-                  (!isClient || !item?.restrictAccess) && (
-                    <Link
-                      key={item.title}
-                      to={item.link}
-                      className={`dashboard-sidebar__link mb-2 rounded-lg ${variantClasses}`}
-                    >
-                      {item.title}
-                    </Link>
-                  )
-                );
-              }
-            )}
-          </Fragment>
-        );
-      })}
+    <nav className={classes}>
+      {Object.entries(isClient ? clientMenuItems : menuItems).map(
+        ([key, value]) => {
+          return (
+            <Fragment key={key}>
+              <Heading
+                text={value.title}
+                className="text-lg"
+                marginBottom={2}
+              />
+              {value.items.map(
+                (item: {
+                  title: string;
+                  link: string;
+                  restrictAccess?: boolean;
+                }) => {
+                  return (
+                    (!isClient || !item?.restrictAccess) && (
+                      <Link
+                        key={item.title}
+                        to={item.link}
+                        className={`dashboard-sidebar__link mb-2 rounded-lg ${variantClasses}`}
+                      >
+                        {item.title}
+                      </Link>
+                    )
+                  );
+                }
+              )}
+            </Fragment>
+          );
+        }
+      )}
     </nav>
   );
 };
