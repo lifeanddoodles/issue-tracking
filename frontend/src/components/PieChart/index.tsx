@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { useMemo, useRef } from "react";
+import { removeDashes, toTitleCase } from "../../utils";
 import styles from "./pie-chart.module.css";
 
 type DataItem = {
@@ -64,7 +65,7 @@ export const PieChart = ({ width, height, data, className }: PieChartProps) => {
     const inflectionPoint = arcGenerator.centroid(inflectionInfo);
 
     const isRightLabel = inflectionPoint[0] > 0;
-    const labelPosX = inflectionPoint[0] + 20 * (isRightLabel ? 1 : -1);
+    const labelPosX = inflectionPoint[0] + 10 * (isRightLabel ? 1 : -1);
     const textAnchor = isRightLabel ? "start" : "end";
     const label = grp.data.name + " (" + grp.value + ")";
 
@@ -106,9 +107,10 @@ export const PieChart = ({ width, height, data, className }: PieChartProps) => {
           y={inflectionPoint[1]}
           textAnchor={textAnchor}
           dominantBaseline="middle"
-          fontSize={14}
+          fontSize={12}
+          lengthAdjust={"spacingAndGlyphs"}
         >
-          {label}
+          {toTitleCase(removeDashes(label))}
         </text>
       </g>
     );

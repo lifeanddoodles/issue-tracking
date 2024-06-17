@@ -774,3 +774,19 @@ export const renderFields = <T,>(
       );
     }
   );
+
+export const removeDashes = (label: string) => label.replace(/[-_]/, " ");
+
+export const formatLabel = (label: string) => removeDashes(label).toLowerCase();
+
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const toTitleCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => capitalize(word))
+    .join(" ");
+};
