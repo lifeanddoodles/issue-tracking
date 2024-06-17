@@ -192,7 +192,7 @@ export const getTicket = asyncHandler(async (req: Request, res: Response) => {
     (authUser._id === externalReporter?._id || userIsCompanyEmployee);
 
   // Handle authenticated user not authorized for request
-  if (!clientCanRead) {
+  if (authUser?.role !== "ADMIN" && !clientCanRead) {
     res.status(401);
     throw new Error("Not Authorized");
   }
