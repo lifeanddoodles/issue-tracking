@@ -10,7 +10,10 @@ const Form = ({
   className?: string;
   ariaLabel?: string;
 }) => {
-  const mergedClasses = twMerge("mx-auto w-full max-w-md mb-8", className);
+  const mergedClasses = twMerge(
+    "mx-auto sm:mx-0 w-full max-w-md mb-8",
+    className
+  );
 
   return (
     <form className={mergedClasses} onSubmit={onSubmit} aria-label={ariaLabel}>

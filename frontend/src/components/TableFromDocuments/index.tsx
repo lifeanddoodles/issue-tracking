@@ -114,7 +114,7 @@ const TableCellData = ({
   value: CellDataValue;
 }) => {
   return (
-    <TableCell className="shrink-0 grow-0">
+    <TableCell className="px-4 max-w-[15rem] truncate">
       {getCellData(title, value)}
     </TableCell>
   );
@@ -150,13 +150,13 @@ const TableFromDocuments: <T>({
 
   return (
     <div className="overflow-x-auto grow">
-      <Table>
+      <Table className="table-auto gap-2">
         {cols && (
-          <TableHead className="w-full">
-            <TableRow className="grid grid-flow-col grid-cols-[repeat(auto-fit,_minmax(10rem,_1fr))]">
+          <TableHead>
+            <TableRow>
               {cols.map((col) => (
                 <TableHeading
-                  className="text-left whitespace-nowrap"
+                  className="text-left whitespace-nowrap pt-2 pb-4 px-4 max-w-[15rem] truncate"
                   key={col.keyTitle}
                 >
                   {col.title}
@@ -168,12 +168,12 @@ const TableFromDocuments: <T>({
             </TableRow>
           </TableHead>
         )}
-        <TableBody className="w-full">
+        <TableBody>
           {rows.map((row, index) => (
             <TableRow
               id={row.id}
               key={row.id || index}
-              className="grid grid-flow-col grid-cols-[repeat(auto-fit,_minmax(10rem,_1fr))]"
+              className="hover:bg-neutral-200"
             >
               {Object.entries(row.data).map(([key, value]) => (
                 <TableCellData
@@ -182,7 +182,7 @@ const TableFromDocuments: <T>({
                   value={value as CellDataValue}
                 />
               ))}
-              <TableCell>
+              <TableCell className="flex gap-2 items-center">
                 <Link
                   to={`${resourceBaseUrl}/${row.id}`}
                   className={`rounded-lg ${variantClasses}`}

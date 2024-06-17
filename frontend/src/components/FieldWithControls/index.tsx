@@ -41,6 +41,7 @@ const FieldWithControls = withControls(
 
       return cloneElement(childElement, {
         ...childElement.props,
+        className: "grow",
         disabled: !isEditable,
         resetFieldValue,
         setResetFieldValue,

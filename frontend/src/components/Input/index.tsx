@@ -65,7 +65,7 @@ const Input = forwardRef(
     );
 
     return (
-      <div role={label && "group"} className="flex flex-col mb-4">
+      <div role={label && "group"} className="w-full flex flex-col mb-4">
         {label && (
           <label htmlFor={id} className="font-semibold">
             {label}

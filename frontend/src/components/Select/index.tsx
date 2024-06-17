@@ -41,10 +41,8 @@ const SelectComponent: ForwardRefRenderFunction<
     }`,
     className
   );
-  const controlBaseClassName = `text-neutral-800 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-700 rounded-lg border focus:ring-blue-500 focus:border-blue-500 block p-2 pr-4 dark:placeholder-neutral-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full max-w-xs${
-    direction === "row"
-      ? " basis-full max-w-2/3 shrink grow sm:basis-2/3 md:basis-full lg:basis-2/3"
-      : ""
+  const controlBaseClassName = `text-neutral-800 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-700 rounded-lg border focus:ring-blue-500 focus:border-blue-500 block p-2 pr-4 dark:placeholder-neutral-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full${
+    direction === "row" ? " shrink grow" : ""
   }`;
   const controlClassNames = !label
     ? twMerge(`${controlBaseClassName} mb-4`, className)
