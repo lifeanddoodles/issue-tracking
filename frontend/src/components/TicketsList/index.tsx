@@ -29,7 +29,7 @@ const TicketsList = ({ tickets }: ITicketsListProps) => {
             <article className="">
               <Link
                 to={`/dashboard/tickets/${ticketId}`}
-                className={`ticket-list__link w-full mb-2 rounded-lg ${variantClasses} flex justify-between`}
+                className={`ticket-list__link w-full mb-2 rounded-lg ${variantClasses} flex justify-between items-start`}
               >
                 <Heading
                   text={ticket.title}
