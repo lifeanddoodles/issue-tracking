@@ -1,32 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useDebounce from "./useDebounce";
 
 export const useResponsive = () => {
   const [width, setWidth] = useState(window.innerWidth);
 
-  const handleWindowSizeChange = () => {
+  const handleResize = () => {
     setWidth(window.innerWidth);
   };
 
-  const debouncedHandleWindowSizeChange = useDebounce(
-    handleWindowSizeChange,
-    300
-  );
+  const debouncedWidth = useDebounce(width, 300);
 
   useEffect(() => {
-    window.addEventListener("resize", debouncedHandleWindowSizeChange);
-
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener("resize", debouncedHandleWindowSizeChange);
+      window.removeEventListener("resize", handleResize);
     };
-  }, [debouncedHandleWindowSizeChange]);
+  }, []);
 
-  const isExtraSmall = width <= 640;
-  const isMobile = width <= 768;
-  const isTablet = width <= 1024;
-  const isDesktop = width > 1024;
+  const isExtraSmall = useMemo(() => debouncedWidth <= 640, [debouncedWidth]);
+  const isMobile = useMemo(
+    () => debouncedWidth > 640 && debouncedWidth <= 768,
+    [debouncedWidth]
+  );
+  const isTablet = useMemo(
+    () => debouncedWidth > 768 && debouncedWidth <= 1024,
+    [debouncedWidth]
+  );
+  const isDesktop = useMemo(() => debouncedWidth > 1024, [debouncedWidth]);
 
-  return { isExtraSmall, isMobile, isTablet, isDesktop };
+  return {
+    isExtraSmall,
+    isMobile,
+    isTablet,
+    isDesktop,
+  };
 };
 
 export default useResponsive;

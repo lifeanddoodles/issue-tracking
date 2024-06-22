@@ -49,7 +49,7 @@ const ChartsSection = <T,>({
   const { data: fetchedData, loading, error, sendRequest } = useFetch<T[]>();
   const { elementRef, dimensions, setIsReady } =
     useDimensions<HTMLDivElement>();
-  const { isMobile } = useResponsive();
+  const { isExtraSmall, isMobile, isTablet } = useResponsive();
 
   const dataForCharts = data || fetchedData;
 
@@ -84,7 +84,10 @@ const ChartsSection = <T,>({
                   chart={{
                     ...chart,
                     data: dataForCharts,
-                    width: isMobile ? dimensions.width : dimensions.width / 2,
+                    width:
+                      isExtraSmall || isMobile || isTablet
+                        ? dimensions.width
+                        : dimensions.width / 2,
                   }}
                 />
               )
