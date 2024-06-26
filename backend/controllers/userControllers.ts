@@ -132,12 +132,6 @@ export const getUsers = asyncHandler(async (req: Request, res: Response) => {
   const authUser: Partial<IUserDocument> | undefined = req.user;
   const isClient = authUser?.role === "CLIENT";
 
-  // Handle authenticated user not authorized for request
-  if (isClient) {
-    res.status(401);
-    throw new Error("Not Authorized");
-  }
-
   // Find users
   const query: RootQuerySelector<IUser> = {};
 
@@ -148,6 +142,10 @@ export const getUsers = asyncHandler(async (req: Request, res: Response) => {
     } else {
       query[key as keyof IUser] = req.query[key];
     }
+  }
+
+  if (isClient) {
+    query.company = authUser?.company;
   }
 
   const users: IUserDocument[] = await User.find(query).select("-password");

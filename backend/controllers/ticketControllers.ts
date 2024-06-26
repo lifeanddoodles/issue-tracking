@@ -118,7 +118,7 @@ export const getTickets = asyncHandler(async (req: Request, res: Response) => {
     }
   }
 
-  if (isClient && !Object.hasOwn(req.query, "company")) {
+  if (isClient) {
     query["projectInfo.company._id"] = authUser?.company;
   }
 
