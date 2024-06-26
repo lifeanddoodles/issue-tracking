@@ -4,17 +4,20 @@ const Column = ({
   id,
   children,
   className,
+  as,
 }: {
   id?: string;
   children: React.ReactNode;
   className?: string;
+  as?: keyof JSX.IntrinsicElements;
 }) => {
   const mergedClasses = twMerge("flex flex-col", className);
+  const Tag = as || "div";
 
   return (
-    <div id={id} className={mergedClasses}>
+    <Tag id={id} className={mergedClasses}>
       {children}
-    </div>
+    </Tag>
   );
 };
 

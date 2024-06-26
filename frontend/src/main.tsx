@@ -58,14 +58,16 @@ const router = createBrowserRouter(
       <Route path="" element={<PrivateRoute />}>
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="" element={<Dashboard />} />
+          <Route path="/dashboard/my-tickets" element={<AllTickets />} />
           <Route
             path="/dashboard/tickets/:ticketId"
             element={<TicketDetails />}
           />
           <Route path="/dashboard/tickets/create" element={<CreateTicket />} />
+          <Route path="/dashboard/my-team" element={<AllUsers />} />
           <Route path="/dashboard/users/:userId" element={<UserDetails />} />
-          <Route path="/dashboard/profile/" element={<Profile />} />
-          <Route path="/dashboard/my-company/" element={<CompanyDetails />} />
+          <Route path="/dashboard/profile" element={<Profile />} />
+          <Route path="/dashboard/my-company" element={<CompanyDetails />} />
           <Route
             path="/dashboard/companies/create"
             element={<CreateCompany />}
@@ -91,8 +93,8 @@ const router = createBrowserRouter(
             <Route path="/dashboard/users" element={<AllUsers />} />
             <Route path="/dashboard/companies" element={<AllCompanies />} />
             <Route path="/dashboard/projects" element={<AllProjects />} />
-            <Route path="/dashboard/tickets/" element={<AllTickets />} />
-            <Route path="/dashboard/services/" element={<AllServices />} />
+            <Route path="/dashboard/tickets" element={<AllTickets />} />
+            <Route path="/dashboard/services" element={<AllServices />} />
             <Route
               path="/dashboard/services/:serviceId"
               element={<ServiceDetails />}

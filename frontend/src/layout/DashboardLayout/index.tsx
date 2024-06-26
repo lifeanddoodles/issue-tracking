@@ -14,7 +14,7 @@ const DashboardLayout = () => {
   const { isExtraSmall, isMobile } = useResponsive();
 
   return (
-    <Row className="w-full relative gap-6">
+    <Row className="w-full relative gap-6" as="section">
       {!isExtraSmall && !isMobile && (
         <Column
           className={`relative overflow-visible
@@ -24,6 +24,7 @@ const DashboardLayout = () => {
               : ""
           }
         `}
+          as="aside"
         >
           <IconButton
             onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
@@ -34,7 +35,10 @@ const DashboardLayout = () => {
           <DashboardSidebar className={sidebarIsOpen ? "flex" : "hidden"} />
         </Column>
       )}
-      <Column className="w-full py-2 px-4 overflow-hidden gap-4">
+      <Column
+        className="w-full pt-2 pb-24 md:pb-2 px-4 overflow-hidden gap-4"
+        as="main"
+      >
         {(isExtraSmall || isMobile) && (
           <>
             <Button onClick={() => setMobileMenuIsOpen(!mobileMenuIsOpen)}>

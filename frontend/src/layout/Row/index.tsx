@@ -1,25 +1,25 @@
-import { ForwardedRef, forwardRef } from "react";
+import { ElementType, ForwardedRef, forwardRef } from "react";
 import { twMerge } from "tailwind-merge";
 
+type RowProps<T extends ElementType> = {
+  id?: string;
+  children: React.ReactNode;
+  className?: string;
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+
 const Row = forwardRef(
-  (
-    {
-      id,
-      children,
-      className,
-    }: {
-      id?: string;
-      children: React.ReactNode;
-      className?: string;
-    },
-    ref: ForwardedRef<HTMLDivElement>
+  <T extends ElementType>(
+    { id, children, className, as }: RowProps<T>,
+    ref: ForwardedRef<React.ElementRef<T>>
   ) => {
     const mergedClasses = twMerge("flex flex-col md:flex-row", className);
+    const Tag: ElementType = as || "div";
 
     return (
-      <div id={id} className={mergedClasses} ref={ref}>
+      <Tag id={id} className={mergedClasses} ref={ref}>
         {children}
-      </div>
+      </Tag>
     );
   }
 );
