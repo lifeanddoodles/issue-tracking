@@ -1,3 +1,4 @@
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Button from "../../components/Button";
@@ -30,7 +31,7 @@ const DashboardLayout = () => {
             onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
             className={"absolute top-0 left-[100%] z-10"}
           >
-            {sidebarIsOpen ? "<" : ">"}
+            {sidebarIsOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
           <DashboardSidebar className={sidebarIsOpen ? "flex" : "hidden"} />
         </Column>
