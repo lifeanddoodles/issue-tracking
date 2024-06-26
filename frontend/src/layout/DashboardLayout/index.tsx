@@ -15,7 +15,7 @@ const DashboardLayout = () => {
   const { isExtraSmall, isMobile } = useResponsive();
 
   return (
-    <Row className="w-full relative gap-6" as="section">
+    <Row className="w-full relative gap-6 grow" as="section">
       {!isExtraSmall && !isMobile && (
         <Column
           className={`relative overflow-visible
@@ -42,8 +42,11 @@ const DashboardLayout = () => {
       >
         {(isExtraSmall || isMobile) && (
           <>
-            <Button onClick={() => setMobileMenuIsOpen(!mobileMenuIsOpen)}>
-              View resources menu
+            <Button
+              onClick={() => setMobileMenuIsOpen(!mobileMenuIsOpen)}
+              className="fixed bottom-16 right-4 z-10"
+            >
+              View resources
             </Button>
             <MobileResourcesNavigation
               isOpen={mobileMenuIsOpen}

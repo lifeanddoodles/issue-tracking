@@ -1,3 +1,4 @@
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Button from "../../components/Button";
@@ -57,7 +58,7 @@ const MobileResourcesNavigation = ({
               onClick={() => setIsOpen(false)}
               ariaLabel="Close menu"
             >
-              X
+              <XMarkIcon className="w-6 h-6" />
             </Button>
             <div className="flex-1 overflow-y-auto">
               <ResourcesNavigation
