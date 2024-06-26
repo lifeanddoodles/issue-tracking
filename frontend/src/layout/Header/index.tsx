@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/Button";
+import InternalLink from "../../components/InternalLink";
 import { useAuthContext } from "../../context/AuthProvider";
-import { getVariantClasses } from "../../utils";
+import useResponsive from "../../hooks/useResponsive";
 
 const guestMenuItems = [
   {
@@ -33,21 +34,26 @@ const Header = () => {
     () => (user ? userMenuItems : guestMenuItems),
     [user]
   );
-  const variantClasses = getVariantClasses("transparent");
+  const { isExtraSmall, isMobile } = useResponsive();
+  const showIconLinks = isExtraSmall || isMobile;
 
   return (
-    <header className="header flex justify-between py-6 px-4">
+    <header className="header fixed bottom-0 left-0 right-0 z-10 flex justify-between py-6 px-4 bg-neutral-100 dark:bg-neutral-800 md:static">
       <Link to="/">Home</Link>
       <div className="header__user-options flex gap-4">
+        <nav>
         {menuItems.map((item) => (
-          <Link
+            <InternalLink
             key={item.title}
             to={item.link!}
-            className={`header__user-options__link rounded-lg ${variantClasses}`}
+              className={`header__user-options__link rounded-lg`}
+              variant={showIconLinks ? "icon" : "transparent"}
+              ariaLabel={showIconLinks ? item.title : ""}
           >
             {item.title}
-          </Link>
+            </InternalLink>
         ))}
+        </nav>
         {user && <Button onClick={logoutUserReq}>Logout</Button>}
       </div>
     </header>

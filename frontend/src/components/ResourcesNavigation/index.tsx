@@ -156,9 +156,11 @@ const clientMenuItems = {
 const ResourcesNavigation = ({
   className,
   id,
+  onClick,
 }: {
   className?: string;
   id?: string;
+  onClick?: () => void;
 }) => {
   const variantClasses = getVariantClasses("transparent");
   const { user } = useAuthContext();
@@ -187,6 +189,7 @@ const ResourcesNavigation = ({
                         key={item.title}
                         to={item.link}
                         className={`mb-2 rounded-lg ${variantClasses}`}
+                        onClick={onClick}
                       >
                         {item.title}
                       </Link>

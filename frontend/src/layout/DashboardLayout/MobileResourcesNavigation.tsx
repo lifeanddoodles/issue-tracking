@@ -19,6 +19,12 @@ const MobileResourcesNavigation = ({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const mobileClasses = "flex flex-col gap-4";
+
+  const handleOnClick = useCallback(() => {
+    setIsOpen(false);
+    window.scrollTo(0, 0);
+  }, [setIsOpen]);
+
   const handleRemoveMobileMenu = useCallback(() => {
     const mobileNav = document.getElementById("mobile-navigation");
     if (mobileNav) {
@@ -57,6 +63,7 @@ const MobileResourcesNavigation = ({
               <ResourcesNavigation
                 className={mobileClasses}
                 id="mobile-navigation"
+                onClick={handleOnClick}
               />
             </div>
           </FullHeightWrapper>,
