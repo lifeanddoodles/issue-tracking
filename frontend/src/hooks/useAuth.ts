@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { IUserDocument } from "shared/interfaces";
 import { LOGOUT_API_URL } from "../routes";
 import useFetch from "./useFetch";
@@ -11,7 +10,6 @@ const useAuth = () => {
   );
   const { data, error, loading, sendRequest } =
     useFetch<Partial<IUserDocument> | null>();
-  const navigate = useNavigate();
 
   const authUserReq = useCallback(
     async (url: string, options?: RequestInit) => {
@@ -23,8 +21,8 @@ const useAuth = () => {
   const logoutUserReq = useCallback(async () => {
     await sendRequest({ url: LOGOUT_API_URL });
     localStorage.removeItem("user");
-    navigate("/login");
-  }, [navigate, sendRequest]);
+    setUser(null);
+  }, [sendRequest]);
 
   useEffect(() => {
     if (data && !loading && !error) {

@@ -127,7 +127,7 @@ export const logoutUser = asyncHandler(
         httpOnly: true,
         expires: new Date(0),
       });
-      res.redirect("/");
+      res.redirect("/login");
     });
   }
 );

@@ -19,18 +19,21 @@ const useFetch = <T>(reqProps?: RequestProps | null): FetchState<T> => {
         if (!url) return;
 
         const response = await fetch(url, options);
-        const json = await response.json();
 
-        if (!response.ok || (json.success && !json.success)) {
-          setError(
-            new Error(
+        // Check if the response is JSON
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const json = await response.json();
+          if (!response.ok || (json.success && !json.success)) {
+            throw new Error(
               `${json.message}` ||
                 `${response.statusText}. Status: ${response.status}`
-            )
-          );
-          setData(null);
-        } else {
+            );
+          }
           setData(json);
+        } else {
+          if (contentType?.includes("text/html")) return;
+          throw new Error(`Unexpected content type: ${contentType}`);
         }
 
         setLoading(false);
