@@ -13,6 +13,7 @@ import {
   Tier,
   UserRole,
 } from "../../../shared/interfaces";
+import Text from "../components/Text";
 import {
   ErrorType,
   FormElement,
@@ -68,7 +69,7 @@ export function paragraphsFromMultiLineText(text: string) {
   if (!text) return;
   return text
     .split("\n")
-    .map((paragraph, index) => <p key={index}>{paragraph}</p>);
+    .map((paragraph, index) => <Text key={index}>{paragraph}</Text>);
 }
 
 export const omit = (obj: Record<string, unknown>, arr: (string | number)[]) =>
@@ -406,6 +407,7 @@ export function getServiceDataOptions(services: Partial<IServiceDocument>[]) {
 export type ButtonVariant =
   | "accent"
   | "primary"
+  | "outline"
   | "secondary"
   | "transparent"
   | "icon"
@@ -414,15 +416,17 @@ export type ButtonVariant =
 export function getVariantClasses(variant: ButtonVariant) {
   switch (variant) {
     case "accent":
-      return "rounded-lg text-base border-0 text-white bg-accent hover:bg-accent-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
+      return "flex sm:w-fit items-center rounded-lg text-base border-0 text-white bg-accent hover:bg-accent-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
     case "primary":
-      return "rounded-lg text-base border-0 text-white bg-primary hover:bg-primary-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
+      return "flex sm:w-fit items-center rounded-lg text-base border-0 text-white bg-primary hover:bg-primary-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
+    case "outline":
+      return "flex sm:w-fit items-center rounded-lg text-base text-primary bg-transparent hover:text-primary-dark hover:bg-neutral-200 border-2 border-primary hover:border-primary-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
     case "secondary":
-      return "rounded-lg text-base border-0 text-white bg-secondary hover:bg-secondary-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
+      return "flex sm:w-fit items-center rounded-lg text-base border-0 text-white bg-secondary hover:bg-secondary-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
     case "transparent":
-      return "rounded-lg text-base border-0 text-primary hover:bg-neutral-200 disabled:text-gray-500 disabled:hover:bg-inherit py-2 px-3";
+      return "flex sm:w-fit items-center rounded-lg text-base border-0 text-primary hover:bg-neutral-200 disabled:text-gray-500 disabled:hover:bg-inherit py-2 px-3";
     case "icon":
-      return "rounded-lg text-base border-0 text-primary hover:bg-neutral-200 disabled:text-gray-500 disabled:hover:bg-inherit py-1 px-1 w-8 h-8";
+      return "flex sm:w-fit items-center rounded-lg text-base border-0 text-primary hover:bg-neutral-200 disabled:text-gray-500 disabled:hover:bg-inherit py-1 px-1 w-8 h-8";
     case "link":
       return "text-primary hover:text-primary-dark hover:underline disabled:text-gray-500 disabled:hover:no-underline";
   }

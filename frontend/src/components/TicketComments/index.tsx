@@ -3,6 +3,7 @@ import { ICommentPopulatedDocument } from "../../../../shared/interfaces";
 import Button from "../../components/Button";
 import Heading from "../../components/Heading";
 import Input from "../../components/Input";
+import Text from "../../components/Text";
 import Comment from "../Comment";
 
 interface ITicketCommentsProps {
@@ -63,7 +64,7 @@ const TicketComments = ({ comments }: ITicketCommentsProps) => {
         </div>
       )}
       {noComments ? (
-        <p>No comments yet</p>
+        <Text>No comments yet</Text>
       ) : (
         <ul>
           {!loading &&

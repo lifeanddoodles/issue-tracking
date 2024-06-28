@@ -11,6 +11,13 @@ import InternalLink from "../../components/InternalLink";
 import { useAuthContext } from "../../context/AuthProvider";
 import useResponsive from "../../hooks/useResponsive";
 
+const baseMenuItems = [
+  {
+    title: "About",
+    link: "/about-the-dev",
+  },
+];
+
 const guestMenuItems = [
   {
     title: "Register",
@@ -51,7 +58,19 @@ const Header = () => {
     <header className="header fixed bottom-0 left-0 right-0 z-10 flex justify-between py-6 px-4 bg-neutral-100 dark:bg-neutral-800 md:static">
       <Link to="/">Home</Link>
       <div className="header__user-options flex gap-4">
-        <nav className="flex gap-4">
+        <nav className="flex gap-4 items-center">
+          {baseMenuItems.map((item) => {
+            return (
+              <InternalLink
+                key={item.title}
+                to={item.link!}
+                className={`header__info-options__link rounded-lg`}
+                variant={"transparent"}
+              >
+                {item.title}
+              </InternalLink>
+            );
+          })}
           {menuItems.map((item) => {
             const Icon = item.icon;
 
@@ -65,7 +84,7 @@ const Header = () => {
               >
                 {showIconLinks ? (
                   <figure>
-                    <Icon />
+                    <Icon className="w-6 h-6" />
                   </figure>
                 ) : (
                   item.title

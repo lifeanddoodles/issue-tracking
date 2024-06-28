@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DepartmentTeam, UserRole } from "../../../../../shared/interfaces";
 import Button from "../../../components/Button";
 import Form from "../../../components/Form";
 import Heading from "../../../components/Heading";
 import { EmailInput, PasswordInput } from "../../../components/Input";
+import InternalLink from "../../../components/InternalLink";
+import Text from "../../../components/Text";
 import { useAuthContext } from "../../../context/AuthProvider";
 import useValidation from "../../../hooks/useValidation";
 import { FormField } from "../../../interfaces";
@@ -148,61 +150,77 @@ const Login = () => {
         <Button type="submit" disabled={disableSubmit} className="mb-4">
           Submit
         </Button>
-        {error && <p className="mt-4 text-red-500">{error?.message}</p>}
+        {error && <Text className="mt-4 text-red-500">{error?.message}</Text>}
         {/* TODO: Add forgot password functionality
-         <p>
-          Forgot your password? <Link to="/forgot-password">Reset</Link>
-        </p> */}
-        <p>
-          Don't have an account? <Link to="/register">Register</Link>
-        </p>
-        <p>OR</p>
-        <p>Sign in with one of the demo accounts:</p>
-        <Row className="gap-2 flex-wrap flex-row">
-          <Button
-            className="flex-grow-0 flex-shrink-1"
-            variant="secondary"
-            onClick={() => handleLoginAsDemo(UserRole.CLIENT)}
-          >
-            Client
-          </Button>
-          <Button
-            className="flex-grow-0 flex-shrink-1"
-            variant="secondary"
-            onClick={() =>
-              handleLoginAsDemo(UserRole.STAFF, DepartmentTeam.CUSTOMER_SUCCESS)
-            }
-          >
-            Customer Success Rep.
-          </Button>
-          <Button
-            className="flex-grow-0 flex-shrink-1"
-            variant="secondary"
-            onClick={() =>
-              handleLoginAsDemo(UserRole.STAFF, DepartmentTeam.DEVELOPMENT)
-            }
-          >
-            Developer
-          </Button>
-          <Button
-            className="flex-grow-0 flex-shrink-1"
-            variant="secondary"
-            onClick={() =>
-              handleLoginAsDemo(UserRole.STAFF, DepartmentTeam.MANAGEMENT)
-            }
-          >
-            Project Manager
-          </Button>
-          <Button
-            className="flex-grow-0 flex-shrink-1"
-            variant="secondary"
-            onClick={() => handleLoginAsDemo(UserRole.ADMIN)}
-          >
-            Admin
-          </Button>
+          <Text>
+            Forgot your password? <InternalLink to="/forgot-password">Reset</InternalLink>
+          </Text>
+        */}
+        <Row className="gap-x-4 mb-4">
+          <Text>
+            Don't have an account?{" "}
+            <InternalLink to="/register" variant="link">
+              Register
+            </InternalLink>
+          </Text>
+          <GoogleLoginButton />
         </Row>
+        <section aria-label={"Sign in as a demo user"} className="mb-4">
+          <Text>
+            Or use one of the{" "}
+            <Text className="font-bold" as="span">
+              demo accounts
+            </Text>
+            :
+          </Text>
+          <Row className="gap-2 flex-wrap flex-row">
+            <Button
+              className="flex-grow-0 flex-shrink-1"
+              variant="outline"
+              onClick={() => handleLoginAsDemo(UserRole.CLIENT)}
+            >
+              Client
+            </Button>
+            <Button
+              className="flex-grow-0 flex-shrink-1"
+              variant="outline"
+              onClick={() =>
+                handleLoginAsDemo(
+                  UserRole.STAFF,
+                  DepartmentTeam.CUSTOMER_SUCCESS
+                )
+              }
+            >
+              Customer Success Rep.
+            </Button>
+            <Button
+              className="flex-grow-0 flex-shrink-1"
+              variant="outline"
+              onClick={() =>
+                handleLoginAsDemo(UserRole.STAFF, DepartmentTeam.DEVELOPMENT)
+              }
+            >
+              Developer
+            </Button>
+            <Button
+              className="flex-grow-0 flex-shrink-1"
+              variant="outline"
+              onClick={() =>
+                handleLoginAsDemo(UserRole.STAFF, DepartmentTeam.MANAGEMENT)
+              }
+            >
+              Project Manager
+            </Button>
+            <Button
+              className="flex-grow-0 flex-shrink-1"
+              variant="outline"
+              onClick={() => handleLoginAsDemo(UserRole.ADMIN)}
+            >
+              Admin
+            </Button>
+          </Row>
+        </section>
       </Form>
-      <GoogleLoginButton />
     </>
   );
 };

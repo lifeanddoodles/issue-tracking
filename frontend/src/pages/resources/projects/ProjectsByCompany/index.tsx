@@ -6,6 +6,7 @@ import {
 import Button from "../../../../components/Button";
 import Select from "../../../../components/Select";
 import TableFromDocuments from "../../../../components/TableFromDocuments";
+import Text from "../../../../components/Text";
 import { useAuthContext } from "../../../../context/AuthProvider";
 import useFetch from "../../../../hooks/useFetch";
 import Row from "../../../../layout/Row";
@@ -148,7 +149,7 @@ const ProjectsByCompany = () => {
     <>
       <div className="filters mb-8">
         <Row className="gap-2">
-          {servicesLoading && <p role="status">Loading services...</p>}
+          {servicesLoading && <Text role="status">Loading services...</Text>}
           {services && (
             <Select
               id="services"

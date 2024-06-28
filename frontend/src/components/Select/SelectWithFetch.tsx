@@ -2,6 +2,7 @@ import { Fragment, forwardRef, useCallback, useEffect, useMemo } from "react";
 import Select from ".";
 import useFetch from "../../hooks/useFetch";
 import { ISelectWithFetchProps } from "../../interfaces";
+import Text from "../Text";
 
 const SelectWithFetch = forwardRef(
   <T extends object>(
@@ -46,25 +47,25 @@ const SelectWithFetch = forwardRef(
 
     if (loading) {
       return (
-        <p id={id} role="status">
+        <Text id={id} role="status">
           Loading...
-        </p>
+        </Text>
       );
     }
 
     if (error) {
       return (
-        <p id={id} role="status">
+        <Text id={id} role="status">
           {error.message}
-        </p>
+        </Text>
       );
     }
 
     if (!data) {
       return (
-        <p id={id} role="status">
+        <Text id={id} role="status">
           Resources not found
-        </p>
+        </Text>
       );
     }
 

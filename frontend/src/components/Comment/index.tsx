@@ -12,6 +12,7 @@ import {
 import Avatar from "../Avatar";
 import Button from "../Button";
 import Input from "../Input";
+import Text from "../Text";
 import CommentHeader from "./CommentHeader";
 
 interface ICommentProps {
@@ -72,7 +73,7 @@ const Comment = ({ comment }: ICommentProps) => {
           isEdited={isEdited}
         />
         <div className="comment__message mb-2">
-          {!loading && !toggleEdit && <p>{message}</p>}
+          {!loading && !toggleEdit && <Text>{message}</Text>}
           {toggleEdit && (
             <Input
               id="comment__message--input"
