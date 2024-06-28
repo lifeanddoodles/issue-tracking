@@ -204,7 +204,7 @@ const Register = () => {
       !newCompanyLoading &&
       !newCompanyError
     ) {
-      createUser(newCompany._id);
+      createUser(newCompany._id as string);
     }
   }, [
     companyParam,

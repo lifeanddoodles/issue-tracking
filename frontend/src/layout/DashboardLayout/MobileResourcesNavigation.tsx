@@ -1,5 +1,11 @@
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import Button from "../../components/Button";
 import ResourcesNavigation from "../../components/ResourcesNavigation";
@@ -20,11 +26,18 @@ const MobileResourcesNavigation = ({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const mobileClasses = "flex flex-col gap-4";
+  const [currentYPosition, setCurrentYPosition] = useState(0);
+  const body = document.querySelector("body");
+  const appRoot = document.getElementById("root");
 
   const handleOnClick = useCallback(() => {
     setIsOpen(false);
     window.scrollTo(0, 0);
   }, [setIsOpen]);
+
+  const scrollToPrevPosition = useCallback(() => {
+    window.scrollTo(0, currentYPosition);
+  }, [currentYPosition]);
 
   const handleRemoveMobileMenu = useCallback(() => {
     const mobileNav = document.getElementById("mobile-navigation");
@@ -33,20 +46,29 @@ const MobileResourcesNavigation = ({
     }
   }, []);
 
+  const handleCloseMobileMenu = useCallback(() => {
+    setIsOpen(false);
+    handleRemoveMobileMenu();
+    body?.classList.remove("overflow-hidden", "max-h-screen");
+    appRoot?.classList.remove("overflow-hidden", "max-h-screen");
+    appRoot?.removeAttribute("tabindex");
+    scrollToPrevPosition();
+  }, [
+    appRoot,
+    body?.classList,
+    handleRemoveMobileMenu,
+    setIsOpen,
+    scrollToPrevPosition,
+  ]);
+
   useEffect(() => {
-    const body = document.querySelector("body");
-    const appRoot = document.getElementById("root");
-    if (!isOpen) {
-      handleRemoveMobileMenu();
-      body?.classList.remove("overflow-hidden");
-      appRoot?.classList.remove("overflow-hidden");
-      appRoot?.removeAttribute("tabindex");
-    } else {
-      body?.classList.add("overflow-hidden");
-      appRoot?.classList.add("overflow-hidden");
+    if (isOpen) {
+      setCurrentYPosition(window.scrollY);
+      body?.classList.add("overflow-hidden", "max-h-screen");
+      appRoot?.classList.add("overflow-hidden", "max-h-screen");
       appRoot?.setAttribute("tabindex", "-1");
     }
-  }, [isOpen, handleRemoveMobileMenu]);
+  }, [isOpen, handleRemoveMobileMenu, body?.classList, appRoot]);
 
   return (
     <>
@@ -55,7 +77,7 @@ const MobileResourcesNavigation = ({
           <FullHeightWrapper>
             <Button
               className="self-end"
-              onClick={() => setIsOpen(false)}
+              onClick={handleCloseMobileMenu}
               ariaLabel="Close menu"
             >
               <XMarkIcon className="w-6 h-6" />
