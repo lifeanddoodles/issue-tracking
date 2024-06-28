@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { DepartmentTeam, UserRole } from "../../../../../shared/interfaces";
 import Button from "../../../components/Button";
 import Form from "../../../components/Form";
 import Heading from "../../../components/Heading";
@@ -7,6 +8,7 @@ import { EmailInput, PasswordInput } from "../../../components/Input";
 import { useAuthContext } from "../../../context/AuthProvider";
 import useValidation from "../../../hooks/useValidation";
 import { FormField } from "../../../interfaces";
+import Row from "../../../layout/Row";
 import { LOGIN_API_URL, getLoginUserOptions } from "../../../routes";
 import GoogleLoginButton from "./GoogleLoginButton";
 
@@ -71,6 +73,49 @@ const Login = () => {
     });
   };
 
+  const getDemoUserCredentials = (
+    role: UserRole,
+    department?: DepartmentTeam
+  ) => {
+    switch (role) {
+      case UserRole.ADMIN:
+        return {
+          email: import.meta.env.VITE_ADMIN_EMAIL,
+          password: import.meta.env.VITE_ADMIN_PASSWORD,
+        };
+      case UserRole.STAFF:
+        return {
+          email:
+            department === DepartmentTeam.MANAGEMENT
+              ? import.meta.env.VITE_PM_EMAIL
+              : department === DepartmentTeam.DEVELOPMENT
+              ? import.meta.env.VITE_DEV_EMAIL
+              : import.meta.env.VITE_CS_EMAIL,
+          password:
+            department === DepartmentTeam.MANAGEMENT
+              ? import.meta.env.VITE_PM_PASSWORD
+              : department === DepartmentTeam.DEVELOPMENT
+              ? import.meta.env.VITE_DEV_PASSWORD
+              : import.meta.env.VITE_CS_PASSWORD,
+        };
+      case UserRole.CLIENT:
+      default:
+        return {
+          email: import.meta.env.VITE_CLIENT_EMAIL,
+          password: import.meta.env.VITE_CLIENT_PASSWORD,
+        };
+    }
+  };
+
+  const handleLoginAsDemo = (role: UserRole, department?: DepartmentTeam) => {
+    const credentials = getDemoUserCredentials(role, department);
+
+    const options = getLoginUserOptions(
+      credentials as { email: string; password: string }
+    );
+    authUserReq!(LOGIN_API_URL, options);
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -100,10 +145,62 @@ const Login = () => {
             setErrors={setErrors}
           />
         ))}
-        <Button type="submit" disabled={disableSubmit}>
+        <Button type="submit" disabled={disableSubmit} className="mb-4">
           Submit
         </Button>
         {error && <p className="mt-4 text-red-500">{error?.message}</p>}
+        {/* TODO: Add forgot password functionality
+         <p>
+          Forgot your password? <Link to="/forgot-password">Reset</Link>
+        </p> */}
+        <p>
+          Don't have an account? <Link to="/register">Register</Link>
+        </p>
+        <p>OR</p>
+        <p>Sign in with one of the demo accounts:</p>
+        <Row className="gap-2 flex-wrap flex-row">
+          <Button
+            className="flex-grow-0 flex-shrink-1"
+            variant="secondary"
+            onClick={() => handleLoginAsDemo(UserRole.CLIENT)}
+          >
+            Client
+          </Button>
+          <Button
+            className="flex-grow-0 flex-shrink-1"
+            variant="secondary"
+            onClick={() =>
+              handleLoginAsDemo(UserRole.STAFF, DepartmentTeam.CUSTOMER_SUCCESS)
+            }
+          >
+            Customer Success Rep.
+          </Button>
+          <Button
+            className="flex-grow-0 flex-shrink-1"
+            variant="secondary"
+            onClick={() =>
+              handleLoginAsDemo(UserRole.STAFF, DepartmentTeam.DEVELOPMENT)
+            }
+          >
+            Developer
+          </Button>
+          <Button
+            className="flex-grow-0 flex-shrink-1"
+            variant="secondary"
+            onClick={() =>
+              handleLoginAsDemo(UserRole.STAFF, DepartmentTeam.MANAGEMENT)
+            }
+          >
+            Project Manager
+          </Button>
+          <Button
+            className="flex-grow-0 flex-shrink-1"
+            variant="secondary"
+            onClick={() => handleLoginAsDemo(UserRole.ADMIN)}
+          >
+            Admin
+          </Button>
+        </Row>
       </Form>
       <GoogleLoginButton />
     </>

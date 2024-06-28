@@ -12,7 +12,7 @@ const InternalLink = ({
   ...props
 }: {
   to: string;
-  className: string;
+  className?: string;
   children: React.ReactNode;
   variant?: ButtonVariant;
   ariaLabel?: string;

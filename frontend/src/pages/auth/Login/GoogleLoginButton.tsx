@@ -4,7 +4,7 @@ import { getVariantClasses } from "../../../utils";
 const GoogleLoginButton = () => {
   return (
     <a
-      className={`block mx-auto max-w-fit ${getVariantClasses("primary")}`}
+      className={`block max-w-fit ${getVariantClasses("primary")}`}
       href={GOOGLE_AUTH_BASE_API_URL}
     >
       Login with Google
