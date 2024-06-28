@@ -5,7 +5,7 @@ const GuestPageWrapper = () => {
   const { user } = useAuthContext();
 
   return !user ? (
-    <main className="w-full h-full px-4 pb-24 md:pb-2">
+    <main className="w-full h-full px-4 pt-8 pb-24 md:py-8">
       <Outlet />
     </main>
   ) : (

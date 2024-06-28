@@ -37,7 +37,7 @@ const DashboardLayout = () => {
         </Column>
       )}
       <Column
-        className="w-full pt-2 pb-24 md:pb-2 px-4 overflow-hidden gap-4"
+        className="w-full pt-8 pb-24 md:py-8 px-4 overflow-hidden gap-4"
         as="main"
       >
         {(isExtraSmall || isMobile) && (

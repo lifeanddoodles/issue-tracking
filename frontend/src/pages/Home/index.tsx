@@ -1,20 +1,22 @@
+import Heading from "../../components/Heading";
 import InternalLink from "../../components/InternalLink";
+import Text from "../../components/Text";
 
 const Home = () => {
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Welcome</h1>
-      <p>
+      <Heading level={1} text="Hi, I'm Sandra Vargas" />
+      <Text>
         Bug tracking web application created with the{" "}
         <abbr title="MongoDB, Express, React, Node">MERN</abbr> stack.
-      </p>
-      <p>
+      </Text>
+      <Text>
         Includes user-level and role-level security and access control for
         creating, updating, and assigning tickets.
-      </p>
-      <p>
+      </Text>
+      <Text>
         Composed a responsive front-end design using HTML5, and Tailwind CSS.
-      </p>
+      </Text>
       <InternalLink to="/login" variant="primary">
         Try it now!
       </InternalLink>

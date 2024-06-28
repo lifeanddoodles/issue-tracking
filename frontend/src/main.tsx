@@ -13,6 +13,7 @@ import NotClientRoute from "./components/NotClientRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import AuthProvider from "./context/AuthProvider.tsx";
 import "./index.css";
+import CommonLayout from "./layout/CommonLayout";
 import DashboardLayout from "./layout/DashboardLayout";
 import GuestPageWrapper from "./layout/GuestPageWrapper";
 import Home from "./pages/Home";
@@ -21,6 +22,7 @@ import Profile from "./pages/account/Profile/index.tsx";
 import LoginSuccess from "./pages/auth/Login/LoginSuccess.tsx";
 import Login from "./pages/auth/Login/index.tsx";
 import Register from "./pages/auth/Register/index.tsx";
+import About from "./pages/info/About/index.tsx";
 import AllCompanies from "./pages/resources/companies/AllCompanies/index.tsx";
 import CompanyDetails from "./pages/resources/companies/CompanyDetails/index.tsx";
 import CreateCompany from "./pages/resources/companies/CreateCompany/index.tsx";
@@ -53,6 +55,9 @@ const router = createBrowserRouter(
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/login/success" element={<LoginSuccess />} />
+      </Route>
+      <Route path="" element={<CommonLayout />}>
+        <Route path="/about-the-dev" element={<About />} />
       </Route>
       {/* Registered users */}
       <Route path="" element={<PrivateRoute />}>
