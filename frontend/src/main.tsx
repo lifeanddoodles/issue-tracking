@@ -23,6 +23,7 @@ import LoginSuccess from "./pages/auth/Login/LoginSuccess.tsx";
 import Login from "./pages/auth/Login/index.tsx";
 import Register from "./pages/auth/Register/index.tsx";
 import About from "./pages/info/About/index.tsx";
+import SeeTheCode from "./pages/info/SeeTheCode/index.tsx";
 import AllCompanies from "./pages/resources/companies/AllCompanies/index.tsx";
 import CompanyDetails from "./pages/resources/companies/CompanyDetails/index.tsx";
 import CreateCompany from "./pages/resources/companies/CreateCompany/index.tsx";
@@ -57,6 +58,7 @@ const router = createBrowserRouter(
         <Route path="/login/success" element={<LoginSuccess />} />
       </Route>
       <Route path="" element={<CommonLayout />}>
+        <Route path="/see-the-code" element={<SeeTheCode />} />
         <Route path="/about-the-dev" element={<About />} />
       </Route>
       {/* Registered users */}

@@ -31,11 +31,15 @@ const useFetch = <T>(reqProps?: RequestProps | null): FetchState<T> => {
             );
           }
           setData(json);
+        } else if (contentType?.includes("text/plain")) {
+          const text = await response.text();
+          setData(text as T);
         } else {
-          if (contentType?.includes("text/html")) return;
+          if (contentType?.includes("text/html")) {
+            return;
+          }
           throw new Error(`Unexpected content type: ${contentType}`);
         }
-
         setLoading(false);
       } catch (error) {
         setError(error as Error);
