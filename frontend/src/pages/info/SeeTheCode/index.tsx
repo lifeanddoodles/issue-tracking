@@ -1,5 +1,6 @@
 import Heading from "../../../components/Heading";
 import CodeSnippetsWithFetch from "./CodeSnippetsWithFetch";
+import { CodeSnippetsSectionProps } from "./types";
 
 const clientFlowsCodeSamples = [
   {
@@ -183,21 +184,7 @@ const customerSuccessFlowsCodeSamples = [
   },
 ];
 
-const CodeSnippetsSection = ({
-  codeSources,
-}: {
-  codeSources: {
-    summary: string;
-    content: {
-      title: string;
-      description: string;
-      language: string;
-      pathToFile?: string;
-      startLine?: number;
-      endLine?: number;
-    }[];
-  }[];
-}) => {
+const CodeSnippetsSection = ({ codeSources }: CodeSnippetsSectionProps) => {
   return codeSources.map((item) => (
     <CodeSnippetsWithFetch
       key={item.summary}

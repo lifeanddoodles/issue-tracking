@@ -424,9 +424,9 @@ export function getVariantClasses(variant: ButtonVariant) {
     case "secondary":
       return "flex sm:w-fit items-center rounded-lg text-base border-0 text-white bg-secondary hover:bg-secondary-dark disabled:bg-gray-400 disabled:text-gray-700 py-1 px-3";
     case "transparent":
-      return "flex sm:w-fit items-center rounded-lg text-base border-0 text-primary hover:bg-neutral-200 disabled:text-gray-500 disabled:hover:bg-inherit py-2 px-3";
+      return "flex sm:w-fit items-center rounded-lg text-base border-0 text-primary dark:text-white hover:bg-neutral-200 dark:hover:bg-primary disabled:text-gray-500 disabled:hover:bg-inherit py-2 px-3";
     case "icon":
-      return "flex sm:w-fit items-center rounded-lg text-base border-0 text-primary hover:bg-neutral-200 disabled:text-gray-500 disabled:hover:bg-inherit py-1 px-1 w-8 h-8";
+      return "flex sm:w-fit items-center rounded-lg text-base border-0 text-primary dark:text-white hover:bg-neutral-200 dark:hover:bg-primary disabled:text-gray-500 disabled:hover:bg-inherit py-1 px-1 w-8 h-8";
     case "link":
       return "text-primary hover:text-primary-dark hover:underline disabled:text-gray-500 disabled:hover:no-underline";
   }

@@ -12,6 +12,7 @@ import AdminRoute from "./components/AdminRoute";
 import NotClientRoute from "./components/NotClientRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import AuthProvider from "./context/AuthProvider.tsx";
+import { ThemeProvider } from "./context/ThemeContext";
 import "./index.css";
 import CommonLayout from "./layout/CommonLayout";
 import DashboardLayout from "./layout/DashboardLayout";
@@ -47,7 +48,9 @@ const router = createBrowserRouter(
       path="/"
       element={
         <AuthProvider>
-          <App />
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
         </AuthProvider>
       }
     >
