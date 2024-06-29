@@ -1,4 +1,7 @@
+import ExternalLink from "frontend/src/components/ExternalLink";
 import Heading from "../../../components/Heading";
+import Text from "../../../components/Text";
+import { getVariantClasses } from "../../../utils";
 import CodeSnippetsWithFetch from "./CodeSnippetsWithFetch";
 import { CodeSnippetsSectionProps } from "./types";
 
@@ -197,11 +200,32 @@ const CodeSnippetsSection = ({ codeSources }: CodeSnippetsSectionProps) => {
 const SeeTheCode = () => {
   return (
     <>
-      <Heading level={1} text="Code snippets" />
-      <Heading text="Client flows" />
-      <CodeSnippetsSection codeSources={clientFlowsCodeSamples} />
-      <Heading text="Customer success flows" className="mt-8" />
-      <CodeSnippetsSection codeSources={customerSuccessFlowsCodeSamples} />
+      <section>
+        <Heading level={1} text="Code snippets" />
+        <Text>
+          Here are some code snippets that I believe can prove interesting, and
+          that you can use to analyze my approach to solving problems and
+          creating the features for an application of this magnitude.
+        </Text>
+        <Text>
+          Feel free to check them out and if you are interested in learning
+          more, you can visit the repo on GitHub:
+        </Text>
+        <ExternalLink
+          href="https://github.com/lifeanddoodles/issue-tracking"
+          className={`${getVariantClasses("outline")} mb-4`}
+        >
+          Go to project repo
+        </ExternalLink>
+      </section>
+      <section>
+        <Heading text="Client flows" />
+        <CodeSnippetsSection codeSources={clientFlowsCodeSamples} />
+      </section>
+      <section>
+        <Heading text="Customer success flows" className="mt-8" />
+        <CodeSnippetsSection codeSources={customerSuccessFlowsCodeSamples} />
+      </section>
     </>
   );
 };
