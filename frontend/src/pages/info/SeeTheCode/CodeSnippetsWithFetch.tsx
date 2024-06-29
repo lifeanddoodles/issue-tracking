@@ -15,11 +15,13 @@ const CodeSnippetsWithFetch: React.FC<CodeSnippetsWithFetchProps> = ({
         <Fragment key={item.title || index}>
           {item.title && <Heading level={3} text={item.title} />}
           {item.description && <Text>{item.description}</Text>}
-          <CodeSnippet
-            pathToFile={item.pathToFile}
-            startLine={item.startLine}
-            endLine={item.endLine}
-          />
+          {item.pathToFile && (
+            <CodeSnippet
+              pathToFile={item.pathToFile}
+              startLine={item.startLine}
+              endLine={item.endLine}
+            />
+          )}
         </Fragment>
       ))}
     </Details>

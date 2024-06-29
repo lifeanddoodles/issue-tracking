@@ -61,7 +61,7 @@ const router = createBrowserRouter(
         <Route path="/login/success" element={<LoginSuccess />} />
       </Route>
       <Route path="" element={<CommonLayout />}>
-        <Route path="/see-the-code" element={<SeeTheCode />} />
+        <Route path="/code-snippets" element={<SeeTheCode />} />
         <Route path="/about-the-dev" element={<About />} />
       </Route>
       {/* Registered users */}

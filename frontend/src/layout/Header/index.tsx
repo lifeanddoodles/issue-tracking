@@ -23,8 +23,8 @@ const baseMenuItems = [
     icon: InformationCircleIcon,
   },
   {
-    title: "See the code",
-    link: "/see-the-code",
+    title: "Code Snippets",
+    link: "/code-snippets",
     icon: CodeBracketIcon,
   },
 ];

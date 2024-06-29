@@ -197,7 +197,7 @@ const CodeSnippetsSection = ({ codeSources }: CodeSnippetsSectionProps) => {
 const SeeTheCode = () => {
   return (
     <>
-      <Heading level={1} text="See the code" />
+      <Heading level={1} text="Code snippets" />
       <Heading text="Client flows" />
       <CodeSnippetsSection codeSources={clientFlowsCodeSamples} />
       <Heading text="Customer success flows" className="mt-8" />
