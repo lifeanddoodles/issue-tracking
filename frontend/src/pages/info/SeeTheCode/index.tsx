@@ -1,4 +1,4 @@
-import ExternalLink from "frontend/src/components/ExternalLink";
+import ExternalLink from "../../../components/ExternalLink";
 import Heading from "../../../components/Heading";
 import Text from "../../../components/Text";
 import { getVariantClasses } from "../../../utils";
