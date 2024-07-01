@@ -36,9 +36,9 @@ The SaaS Issue Tracker is a powerful tool designed to streamline issue managemen
 7. [Role-Based Access Control (RBAC)](#role-based-access-control-rbac)
    - [Roles and Permissions](#roles-and-permissions)
 
-## 1. User Management{#user-management}
+## 1. User Management
 
-### User Registration{#user-registration}
+### User Registration
 
 Users can register via email and password or sign up with Google. The registration process requires the following details:
 
@@ -46,11 +46,11 @@ Users can register via email and password or sign up with Google. The registrati
 - Email Address
 - Password (if registering via email)
 
-### User Authentication{#user-authentication}
+### User Authentication
 
 Authentication ensures secure access to the application. Users can log in using their email and password or their Google account.
 
-### Role Management{#role-management}
+### Role Management
 
 Users are assigned roles that determine their access levels. The roles include:
 
@@ -61,49 +61,49 @@ Users are assigned roles that determine their access levels. The roles include:
 
 Currently all roles except for Client refer to internal roles for the SaaS team. Additional functionality can be added to further customize access for a client to its company's resources, such as a "Client Role" or "Company Role", for example. In the meantime, all users added to the same company have the same level of access.
 
-## 2. Company Management{#company-management}
+## 2. Company Management
 
-### Creating and Managing Companies{#creating-and-managing-companies}
+### Creating and Managing Companies
 
 - Admins can create and manage companies.
 - Each company can have multiple users (employees).
 - An employee ID can only exist in one company.
 
-### Employee Assignment{#employee-assignment}
+### Employee Assignment
 
 - Employees can be assigned to companies during the registration process or later by an Admin.
 - Only employees of the same company can access the company's resources.
 
-## 3. Project Management{#project-management}
+## 3. Project Management
 
-### Creating and Managing Projects{#creating-and-managing-projects}
+### Creating and Managing Projects
 
 - Projects can only be created by users belonging to a company. A company can have multiple projects.
 
-## 4. Ticket Management{#ticket-management}
+## 4. Ticket Management
 
-### Creating and Managing Tickets{#creating-and-managing-tickets}
+### Creating and Managing Tickets
 
 - Tickets can be created for projects or services.
 - Each project/service can have multiple tickets.
 
-## 5. Comment Management{#comment-management}
+## 5. Comment Management
 
-### Adding Comments to Tickets{#adding-comments-to-tickets}
+### Adding Comments to Tickets
 
 - All authenticated users can add comments to tickets to facilitate communication and track progress.
 - Comments are attached to specific tickets.
 
-## 6. Service Management{#service-management}
+## 6. Service Management
 
-### Creating and Managing Services{#creating-and-managing-services}
+### Creating and Managing Services
 
 - Service management is restricted and general availability depends on the company's tier.
 - CRUD operations for services are not accessible to Clients, only Read when a service is being used in one of their projects.
 
-## 7. Role-Based Access Control (RBAC){#role-based-access-control-rbac}
+## 7. Role-Based Access Control (RBAC)
 
-### Roles and Permissions{#roles-and-permissions}
+### Roles and Permissions
 
 #### Admin
 
