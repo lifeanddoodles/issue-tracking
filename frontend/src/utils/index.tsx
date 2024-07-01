@@ -592,25 +592,6 @@ export const hasPathToIndentedKey = (keyName: string) => {
   return /(\w\.\w)/.test(keyName);
 };
 
-export const traverseObjectAndGetValue = <T extends Record<string, unknown>>(
-  objShape: Partial<T>,
-  keyName: string
-) => {
-  const newObj: Partial<T> = { ...objShape };
-  let foundValue: unknown;
-  if (typeof newObj === "object") {
-    Object.entries(newObj).map(([, value]) => {
-      if (typeof value === "object" && !Array.isArray(value)) {
-        traverseObjectAndGetValue(value, keyName);
-      }
-
-      foundValue = newObj[keyName];
-    });
-  }
-
-  return foundValue;
-};
-
 export const matchPathToIndentedKeyValue = <T,>(
   keyName: string,
   objToMatch: T
