@@ -1,4 +1,4 @@
-# SaaS Issue Tracker Documentation
+# SaaS Issue Tracker
 
 ## Introduction
 
