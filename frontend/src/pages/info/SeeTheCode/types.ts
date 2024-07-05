@@ -1,20 +1,30 @@
-export type CodeSnippetProps = {
+export type FetchedCodeSnippetProps = {
   pathToFile?: string;
   language?: string;
   startLine?: number;
   endLine?: number;
 };
 
-export type CodeSnippetContentProps = {
-  title: string;
-  description: string;
-} & CodeSnippetProps;
-
-export type CodeSnippetsWithFetchProps = {
-  summary: string;
-  content: CodeSnippetContentProps[];
+export type MarkdownSnippetProps = {
+  markdown: string;
+  language?: string;
 };
 
-export type CodeSnippetsSectionProps = {
-  codeSources: CodeSnippetsWithFetchProps[];
+export type SnippetTextProps = {
+  title?: string;
+  description?: string;
+};
+
+export type SnippetExplanationProps =
+  | Omit<MarkdownSnippetProps, "language">
+  | SnippetTextProps;
+
+export type CodeSnippetsWithSummaryProps<T> = {
+  summary: string;
+  content: T[];
+};
+
+export type CodeSnippetsSectionProps<T> = {
+  title?: string;
+  codeSources: CodeSnippetsWithSummaryProps<T>[];
 };

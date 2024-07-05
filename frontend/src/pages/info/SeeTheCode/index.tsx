@@ -2,199 +2,295 @@ import ExternalLink from "../../../components/ExternalLink";
 import Heading from "../../../components/Heading";
 import Text from "../../../components/Text";
 import { getVariantClasses } from "../../../utils";
-import CodeSnippetsWithFetch from "./CodeSnippetsWithFetch";
-import { CodeSnippetsSectionProps } from "./types";
+import CodeSnippetsWithSummary from "./CodeSnippetsWithSummary";
+import {
+  CodeSnippetsSectionProps,
+  FetchedCodeSnippetProps,
+  MarkdownSnippetProps,
+  SnippetExplanationProps,
+} from "./types";
 
-const clientFlowsCodeSamples = [
+const designSystems = [
   {
-    summary: "Create account",
+    summary: "Atomic design",
     content: [
       {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
+        language: "markdown",
+        markdown: `frontend/
+├── src/
+│   ├── components/
+│   │   ├── AdminRoute
+│   │   └── Avatar
+│   │   └── Badge
+│   │   └── Button
+│   │   └── Chart
+│   │   └── Comment
+│   │   └── Details
+│   │   └── // Other components
+│   ├── // Other files and folders
+├── // Other files
+`,
       },
       {
-        title: "Create account second step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 225,
-        endLine: 246,
+        markdown: `# Test title
+- item 1
+- item 2
+- item 3
+`,
+      },
+    ],
+  },
+  // {
+  //   summary: "Theming",
+  //   content: [
+  //     {
+  //       title: "Light/Dark mode",
+  //       description: "",
+  //       pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+  //       startLine: 0,
+  //       endLine: 1,
+  //     },
+  //   ],
+  // },
+];
+
+const designPatterns = [
+  // {
+  //   summary: "Component patterns",
+  //   content: [
+  //     {
+  //       title: "Wrapper component",
+  //       description: "",
+  //       pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+  //       startLine: 0,
+  //       endLine: 1,
+  //     },
+  //     {
+  //       title: "Polymorphic component",
+  //       description: "",
+  //       pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+  //       startLine: 0,
+  //       endLine: 1,
+  //     },
+  //   ],
+  // },
+  {
+    summary: "Custom hooks",
+    content: [
+      {
+        title: "useResourceInfo",
+        description: "Includes useFetch custom hook.",
+        pathToFile: "/frontend/src/hooks/useResourceInfo.ts",
+        startLine: 6,
+        endLine: 49,
+      },
+      {
+        title: "useChart",
+        description: "Includes useDimensions and useResponsive custom hooks.",
+        pathToFile: "/frontend/src/hooks/useChart.tsx",
+        startLine: 14,
+        endLine: 81,
       },
     ],
   },
   {
-    summary: "Edit profile",
+    summary: "HOC",
     content: [
       {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
+        title: "withPortal",
+        description: "",
         pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
         startLine: 0,
         endLine: 1,
+      },
+      {
+        title: "withControls",
+        description: "Add props to a form field and control buttons.",
+        pathToFile:
+          "/frontend/src/components/FieldWithControls/hoc/withControls.tsx",
+        startLine: 5,
+        endLine: 55,
+      },
+      {
+        description: "Example:",
+        pathToFile: "/frontend/src/components/FieldWithControls/index.tsx",
+        startLine: 14,
+        endLine: 69,
+      },
+      {
+        title: "withUpdatableResourceForm",
+        description: "Add logic to a form and update resource on submit.",
+        pathToFile:
+          "/frontend/src/components/withUpdatableResourceForm/index.tsx",
+        startLine: 12,
+        endLine: 181,
+      },
+      {
+        description: "Example:",
+        pathToFile: "/frontend/src/components/UpdatableResourceForm/index.tsx",
+        startLine: 98,
+        endLine: 140,
       },
     ],
   },
   {
-    summary: "Create company",
+    summary: "Functional programming",
     content: [
       {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
+        title: "Recursion",
+        description: "",
+        pathToFile: "/frontend/src/utils/index.tsx",
+        startLine: 637,
+        endLine: 666,
+      },
+      {
+        title: "Composition",
+        description: "The main component is the button.",
+        pathToFile: "/frontend/src/components/Button/index.tsx",
+        startLine: 5,
+        endLine: 29,
+      },
+      {
+        description: "The composed component is the icon button.",
+        pathToFile: "/frontend/src/components/Button/IconButton.tsx",
+        startLine: 4,
+        endLine: 10,
+      },
+      // {
+      //   title: "Partial components",
+      //   description: "",
+      //   pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+      //   startLine: 0,
+      //   endLine: 1,
+      // },
+      {
+        title: "Compound components",
+        description: "The main component.",
+        pathToFile: "/frontend/src/components/Comment/index.tsx",
+        startLine: 0,
+        endLine: 1,
+      },
+      {
+        description: "Then create the sub-components header and footer.",
+        pathToFile: "/frontend/src/components/Comment/index.tsx",
+        startLine: 0,
+        endLine: 1,
+      },
+      {
+        description: "Lastly assign the sub-components to the main component.",
+        pathToFile: "/frontend/src/components/Comment/index.tsx",
+        startLine: 0,
+        endLine: 1,
+      },
+      {
+        title: "Provider pattern",
+        description:
+          "I've used the Context API to manage state and avoid prop drilling. Example: AuthContext.",
         pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
         startLine: 0,
         endLine: 1,
       },
-    ],
-  },
-  {
-    summary: "Create project",
-    content: [
       {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
+        description:
+          "Use the state in a component or hook. Example: useAuthState.",
         pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
         startLine: 0,
         endLine: 1,
       },
-    ],
-  },
-  {
-    summary: "Create ticket",
-    content: [
       {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
+        description: "Example: Header.",
         pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
         startLine: 0,
         endLine: 1,
       },
-    ],
-  },
-  {
-    summary: "Create comment",
-    content: [
-      {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-    ],
-  },
-  {
-    summary: "Request status update",
-    content: [
-      {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-    ],
-  },
-  {
-    summary: "View notifications",
-    content: [
-      {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-    ],
-  },
-  {
-    summary: "View dashboard",
-    content: [
-      {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
+      // {
+      //   title: "Pub-Sub pattern",
+      //   description: "Redux",
+      //   pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+      //   startLine: 0,
+      //   endLine: 1,
+      // },
     ],
   },
 ];
-const customerSuccessFlowsCodeSamples = [
-  {
-    summary: "Create company",
-    content: [
-      {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-    ],
-  },
-  {
-    summary: "Create project",
-    content: [
-      {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-    ],
-  },
-  {
-    summary: "Create/Update ticket",
-    content: [
-      {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-    ],
-  },
-  {
-    summary: "View dashboard",
-    content: [
-      {
-        title: "Create account first step",
-        description: "Lorem ipsum dolor.",
-        language: "typescript",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-    ],
-  },
-];
 
-const CodeSnippetsSection = ({ codeSources }: CodeSnippetsSectionProps) => {
-  return codeSources.map((item) => (
-    <CodeSnippetsWithFetch
-      key={item.summary}
-      summary={item.summary}
-      content={item.content}
-    />
-  ));
+// const performance = [
+//   {
+//     summary: "Code splitting",
+//     content: [
+//       {
+//         title: "",
+//         description: "",
+//         pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+//         startLine: 0,
+//         endLine: 1,
+//       },
+//     ],
+//   },
+//   {
+//     summary: "Lazy loading",
+//     content: [
+//       {
+//         title: "",
+//         description: "",
+//         pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+//         startLine: 0,
+//         endLine: 1,
+//       },
+//     ],
+//   },
+//   {
+//     summary: "Memoization",
+//     content: [
+//       {
+//         title: "",
+//         description: "",
+//         pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+//         startLine: 0,
+//         endLine: 1,
+//       },
+//     ],
+//   },
+//   {
+//     summary: "Suspense",
+//     content: [
+//       {
+//         title: "",
+//         description: "",
+//         pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+//         startLine: 0,
+//         endLine: 1,
+//       },
+//     ],
+//   },
+//   {
+//     summary: "Server-Side Rendering",
+//     content: [
+//       {
+//         title: "",
+//         description: "The example is actually this page.",
+//         pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
+//         startLine: 0,
+//         endLine: 1,
+//       },
+//     ],
+//   },
+// ];
+
+const CodeSnippetsSection = ({
+  title,
+  codeSources,
+}: CodeSnippetsSectionProps<
+  (SnippetExplanationProps & FetchedCodeSnippetProps) | MarkdownSnippetProps
+>) => {
+  return (
+    <section>
+      {title && <Heading text={title} className="mt-8" />}
+      {codeSources.map((item) => (
+        <CodeSnippetsWithSummary key={item.summary} {...item} />
+      ))}
+    </section>
+  );
 };
 
 const SeeTheCode = () => {
@@ -218,14 +314,12 @@ const SeeTheCode = () => {
           Go to project repo
         </ExternalLink>
       </section>
-      <section>
-        <Heading text="Client flows" />
-        <CodeSnippetsSection codeSources={clientFlowsCodeSamples} />
-      </section>
-      <section>
-        <Heading text="Customer success flows" className="mt-8" />
-        <CodeSnippetsSection codeSources={customerSuccessFlowsCodeSamples} />
-      </section>
+      <CodeSnippetsSection codeSources={designSystems} title="Design systems" />
+      <CodeSnippetsSection
+        codeSources={designPatterns}
+        title="Design patterns"
+      />
+      {/* <CodeSnippetsSection codeSources={performance} title="Performance" /> */}
     </>
   );
 };

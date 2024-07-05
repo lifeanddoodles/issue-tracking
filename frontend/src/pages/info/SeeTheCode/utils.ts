@@ -1,6 +1,12 @@
 import hljs from "highlight.js";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
+import {
+  FetchedCodeSnippetProps,
+  MarkdownSnippetProps,
+  SnippetExplanationProps,
+  SnippetTextProps,
+} from "./types";
 
 export type Theme = "light" | "dark";
 
@@ -24,4 +30,36 @@ export const generateCodeSnippet = async (
 ) => {
   const contentWrapper = `\`\`\`${language}\n${content}\n\`\`\``;
   return await marked.parse(contentWrapper);
+};
+
+export const generateContent = async (content: string, language?: string) => {
+  try {
+    if (language) return generateCodeSnippet(content, language);
+    return await marked.parse(content);
+  } catch (error) {
+    console.error("Error generating content:", error);
+    return "Error parsing content";
+  }
+};
+
+export const isSnippetTextProps = (
+  item: SnippetExplanationProps
+): item is SnippetTextProps => {
+  return "title" in item || "description" in item;
+};
+
+export const isMarkdownSnippetProps = (
+  item:
+    | (SnippetExplanationProps & FetchedCodeSnippetProps)
+    | MarkdownSnippetProps
+): item is MarkdownSnippetProps => {
+  return "markdown" in item;
+};
+
+export const isFetchedCodeSnippetProps = (
+  item:
+    | (SnippetExplanationProps & FetchedCodeSnippetProps)
+    | MarkdownSnippetProps
+): item is SnippetExplanationProps & FetchedCodeSnippetProps => {
+  return "pathToFile" in item;
 };
