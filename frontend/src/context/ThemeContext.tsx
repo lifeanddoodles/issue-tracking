@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark";
+export type Theme = "light" | "dark";
 
 interface ThemeContextProps {
   theme: Theme;
@@ -19,9 +19,11 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") {
+      root.classList.remove("light");
       root.classList.add("dark");
     } else {
       root.classList.remove("dark");
+      root.classList.add("light");
     }
   }, [theme]);
 
