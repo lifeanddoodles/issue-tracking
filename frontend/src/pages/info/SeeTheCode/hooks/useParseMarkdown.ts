@@ -7,7 +7,8 @@ const useParseMarkdown = (content: string | null, language?: string) => {
   useEffect(() => {
     if (!content) return;
 
-    generateContent(content, language).then(setParsedMarkdown);
+    const generatedMarkup = generateContent(content, language);
+    setParsedMarkdown(generatedMarkup as string);
   }, [content, language]);
 
   return parsedMarkdown;

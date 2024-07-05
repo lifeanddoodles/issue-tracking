@@ -1,6 +1,8 @@
 import hljs from "highlight.js";
+import * as marked from "marked";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
+import { getClasses } from "../../../components/Heading/utils";
 import {
   FetchedCodeSnippetProps,
   MarkdownSnippetProps,
@@ -14,7 +16,7 @@ export const BASE_REPO_URL = `https://raw.githubusercontent.com/${
   import.meta.env.VITE_GITHUB_USER
 }/${import.meta.env.VITE_GITHUB_REPO}/${import.meta.env.VITE_GITHUB_BRANCH}`;
 
-export const marked = new Marked(
+const codeHighlighter = new Marked(
   markedHighlight({
     langPrefix: "hljs language-",
     highlight(code, lang) {
@@ -24,18 +26,36 @@ export const marked = new Marked(
   })
 );
 
-export const generateCodeSnippet = async (
-  content: string,
-  language: string
-) => {
-  const contentWrapper = `\`\`\`${language}\n${content}\n\`\`\``;
-  return await marked.parse(contentWrapper);
+/**
+ * Configure the renderer
+ */
+const renderer = new marked.Renderer();
+renderer.heading = ({ tokens, depth }) => {
+  return `<h${depth} class="${`title-font text-neutral-900 dark:text-white font-medium mb-4 ${getClasses(
+    depth
+  )}`}">${tokens[0].raw}</h${depth}>`;
+};
+renderer.code = ({ text, lang }) => {
+  const highlighted = codeHighlighter.parse(
+    `\`\`\`${lang}\n${text}\n\`\`\``
+  ) as string;
+
+  return highlighted;
 };
 
-export const generateContent = async (content: string, language?: string) => {
+marked.setOptions({
+  renderer,
+});
+
+export const generateCodeSnippet = (content: string, language: string) => {
+  const codeFormat = `\`\`\`${language}\n${content}\n\`\`\``;
+  return marked.parse(codeFormat);
+};
+
+export const generateContent = (content: string, language?: string) => {
   try {
     if (language) return generateCodeSnippet(content, language);
-    return await marked.parse(content);
+    return marked.parse(content);
   } catch (error) {
     console.error("Error generating content:", error);
     return "Error parsing content";
