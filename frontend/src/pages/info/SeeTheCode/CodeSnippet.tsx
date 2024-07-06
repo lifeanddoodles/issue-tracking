@@ -7,13 +7,6 @@ import { FetchedCodeSnippetProps, MarkdownSnippetProps } from "./types";
 import { BASE_REPO_URL } from "./utils";
 import(`highlight.js/styles/a11y-dark.css`);
 
-const ParsedContent = ({ content }: { content: string }) => (
-  <div
-    dangerouslySetInnerHTML={{ __html: content }}
-    className="mb-2 rounded-lg border-2 dark:border-neutral-800 overflow-hidden text-sm"
-  />
-);
-
 const FetchedCodeSnippet = ({
   pathToFile,
   language = "typescript",
@@ -40,21 +33,13 @@ const FetchedCodeSnippet = ({
   if (loading) return <Heading level={1} text="Loading..." />;
   if (error) return <Heading level={1} text={error.message} />;
 
-  return (
-    <ErrorBoundary>
-      {content ? <ParsedContent content={content} /> : null}
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary>{content ?? null}</ErrorBoundary>;
 };
 
 const MarkdownSnippet = ({ markdown, language }: MarkdownSnippetProps) => {
   const content = useParseMarkdown(markdown, language);
 
-  return (
-    <ErrorBoundary>
-      {content ? <ParsedContent content={content} /> : null}
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary>{content ?? null}</ErrorBoundary>;
 };
 
 export { FetchedCodeSnippet, MarkdownSnippet };

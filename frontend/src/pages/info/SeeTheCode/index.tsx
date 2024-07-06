@@ -31,13 +31,6 @@ const designSystems = [
 ├── // Other files
 `,
       },
-      {
-        markdown: `# Test title
-- item 1
-- item 2
-- item 3
-`,
-      },
     ],
   },
   // {
