@@ -71,7 +71,7 @@ const SelectWithFetch = forwardRef(
 
     const Wrapper = ({ children }: { children: React.ReactNode }) =>
       showList ? (
-        <div role="group" className="flex flex-col">
+        <div role="group" className="w-full  flex flex-col">
           {children}
         </div>
       ) : (

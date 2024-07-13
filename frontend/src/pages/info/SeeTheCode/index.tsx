@@ -1,3 +1,4 @@
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/solid";
 import ExternalLink from "../../../components/ExternalLink";
 import Heading from "../../../components/Heading";
 import Text from "../../../components/Text";
@@ -279,7 +280,7 @@ const SeeTheCode = () => {
           href="https://github.com/lifeanddoodles/issue-tracking"
           className={`${getVariantClasses("outline")} mb-4`}
         >
-          Go to project repo
+          Go to project repo <ArrowTopRightOnSquareIcon className="w-4 h-4" />
         </ExternalLink>
       </section>
       <CodeSnippetsSection codeSources={designSystems} title="Design systems" />

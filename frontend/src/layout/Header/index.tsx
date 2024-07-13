@@ -123,13 +123,17 @@ const Header = () => {
             })}
             {user && (
               <Button onClick={logoutUserReq} variant="icon" ariaLabel="Logout">
-                <ArrowRightOnRectangleIcon />
+                <ArrowRightOnRectangleIcon className="w-6 h-6" />
               </Button>
             )}
           </section>
         </nav>
         <Button onClick={toggleTheme} variant="icon" ariaLabel="Toggle theme">
-          {theme === "light" ? <MoonIcon /> : <SunIcon />}
+          {theme === "light" ? (
+            <MoonIcon className="w-6 h-6" />
+          ) : (
+            <SunIcon className="w-6 h-6" />
+          )}
         </Button>
       </div>
     </header>

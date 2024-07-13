@@ -1,3 +1,4 @@
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/solid";
 import ExternalLink from "../../../components/ExternalLink";
 import Heading from "../../../components/Heading";
 import Text from "../../../components/Text";
@@ -20,7 +21,7 @@ const About = () => {
         href="https://sandravargas.dev/"
         className={`${getVariantClasses("primary")} w-fit`}
       >
-        View my portfolio
+        View my portfolio <ArrowTopRightOnSquareIcon className="w-4 h-4" />
       </ExternalLink>
     </>
   );

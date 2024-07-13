@@ -17,14 +17,18 @@ const FormFieldControls = ({
         ariaLabel={isEditable ? `Save ${label}` : `Edit ${label}`}
         disabled={disableToggleEdit}
       >
-        {isEditable ? <CheckIcon title="Save" /> : <PencilIcon title="Edit" />}
+        {isEditable ? (
+          <CheckIcon title="Save" className="w-6 h-6" />
+        ) : (
+          <PencilIcon title="Edit" className="w-6 h-6" />
+        )}
       </IconButton>
       <IconButton
         onClick={onCancel}
         disabled={!isEditable}
         ariaLabel={`Cancel changes to ${label}`}
       >
-        <XMarkIcon title="Cancel" />
+        <XMarkIcon title="Cancel" className="w-6 h-6" />
       </IconButton>
     </div>
   );
