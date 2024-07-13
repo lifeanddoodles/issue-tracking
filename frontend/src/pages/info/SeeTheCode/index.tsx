@@ -48,25 +48,27 @@ const designSystems = [
 ];
 
 const designPatterns = [
-  // {
-  //   summary: "Component patterns",
-  //   content: [
-  //     {
-  //       title: "Wrapper component",
-  //       description: "",
-  //       pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-  //       startLine: 0,
-  //       endLine: 1,
-  //     },
-  //     {
-  //       title: "Polymorphic component",
-  //       description: "",
-  //       pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-  //       startLine: 0,
-  //       endLine: 1,
-  //     },
-  //   ],
-  // },
+  {
+    summary: "Component patterns",
+    content: [
+      {
+        title: "Wrapper component",
+        description:
+          "Like the Select component that adds extra markup if label is provided.",
+        pathToFile: "/frontend/src/components/Select/index.tsx",
+        startLine: 71,
+        endLine: 78,
+      },
+      {
+        title: "Polymorphic component",
+        description:
+          "Change the root element of a component based on a prop. Example: Text.",
+        pathToFile: "/frontend/src/components/Text/index.tsx",
+        startLine: 4,
+        endLine: 20,
+      },
+    ],
+  },
   {
     summary: "Custom hooks",
     content: [
@@ -90,13 +92,6 @@ const designPatterns = [
     summary: "HOC",
     content: [
       {
-        title: "withPortal",
-        description: "",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-      {
         title: "withControls",
         description: "Add props to a form field and control buttons.",
         pathToFile:
@@ -119,10 +114,10 @@ const designPatterns = [
         endLine: 181,
       },
       {
-        description: "Example:",
+        description: "And use it in a component. Example:",
         pathToFile: "/frontend/src/components/UpdatableResourceForm/index.tsx",
-        startLine: 98,
-        endLine: 140,
+        startLine: 142,
+        endLine: 199,
       },
     ],
   },
@@ -149,6 +144,26 @@ const designPatterns = [
         startLine: 4,
         endLine: 10,
       },
+      {
+        title: "Provider pattern",
+        description:
+          "I've used the Context API to manage state and avoid prop drilling. Example: AuthContext.",
+        pathToFile: "/frontend/src/context/AuthContext.ts",
+        startLine: 4,
+        endLine: 12,
+      },
+      {
+        description: "Use the state in a hook. Example: useAuth.",
+        pathToFile: "/frontend/src/hooks/useAuth.ts",
+        startLine: 6,
+        endLine: 41,
+      },
+      {
+        description: "Use the state in a component. Example: Header.",
+        pathToFile: "/frontend/src/layout/Header/index.tsx",
+        startLine: 59,
+        endLine: 137,
+      },
       // {
       //   title: "Partial components",
       //   description: "",
@@ -156,46 +171,6 @@ const designPatterns = [
       //   startLine: 0,
       //   endLine: 1,
       // },
-      {
-        title: "Compound components",
-        description: "The main component.",
-        pathToFile: "/frontend/src/components/Comment/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-      {
-        description: "Then create the sub-components header and footer.",
-        pathToFile: "/frontend/src/components/Comment/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-      {
-        description: "Lastly assign the sub-components to the main component.",
-        pathToFile: "/frontend/src/components/Comment/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-      {
-        title: "Provider pattern",
-        description:
-          "I've used the Context API to manage state and avoid prop drilling. Example: AuthContext.",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-      {
-        description:
-          "Use the state in a component or hook. Example: useAuthState.",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
-      {
-        description: "Example: Header.",
-        pathToFile: "/frontend/src/pages/auth/Register/index.tsx",
-        startLine: 0,
-        endLine: 1,
-      },
       // {
       //   title: "Pub-Sub pattern",
       //   description: "Redux",
