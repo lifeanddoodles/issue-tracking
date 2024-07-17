@@ -6,6 +6,8 @@ import { FetchedCodeSnippet, MarkdownSnippet } from "./CodeSnippet";
 import {
   CodeSnippetsWithSummaryProps,
   FetchedCodeSnippetProps,
+  FetchedMultipleCodeSnippetProps,
+  FetchedSingleCodeSnippetProps,
   MarkdownSnippetProps,
   SnippetExplanationProps,
 } from "./types";
@@ -42,8 +44,9 @@ const CodeSnippetsWithSummary: React.FC<
               {
                 <FetchedCodeSnippet
                   pathToFile={item.pathToFile}
-                  startLine={item.startLine}
-                  endLine={item.endLine}
+                  startLine={(item as FetchedSingleCodeSnippetProps)?.startLine}
+                  endLine={(item as FetchedSingleCodeSnippetProps)?.endLine}
+                  excerpts={(item as FetchedMultipleCodeSnippetProps)?.excerpts}
                 />
               }
             </Fragment>

@@ -5,6 +5,7 @@ import Heading from "../../../components/Heading";
 import Text from "../../../components/Text";
 import {
   FetchedCodeSnippetProps,
+  FetchedMultipleCodeSnippetProps,
   MarkdownSnippetProps,
   SnippetExplanationProps,
   SnippetTextProps,
@@ -36,6 +37,12 @@ export const isFetchedCodeSnippetProps = (
     | MarkdownSnippetProps
 ): item is SnippetExplanationProps & FetchedCodeSnippetProps => {
   return "pathToFile" in item;
+};
+
+export const hasMultipleCodeExcerpts = (
+  item: FetchedCodeSnippetProps
+): item is FetchedMultipleCodeSnippetProps => {
+  return "excerpts" in item && item?.excerpts !== undefined;
 };
 
 /**
@@ -108,4 +115,21 @@ export const generateContent = (content: string, language?: string) => {
     console.error("Error generating content:", error);
     return "Error parsing content";
   }
+};
+
+export const getCodeExcerpt = (
+  codeFile: string,
+  startLine: number = 0,
+  endLine: number = -1
+) => {
+  if (!codeFile) return null;
+
+  const snippet = (codeFile as string)
+    .split("\n")
+    .slice(
+      startLine === 0 ? startLine : startLine - 1,
+      endLine === -1 ? endLine : endLine + 1
+    )
+    .join("\n");
+  return snippet;
 };

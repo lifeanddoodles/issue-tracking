@@ -1,9 +1,32 @@
-export type FetchedCodeSnippetProps = {
-  pathToFile?: string;
-  language?: string;
+export type CodeExcerpt = {
+  markdown?: string;
   startLine?: number;
   endLine?: number;
 };
+
+export type CodeSnippetProps = {
+  fileData: string;
+  language?: string;
+} & CodeExcerpt;
+
+export type MultipleCodeExcerpts = {
+  excerpts: CodeExcerpt[];
+};
+
+export type FetchedCodeSnippetBaseProps = {
+  pathToFile?: string;
+  language?: string;
+};
+
+export type FetchedSingleCodeSnippetProps = FetchedCodeSnippetBaseProps &
+  CodeExcerpt;
+
+export type FetchedMultipleCodeSnippetProps = FetchedCodeSnippetBaseProps &
+  MultipleCodeExcerpts;
+
+export type FetchedCodeSnippetProps =
+  | FetchedSingleCodeSnippetProps
+  | FetchedMultipleCodeSnippetProps;
 
 export type MarkdownSnippetProps = {
   markdown: string;
