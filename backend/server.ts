@@ -54,13 +54,13 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/tickets", ensureAuth, ticketRoutes);
-app.use("/api/comments", ensureAuth, commentRoutes);
-app.use("/api/companies", companyRoutes);
-app.use("/api/projects", ensureAuth, projectRoutes);
-app.use("/api/services", ensureAuth, serviceRoutes);
+app.use(`/api/${process.env.API_VERSION}/auth`, authRoutes);
+app.use(`/api/${process.env.API_VERSION}/users`, userRoutes);
+app.use(`/api/${process.env.API_VERSION}/tickets`, ensureAuth, ticketRoutes);
+app.use(`/api/${process.env.API_VERSION}/comments`, ensureAuth, commentRoutes);
+app.use(`/api/${process.env.API_VERSION}/companies`, companyRoutes);
+app.use(`/api/${process.env.API_VERSION}/projects`, ensureAuth, projectRoutes);
+app.use(`/api/${process.env.API_VERSION}/services`, ensureAuth, serviceRoutes);
 
 // Error handler
 app.use(handleError);

@@ -8,7 +8,9 @@ import {
 /*
  * Auth
  */
-export const AUTH_BASE_API_URL = "/api/auth";
+export const AUTH_BASE_API_URL = `/api/${
+  import.meta.env.VITE_API_VERSION
+}/auth`;
 export const LOGIN_API_URL = `${AUTH_BASE_API_URL}/login`;
 export const LOGOUT_API_URL = `${AUTH_BASE_API_URL}/logout`;
 export const GOOGLE_AUTH_BASE_API_URL = `${AUTH_BASE_API_URL}/google`;
@@ -28,7 +30,9 @@ export const getLoginUserOptions = (reqBody: {
 /*
  * Users
  */
-export const USERS_BASE_API_URL = "/api/users";
+export const USERS_BASE_API_URL = `/api/${
+  import.meta.env.VITE_API_VERSION
+}/users`;
 export const PROFILE_API_URL = `${USERS_BASE_API_URL}/profile`;
 
 export const getRegisterUserOptions = (reqBody: {
@@ -58,7 +62,9 @@ export const getUpdateUserOptions = (reqBody: Partial<IUser>) => ({
 /*
  * Tickets
  */
-export const TICKETS_BASE_API_URL = "/api/tickets";
+export const TICKETS_BASE_API_URL = `/api/${
+  import.meta.env.VITE_API_VERSION
+}/tickets`;
 export const TICKET_BY_ID_API_URL = `${TICKETS_BASE_API_URL}/:ticketId`;
 
 export const getPostTicketOptions = (
@@ -74,7 +80,9 @@ export const getPostTicketOptions = (
 /*
  * Comments
  */
-export const COMMENTS_BASE_API_URL = "/api/comments";
+export const COMMENTS_BASE_API_URL = `/api/${
+  import.meta.env.VITE_API_VERSION
+}/comments`;
 
 export const getUpdateCommentOptions = (message: string) => ({
   method: "PATCH",
@@ -91,17 +99,23 @@ export const getDeleteOptions = () => ({
 /*
  * Companies
  */
-export const COMPANIES_BASE_API_URL = "/api/companies";
+export const COMPANIES_BASE_API_URL = `/api/${
+  import.meta.env.VITE_API_VERSION
+}/companies`;
 
 /*
  * Projects
  */
-export const PROJECTS_BASE_API_URL = "/api/projects";
+export const PROJECTS_BASE_API_URL = `/api/${
+  import.meta.env.VITE_API_VERSION
+}/projects`;
 
 /*
  * Services
  */
-export const SERVICES_BASE_API_URL = "/api/services";
+export const SERVICES_BASE_API_URL = `/api/${
+  import.meta.env.VITE_API_VERSION
+}/services`;
 
 export const getPostOptions: <T>(reqBody: Partial<T>) => RequestInit = (
   reqBody

@@ -1,7 +1,11 @@
+import { useMemo } from "react";
 import { ITicketDocument, ITicketPopulatedDocument } from "shared/interfaces";
 import { DepartmentTeam, UserRole } from "../../../../../shared/interfaces";
 import ChartsSection from "../../../components/ChartsSection";
 import Heading from "../../../components/Heading";
+import Pagination from "../../../components/Pagination";
+import useDocsSlice from "../../../components/Pagination/hooks/useDocsSlice";
+import usePagination from "../../../components/Pagination/hooks/usePagination";
 import TicketsList from "../../../components/TicketsList";
 import { useAuthContext } from "../../../context/AuthProvider";
 import useFetch from "../../../hooks/useFetch";
@@ -91,18 +95,29 @@ const Dashboard = () => {
   );
   const ticketsUrl = `${TICKETS_BASE_API_URL}${ticketsQuery}`;
   const {
-    data: tickets,
+    data: ticketsResponse,
     loading: loadingTickets,
     error: ticketsError,
-  } = useFetch<ITicketDocument[] | ITicketPopulatedDocument[] | []>({
+  } = useFetch<{
+    data: (ITicketDocument | ITicketPopulatedDocument)[];
+    count: number;
+    pagination: { [key: string]: number; limit: number };
+    success: boolean;
+  }>({
     url: ticketsUrl,
   });
+
+  const tickets = useMemo(() => ticketsResponse?.data, [ticketsResponse]);
 
   const projectsQuery = getProjectsQuery(
     user?.role as UserRole,
     user?.company as string
   );
   const projectsUrl = `${PROJECTS_BASE_API_URL}${projectsQuery}`;
+
+  const { currentPage, setCurrentPage } = usePagination();
+  const limit = 10;
+  const paginatedTickets = useDocsSlice(limit, currentPage, tickets);
 
   return (
     <>
@@ -126,8 +141,16 @@ const Dashboard = () => {
       {!loadingTickets && tickets && tickets?.length === 0 && (
         <h3 role="status">No tickets found</h3>
       )}
-      {!loadingTickets && tickets && tickets?.length > 0 && (
-        <TicketsList tickets={tickets} />
+      {!loadingTickets && tickets && paginatedTickets?.length > 0 && (
+        <>
+          <TicketsList tickets={paginatedTickets} />
+          <Pagination
+            total={tickets.length}
+            limit={limit}
+            currentPage={currentPage}
+            onClick={setCurrentPage}
+          />
+        </>
       )}
     </>
   );

@@ -98,8 +98,10 @@ const ticketSchema = new mongoose.Schema(
 );
 
 ticketSchema.statics.aggregateTicketsWithProjectsAndServices = async function (
-  query
+  query,
+  options = {}
 ) {
+  const { sort, skip, limit } = options;
   const pipeline = [];
 
   const projectLookup = [
@@ -225,6 +227,20 @@ ticketSchema.statics.aggregateTicketsWithProjectsAndServices = async function (
     pipeline.push({
       $match: query,
     });
+  }
+
+  if (sort) {
+    pipeline.push({ $sort: sort });
+  } else {
+    pipeline.push({ $sort: { createdAt: -1 } });
+  }
+
+  if (skip !== undefined) {
+    pipeline.push({ $skip: skip });
+  }
+
+  if (limit !== undefined) {
+    pipeline.push({ $limit: limit });
   }
 
   return this.aggregate(pipeline);

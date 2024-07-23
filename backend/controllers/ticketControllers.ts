@@ -1,14 +1,15 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { RootQuerySelector, Types } from "mongoose";
 import {
+  FormattedResultsProps,
   IPersonInfo,
   ITicket,
   ITicketDocument,
   ITicketPopulatedDocument,
   ITicketWithStatics,
   IUserDocument,
-} from "../../shared/interfaces/index.js";
+} from "../../shared/interfaces";
 import Comment from "../models/commentModel.js";
 import Ticket from "../models/ticketModel.js";
 
@@ -96,50 +97,13 @@ export const addTicket = asyncHandler(async (req: Request, res: Response) => {
 // @desc Get all tickets
 // @route GET /api/tickets/
 // @access Public
-export const getTickets = asyncHandler(async (req: Request, res: Response) => {
-  // Get authenticated user
-  const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === "CLIENT";
-
-  // Find tickets
-  const query: RootQuerySelector<ITicketDocument> = {};
-
-  for (const key in req.query) {
-    if (key === "company") {
-      query["projectInfo.company._id"] = new Types.ObjectId(
-        req.query[key] as keyof ITicketDocument
-      );
-    } else if (key === "service") {
-      query["serviceInfo._id"] = new Types.ObjectId(
-        req.query[key] as keyof ITicketDocument
-      );
-    } else {
-      query[key as keyof ITicketDocument] = req.query[key];
-    }
-  }
-
-  if (isClient) {
-    query["projectInfo.company._id"] = authUser?.company;
-  }
-
-  const tickets = await (Ticket as unknown as ITicketWithStatics)
-    .aggregateTicketsWithProjectsAndServices!(query);
-
-  // Handle tickets not found
-  if (!tickets || tickets.length === 0) {
-    res.status(404);
-    throw new Error("Tickets not found");
-  }
-
-  // Populate assignee, reporter, and externalReporter fields
-  await Ticket.populate(tickets, [
-    { path: "assignee", select: "_id firstName lastName" },
-    { path: "reporter", select: "_id firstName lastName" },
-    { path: "externalReporter", select: "_id firstName lastName" },
-  ]);
-
-  // Handle success
-  res.status(200).send(tickets);
+export const getTickets = asyncHandler(async (_: Request, res: Response) => {
+  res
+    .status(200)
+    .send(
+      (res as Response & { formattedResults: FormattedResultsProps })
+        .formattedResults
+    );
 });
 
 // @desc  Get one ticket

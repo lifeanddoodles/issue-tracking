@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
-import { IUserDocument } from "../../shared/interfaces/index.ts";
+import { IUserDocument, UserRole } from "../../shared/interfaces/index.ts";
 import User from "../models/userModel.ts";
 
 const ensureAuth = asyncHandler(
@@ -65,4 +65,19 @@ const isAdmin = asyncHandler(
   }
 );
 
-export { ensureAuth, ensureGuest, isAdmin };
+const authorize = (...roles: UserRole[]) => {
+  return (req: Request, _: Response, next: NextFunction) => {
+    if (!roles.includes((req.user as IUserDocument).role as UserRole)) {
+      return next(
+        new Error(
+          `User role ${
+            (req.user as IUserDocument).role
+          } is not authorized to access this route`
+        )
+      );
+    }
+    next();
+  };
+};
+
+export { authorize, ensureAuth, ensureGuest, isAdmin };

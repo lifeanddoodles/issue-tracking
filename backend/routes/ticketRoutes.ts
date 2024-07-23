@@ -7,6 +7,8 @@ import {
   updateTicket,
 } from "../controllers/ticketControllers.js";
 import { ensureAuth, isAdmin } from "../middleware/authMiddleware.ts";
+import formatResults from "../middleware/formatResults.ts";
+import Ticket from "../models/ticketModel.ts";
 
 const router = express.Router();
 
@@ -18,7 +20,23 @@ router.post("/", ensureAuth, addTicket);
 // @desc Show all tickets
 // @route GET /api/tickets/
 // @access Private
-router.get("/", ensureAuth, getTickets);
+router.get(
+  "/",
+  ensureAuth,
+  formatResults(
+    Ticket,
+    [
+      { path: "assignee", select: "_id firstName lastName" },
+      { path: "reporter", select: "_id firstName lastName" },
+      { path: "externalReporter", select: "_id firstName lastName" },
+    ],
+    {
+      staticsFnName: "aggregateTicketsWithProjectsAndServices",
+      replaceFind: true,
+    }
+  ),
+  getTickets
+);
 
 // @desc Show all tickets by user
 // @route GET /api/tickets/:user

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ITicketDocument,
   ITicketPopulatedDocument,
@@ -7,6 +7,8 @@ import {
   TicketType,
 } from "shared/interfaces";
 import Button from "../../../../components/Button";
+import Pagination from "../../../../components/Pagination";
+import usePagination from "../../../../components/Pagination/hooks/usePagination";
 import Select from "../../../../components/Select";
 import TableFromDocuments from "../../../../components/TableFromDocuments";
 import useFetch from "../../../../hooks/useFetch";
@@ -29,11 +31,20 @@ enum TableColumns {
 
 const AllTickets = () => {
   const {
-    data: tickets,
+    data: ticketsResponse,
     loading,
     error,
     sendRequest,
-  } = useFetch<ITicketDocument[] | ITicketPopulatedDocument[] | []>();
+  } = useFetch<{
+    data: ITicketDocument[] | ITicketPopulatedDocument[] | [];
+    count: number;
+    pagination: { [key: string]: number; limit: number };
+    success: boolean;
+  }>();
+  const tickets = useMemo(() => ticketsResponse?.data, [ticketsResponse?.data]);
+  const { currentPage, setCurrentPage } = usePagination();
+  const limit = 10;
+
   const [filters, setFilters] = useState<
     Partial<{
       title: string;
@@ -62,11 +73,13 @@ const AllTickets = () => {
     // TODO: Reset controllers to select empty option
   }, []);
 
-  const getRows = useCallback(() => {
-    sendRequest({
-      url: `${TICKETS_BASE_API_URL}${query ? `?${query}` : ""}`,
+  const getRows = useCallback(async () => {
+    await sendRequest({
+      url: `${TICKETS_BASE_API_URL}?page=${currentPage}&limit=${limit}${
+        query ? `&${query}` : ""
+      }`,
     });
-  }, [query, sendRequest]);
+  }, [currentPage, query, sendRequest]);
 
   const handleChangeFilters = (
     e: React.ChangeEvent<
@@ -79,25 +92,35 @@ const AllTickets = () => {
     });
   };
 
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setCurrentPage(newPage);
+    },
+    [setCurrentPage]
+  );
+
+  const formattedTickets = useMemo(
+    () =>
+      !loading &&
+      tickets?.map((ticket) => {
+        return {
+          id: ticket._id as string,
+          data: {
+            title: ticket.title,
+            status: ticket.status,
+            ticketType: ticket.ticketType,
+            assignee: ticket.assignee,
+            priority: ticket.priority as Priority,
+            createdAt: ticket.createdAt,
+          },
+        };
+      }),
+    [loading, tickets]
+  );
+
   useEffect(() => {
     getRows();
   }, [getRows]);
-
-  const formattedTickets =
-    !loading &&
-    tickets?.map((ticket) => {
-      return {
-        id: ticket._id as string,
-        data: {
-          title: ticket.title,
-          status: ticket.status,
-          ticketType: ticket.ticketType,
-          assignee: ticket.assignee,
-          priority: ticket.priority as Priority,
-          createdAt: ticket.createdAt,
-        },
-      };
-    });
 
   if (error) return <h3 role="status">{error.message}</h3>;
 
@@ -123,15 +146,26 @@ const AllTickets = () => {
       {!loading && formattedTickets && formattedTickets?.length === 0 && (
         <h3 role="status">No tickets found</h3>
       )}
-      {!loading && formattedTickets && formattedTickets?.length > 0 && (
-        <TableFromDocuments
-          cols={getColumnTitles(formattedTickets[0], TableColumns)}
-          rows={formattedTickets}
-          resourceBaseUrl="/dashboard/tickets"
-          apiBaseUrl={TICKETS_BASE_API_URL}
-          refetch={getRows}
-        />
-      )}
+      {!loading &&
+        ticketsResponse &&
+        formattedTickets &&
+        formattedTickets?.length > 0 && (
+          <>
+            <TableFromDocuments
+              cols={getColumnTitles(formattedTickets[0], TableColumns)}
+              rows={formattedTickets}
+              resourceBaseUrl="/dashboard/tickets"
+              apiBaseUrl={TICKETS_BASE_API_URL}
+              refetch={getRows}
+            />
+            <Pagination
+              total={ticketsResponse.count}
+              limit={limit}
+              currentPage={currentPage}
+              onClick={handlePageChange}
+            />
+          </>
+        )}
     </>
   );
 };

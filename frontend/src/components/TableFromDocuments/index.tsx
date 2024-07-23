@@ -142,9 +142,9 @@ const TableFromDocuments: <T>({
   const variantClasses = getVariantClasses("transparent");
   if (!cols && !rows) return null;
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     const options = getDeleteOptions();
-    sendRequest({ url: `${apiBaseUrl}/${id}`, options });
+    await sendRequest({ url: `${apiBaseUrl}/${id}`, options });
     refetch();
   };
 
