@@ -1,14 +1,9 @@
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Button from "../../components/Button";
 import ResourcesNavigation from "../../components/ResourcesNavigation";
+import useLockBodyScroll from "../../hooks/useLockBodyScroll";
 
 const FullHeightWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -26,18 +21,10 @@ const MobileResourcesNavigation = ({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const mobileClasses = "flex flex-col gap-4";
-  const [currentYPosition, setCurrentYPosition] = useState(0);
-  const body = document.querySelector("body");
-  const appRoot = document.getElementById("root");
-
-  const handleOnClick = useCallback(() => {
-    setIsOpen(false);
-    window.scrollTo(0, 0);
-  }, [setIsOpen]);
-
-  const scrollToPrevPosition = useCallback(() => {
-    window.scrollTo(0, currentYPosition);
-  }, [currentYPosition]);
+  const { onDisableLockNavigation, onDisableLock } = useLockBodyScroll({
+    isOpen,
+    setIsOpen,
+  });
 
   const handleRemoveMobileMenu = useCallback(() => {
     const mobileNav = document.getElementById("mobile-navigation");
@@ -47,28 +34,9 @@ const MobileResourcesNavigation = ({
   }, []);
 
   const handleCloseMobileMenu = useCallback(() => {
-    setIsOpen(false);
     handleRemoveMobileMenu();
-    body?.classList.remove("overflow-hidden", "max-h-screen");
-    appRoot?.classList.remove("overflow-hidden", "max-h-screen");
-    appRoot?.removeAttribute("tabindex");
-    scrollToPrevPosition();
-  }, [
-    appRoot,
-    body?.classList,
-    handleRemoveMobileMenu,
-    setIsOpen,
-    scrollToPrevPosition,
-  ]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setCurrentYPosition(window.scrollY);
-      body?.classList.add("overflow-hidden", "max-h-screen");
-      appRoot?.classList.add("overflow-hidden", "max-h-screen");
-      appRoot?.setAttribute("tabindex", "-1");
-    }
-  }, [isOpen, handleRemoveMobileMenu, body?.classList, appRoot]);
+    onDisableLock();
+  }, [handleRemoveMobileMenu, onDisableLock]);
 
   return (
     <>
@@ -86,7 +54,7 @@ const MobileResourcesNavigation = ({
               <ResourcesNavigation
                 className={mobileClasses}
                 id="mobile-navigation"
-                onClick={handleOnClick}
+                onClick={onDisableLockNavigation}
               />
             </div>
           </FullHeightWrapper>,
