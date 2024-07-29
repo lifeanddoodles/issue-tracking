@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { RootQuerySelector } from "mongoose";
 import {
+  FormattedResultsProps,
   ICompany,
   ICompanyDocument,
   IUserDocument,
-} from "../../shared/interfaces/index.js";
+} from "../../shared/interfaces";
 import Company from "../models/companyModel.js";
 import User from "../models/userModel.js";
 import {
@@ -125,40 +125,12 @@ export const addCompany = asyncHandler(async (req: Request, res: Response) => {
 // @access Private
 export const getCompanies = asyncHandler(
   async (req: Request, res: Response) => {
-    // Get authenticated user
-    const authUser: Partial<IUserDocument> | undefined = req.user;
-    const isClient = authUser?.role === "CLIENT";
-
-    // Find companies
-    const query: RootQuerySelector<ICompanyDocument> = {};
-
-    for (const key in req.query) {
-      query[key as keyof ICompanyDocument] = req.query[key];
-    }
-
-    // Handle if user is not authorized for request
-    if (isClient && !Object.hasOwn(req.query, "company")) {
-      query._id = authUser?.company;
-    }
-
-    const companies: ICompanyDocument[] = await Company.find(query)
-      .populate({
-        path: "projects",
-        select: "name",
-      })
-      .populate({
-        path: "employees",
-        select: "firstName lastName -company",
-      });
-
-    // Handle companies not found
-    if (!companies) {
-      res.status(404);
-      throw new Error("Companies not found");
-    }
-
-    // Handle success
-    res.status(200).send(companies);
+    res
+      .status(200)
+      .send(
+        (res as Response & { formattedResults: FormattedResultsProps })
+          .formattedResults
+      );
   }
 );
 

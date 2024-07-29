@@ -3,12 +3,12 @@ import NavControls from "./NavControls";
 const Pagination = ({
   currentPage,
   total,
-  limit,
+  limit = 10,
   onClick,
 }: {
   currentPage: number;
   total: number;
-  limit: number;
+  limit?: number;
   onClick: (arg: number) => void;
 }) => {
   return (

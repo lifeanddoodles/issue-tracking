@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IUser, IUserDocument } from "shared/interfaces";
 import Button from "../../../../components/Button";
+import Pagination from "../../../../components/Pagination";
+import usePagination from "../../../../components/Pagination/hooks/usePagination";
 import Select from "../../../../components/Select";
 import TableFromDocuments from "../../../../components/TableFromDocuments";
 import useFetch from "../../../../hooks/useFetch";
@@ -25,11 +27,20 @@ enum TableColumns {
 
 const AllUsers = () => {
   const {
-    data: users,
+    data: usersResponse,
     loading,
     error,
     sendRequest,
-  } = useFetch<IUserDocument[] | []>();
+  } = useFetch<{
+    data: IUserDocument[] | [];
+    count: number;
+    pagination: { [key: string]: number; limit: number };
+    success: boolean;
+  }>();
+  const users = useMemo(() => usersResponse?.data, [usersResponse?.data]);
+  const { currentPage, setCurrentPage } = usePagination();
+  const limit = 10;
+
   const [filters, setFilters] = useState<Partial<IUser>>({});
   const [query, setQuery] = useState("");
 
@@ -46,13 +57,32 @@ const AllUsers = () => {
 
   const getRows = useCallback(() => {
     sendRequest({
-      url: `${USERS_BASE_API_URL}${query ? `?${query}` : ""}`,
+      url: `${USERS_BASE_API_URL}?page=${currentPage}&limit=${limit}${
+        query ? `&${query}` : ""
+      }`,
     });
-  }, [query, sendRequest]);
+  }, [currentPage, query, sendRequest]);
 
-  useEffect(() => {
-    getRows();
-  }, [getRows]);
+  const formattedUsers = useMemo(
+    () =>
+      !loading &&
+      users &&
+      users?.map((user) => {
+        return {
+          id: user._id as string,
+          data: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            company: user.company,
+            position: user.position,
+            role: user.role,
+            department: user.department,
+          },
+        };
+      }),
+    [loading, users]
+  );
 
   const handleChangeFilters = (
     e: React.ChangeEvent<
@@ -65,23 +95,16 @@ const AllUsers = () => {
     });
   };
 
-  const formattedUsers =
-    !loading &&
-    users &&
-    users?.map((user) => {
-      return {
-        id: user._id as string,
-        data: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          company: user.company,
-          position: user.position,
-          role: user.role,
-          department: user.department,
-        },
-      };
-    });
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setCurrentPage(newPage);
+    },
+    [setCurrentPage]
+  );
+
+  useEffect(() => {
+    getRows();
+  }, [getRows]);
 
   if (error) return <h1 role="status">{error.message}</h1>;
 
@@ -115,15 +138,26 @@ const AllUsers = () => {
       {!loading && formattedUsers && formattedUsers?.length === 0 && (
         <h1 role="status">No users found</h1>
       )}
-      {!loading && formattedUsers && formattedUsers?.length > 0 && (
-        <TableFromDocuments
-          cols={getColumnTitles(formattedUsers[0], TableColumns)}
-          rows={formattedUsers}
-          resourceBaseUrl="/dashboard/users"
-          apiBaseUrl={USERS_BASE_API_URL}
-          refetch={getRows}
-        />
-      )}
+      {!loading &&
+        usersResponse &&
+        formattedUsers &&
+        formattedUsers?.length > 0 && (
+          <>
+            <TableFromDocuments
+              cols={getColumnTitles(formattedUsers[0], TableColumns)}
+              rows={formattedUsers}
+              resourceBaseUrl="/dashboard/users"
+              apiBaseUrl={USERS_BASE_API_URL}
+              refetch={getRows}
+            />
+            <Pagination
+              total={usersResponse.count}
+              limit={limit}
+              currentPage={currentPage}
+              onClick={handlePageChange}
+            />
+          </>
+        )}
     </>
   );
 };

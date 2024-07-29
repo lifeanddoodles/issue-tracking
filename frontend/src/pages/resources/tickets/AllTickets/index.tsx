@@ -81,24 +81,6 @@ const AllTickets = () => {
     });
   }, [currentPage, query, sendRequest]);
 
-  const handleChangeFilters = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFilters({
-      ...filters,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handlePageChange = useCallback(
-    (newPage: number) => {
-      setCurrentPage(newPage);
-    },
-    [setCurrentPage]
-  );
-
   const formattedTickets = useMemo(
     () =>
       !loading &&
@@ -116,6 +98,27 @@ const AllTickets = () => {
         };
       }),
     [loading, tickets]
+  );
+
+  const handleChangeFilters = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
+      setFilters({
+        ...filters,
+        [e.target.name]: e.target.value,
+      });
+    },
+    [filters]
+  );
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setCurrentPage(newPage);
+    },
+    [setCurrentPage]
   );
 
   useEffect(() => {

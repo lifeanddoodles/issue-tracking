@@ -9,6 +9,8 @@ import {
   updateUserProfile,
 } from "../controllers/userControllers.js";
 import { ensureAuth } from "../middleware/authMiddleware.ts";
+import formatResults from "../middleware/formatResults.ts";
+import User from "../models/userModel.js";
 
 const router = express.Router();
 
@@ -22,7 +24,7 @@ router.post("/", addUser);
 // @desc Show all users
 // @route GET /api/users/
 // @access Private
-router.get("/", ensureAuth, getUsers);
+router.get("/", ensureAuth, formatResults(User), getUsers);
 
 // PROFILE
 // @desc Show user's profile

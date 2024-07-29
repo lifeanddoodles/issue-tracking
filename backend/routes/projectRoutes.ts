@@ -7,6 +7,8 @@ import {
   updateProject,
 } from "../controllers/projectControllers.js";
 import { isAdmin } from "../middleware/authMiddleware.ts";
+import formatResults from "../middleware/formatResults.ts";
+import Project from "../models/projectModel.ts";
 
 const router = express.Router();
 
@@ -18,7 +20,16 @@ router.post("/", addProject);
 // @desc Show all projects
 // @route GET /api/projects/
 // @access Public
-router.get("/", getProjects);
+router.get(
+  "/",
+  formatResults(Project, [
+    {
+      path: "company",
+      select: "name",
+    },
+  ]),
+  getProjects
+);
 
 // @desc Show one project
 // @route GET /api/projects/:projectId

@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IProjectDocument } from "../../../../../../shared/interfaces";
 import Button from "../../../../components/Button";
+import Pagination from "../../../../components/Pagination";
+import usePagination from "../../../../components/Pagination/hooks/usePagination";
 import SelectWithFetch from "../../../../components/Select/SelectWithFetch";
 import TableFromDocuments from "../../../../components/TableFromDocuments";
 import useFetch from "../../../../hooks/useFetch";
@@ -24,19 +26,30 @@ enum TableColumns {
 
 const AllProjects = () => {
   const {
-    data: projects,
+    data: projectsResponse,
     loading,
     error,
     sendRequest,
-  } = useFetch<
-    | (Omit<IProjectDocument, "company"> & {
-        company: {
-          _id: Record<string, unknown> | string;
-          name: string;
-        };
-      })[]
-    | []
-  >();
+  } = useFetch<{
+    data:
+      | (Omit<IProjectDocument, "company"> & {
+          company: {
+            _id: Record<string, unknown> | string;
+            name: string;
+          };
+        })[]
+      | [];
+    count: number;
+    pagination: { [key: string]: number; limit: number };
+    success: boolean;
+  }>();
+  const projects = useMemo(
+    () => projectsResponse?.data,
+    [projectsResponse?.data]
+  );
+  const { currentPage, setCurrentPage } = usePagination();
+  const limit = 10;
+
   const [filters, setFilters] = useState<
     Partial<{
       name: string;
@@ -65,38 +78,53 @@ const AllProjects = () => {
 
   const getRows = useCallback(() => {
     sendRequest({
-      url: `${PROJECTS_BASE_API_URL}${query ? `?${query}` : ""}`,
+      url: `${PROJECTS_BASE_API_URL}?page=${currentPage}&limit=${limit}${
+        query ? `&${query}` : ""
+      }`,
     });
-  }, [query, sendRequest]);
+  }, [currentPage, query, sendRequest]);
 
-  const handleChangeFilters = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFilters({
-      ...filters,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const formattedProjects = useMemo(
+    () =>
+      !loading &&
+      projects?.map((project) => {
+        return {
+          id: project._id as string,
+          data: {
+            name: project.name,
+            company: project.company?.name,
+            url: project.url,
+            services: project.services,
+          },
+        };
+      }),
+    [loading, projects]
+  );
+
+  const handleChangeFilters = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
+      setFilters({
+        ...filters,
+        [e.target.name]: e.target.value,
+      });
+    },
+    [filters]
+  );
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setCurrentPage(newPage);
+    },
+    [setCurrentPage]
+  );
 
   useEffect(() => {
     getRows();
   }, [getRows]);
-
-  const formattedProjects =
-    !loading &&
-    projects?.map((project) => {
-      return {
-        id: project._id as string,
-        data: {
-          name: project.name,
-          company: project.company?.name,
-          url: project.url,
-          services: project.services,
-        },
-      };
-    });
 
   if (error) return <h3 role="status">{error.message}</h3>;
 
@@ -121,15 +149,26 @@ const AllProjects = () => {
       {!loading && formattedProjects && formattedProjects?.length === 0 && (
         <h3 role="status">No projects found</h3>
       )}
-      {!loading && formattedProjects && formattedProjects?.length > 0 && (
-        <TableFromDocuments
-          cols={getColumnTitles(formattedProjects[0], TableColumns)}
-          rows={formattedProjects}
-          resourceBaseUrl="/dashboard/projects"
-          apiBaseUrl={PROJECTS_BASE_API_URL}
-          refetch={getRows}
-        />
-      )}
+      {!loading &&
+        projectsResponse &&
+        formattedProjects &&
+        formattedProjects?.length > 0 && (
+          <>
+            <TableFromDocuments
+              cols={getColumnTitles(formattedProjects[0], TableColumns)}
+              rows={formattedProjects}
+              resourceBaseUrl="/dashboard/projects"
+              apiBaseUrl={PROJECTS_BASE_API_URL}
+              refetch={getRows}
+            />
+            <Pagination
+              total={projectsResponse.count}
+              limit={limit}
+              currentPage={currentPage}
+              onClick={handlePageChange}
+            />
+          </>
+        )}
     </>
   );
 };

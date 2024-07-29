@@ -4,6 +4,7 @@ import {
   deleteTicket,
   getTicket,
   getTickets,
+  modifyGetAllTicketsQuery,
   updateTicket,
 } from "../controllers/ticketControllers.js";
 import { ensureAuth, isAdmin } from "../middleware/authMiddleware.ts";
@@ -23,6 +24,7 @@ router.post("/", ensureAuth, addTicket);
 router.get(
   "/",
   ensureAuth,
+  modifyGetAllTicketsQuery, // TODO: Ensure this middleware is working
   formatResults(
     Ticket,
     [

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { RootQuerySelector } from "mongoose";
 import {
+  FormattedResultsProps,
   IServiceBase,
   IServiceDocument,
   IUserDocument,
-} from "../../shared/interfaces/index.js";
+} from "../../shared/interfaces";
 import Service from "../models/serviceModel.js";
 
 // @desc Create service
@@ -55,23 +55,12 @@ export const addService = asyncHandler(async (req: Request, res: Response) => {
 // @route GET /api/services/
 // @access Public
 export const getServices = asyncHandler(async (req: Request, res: Response) => {
-  // Find services
-  const query: RootQuerySelector<IServiceDocument> = {};
-
-  for (const key in req.query) {
-    query[key as keyof IServiceDocument] = req.query[key];
-  }
-
-  const services = await Service.find(query);
-
-  // Handle services not found
-  if (!services) {
-    res.status(404);
-    throw new Error("Services not found");
-  }
-
-  // Handle success
-  res.status(200).send(services);
+  res
+    .status(200)
+    .send(
+      (res as Response & { formattedResults: FormattedResultsProps })
+        .formattedResults
+    );
 });
 
 // @desc  Get one service

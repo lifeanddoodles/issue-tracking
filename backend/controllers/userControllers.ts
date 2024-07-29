@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { RootQuerySelector, Types } from "mongoose";
-import { IUser, IUserDocument } from "../../shared/interfaces/index.js";
+import { FormattedResultsProps, IUserDocument } from "../../shared/interfaces";
 import Company from "../models/companyModel.js";
 import User from "../models/userModel.js";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.ts";
@@ -127,37 +126,12 @@ export const addUser = asyncHandler(
 // @route   GET /api/users/
 // @access  Private
 export const getUsers = asyncHandler(async (req: Request, res: Response) => {
-  // Validation
-  // Get authenticated user
-  const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === "CLIENT";
-
-  // Find users
-  const query: RootQuerySelector<IUser> = {};
-
-  for (const key in req.query) {
-    if (key === "company" && Types.ObjectId.isValid(req.query[key] as string)) {
-      // If the query parameter for 'company' is a valid ObjectId, convert it
-      query[key as keyof IUser] = new Types.ObjectId(req.query[key] as string);
-    } else {
-      query[key as keyof IUser] = req.query[key];
-    }
-  }
-
-  if (isClient) {
-    query.company = authUser?.company;
-  }
-
-  const users: IUserDocument[] = await User.find(query).select("-password");
-
-  // Handle users not found
-  if (!users) {
-    res.status(404);
-    throw new Error("Users not found");
-  }
-
-  // Handle success
-  res.status(200).send(users);
+  res
+    .status(200)
+    .send(
+      (res as Response & { formattedResults: FormattedResultsProps })
+        .formattedResults
+    );
 });
 
 // @desc Show user's profile

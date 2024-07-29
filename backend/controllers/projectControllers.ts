@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { RootQuerySelector, Types } from "mongoose";
 import {
+  FormattedResultsProps,
   IProjectBase,
   IProjectDocument,
   IUserDocument,
@@ -51,45 +51,12 @@ export const addProject = asyncHandler(async (req: Request, res: Response) => {
 // @route GET /api/projects/
 // @access Public
 export const getProjects = asyncHandler(async (req: Request, res: Response) => {
-  // Get authenticated user
-  const authUser: Partial<IUserDocument> | undefined = req.user;
-  const isClient = authUser?.role === "CLIENT";
-
-  // Find projects
-  const query: RootQuerySelector<IProjectDocument> = {};
-
-  for (const key in req.query) {
-    if (key === "services") {
-      query.services = {
-        $in: [req.query[key]],
-      };
-    } else if (key === "company") {
-      query.company = new Types.ObjectId(
-        req.query[key] as keyof IProjectDocument
-      );
-    } else {
-      query[key as keyof IProjectDocument] = req.query[key];
-    }
-  }
-
-  // Restrict query to user's company
-  if (isClient) {
-    query.company = authUser?.company;
-  }
-
-  const projects = await Project.find(query).populate({
-    path: "company",
-    select: "name",
-  });
-
-  // Handle projects not found
-  if (!projects) {
-    res.status(404);
-    throw new Error("Projects not found");
-  }
-
-  // Handle success
-  res.status(200).send(projects);
+  res
+    .status(200)
+    .send(
+      (res as Response & { formattedResults: FormattedResultsProps })
+        .formattedResults
+    );
 });
 
 // @desc  Get one project

@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ICompanyDocument,
   Industry,
   SubscriptionStatus,
 } from "shared/interfaces";
 import Button from "../../../../components/Button";
+import Pagination from "../../../../components/Pagination";
+import usePagination from "../../../../components/Pagination/hooks/usePagination";
 import Select from "../../../../components/Select";
 import TableFromDocuments from "../../../../components/TableFromDocuments";
 import useFetch from "../../../../hooks/useFetch";
@@ -26,11 +28,23 @@ enum TableColumns {
 
 const AllCompanies = () => {
   const {
-    data: companies,
+    data: companiesResponse,
     loading,
     error,
     sendRequest,
-  } = useFetch<ICompanyDocument[] | []>();
+  } = useFetch<{
+    data: ICompanyDocument[] | [];
+    count: number;
+    pagination: { [key: string]: number; limit: number };
+    success: boolean;
+  }>();
+  const companies = useMemo(
+    () => companiesResponse?.data,
+    [companiesResponse?.data]
+  );
+  const { currentPage, setCurrentPage } = usePagination();
+  const limit = 10;
+
   const [filters, setFilters] = useState<
     Partial<{
       name: string;
@@ -61,38 +75,53 @@ const AllCompanies = () => {
 
   const getRows = useCallback(() => {
     sendRequest({
-      url: `${COMPANIES_BASE_API_URL}${query ? `?${query}` : ""}`,
+      url: `${COMPANIES_BASE_API_URL}?page=${currentPage}&limit=${limit}${
+        query ? `&${query}` : ""
+      }`,
     });
-  }, [query, sendRequest]);
+  }, [currentPage, query, sendRequest]);
 
-  const handleChangeFilters = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFilters({
-      ...filters,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const formattedCompanies = useMemo(
+    () =>
+      !loading &&
+      companies?.map((company) => {
+        return {
+          id: company._id as string,
+          data: {
+            name: company.name,
+            subscriptionStatus: company.subscriptionStatus,
+            url: company.url,
+            industry: company.industry,
+          },
+        };
+      }),
+    [companies, loading]
+  );
+
+  const handleChangeFilters = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
+      setFilters({
+        ...filters,
+        [e.target.name]: e.target.value,
+      });
+    },
+    [filters]
+  );
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setCurrentPage(newPage);
+    },
+    [setCurrentPage]
+  );
 
   useEffect(() => {
     getRows();
   }, [getRows]);
-
-  const formattedCompanies =
-    !loading &&
-    companies?.map((company) => {
-      return {
-        id: company._id as string,
-        data: {
-          name: company.name,
-          subscriptionStatus: company.subscriptionStatus,
-          url: company.url,
-          industry: company.industry,
-        },
-      };
-    });
 
   if (error) return <h3 role="status">{error.message}</h3>;
 
@@ -126,18 +155,29 @@ const AllCompanies = () => {
       {!loading && formattedCompanies && formattedCompanies?.length === 0 && (
         <h3 role="status">No companies found</h3>
       )}
-      {!loading && formattedCompanies && formattedCompanies?.length > 0 && (
-        <TableFromDocuments
-          cols={getColumnTitles<ICompanyDocument>(
-            formattedCompanies[0],
-            TableColumns
-          )}
-          rows={formattedCompanies}
-          resourceBaseUrl="/dashboard/companies"
-          apiBaseUrl={COMPANIES_BASE_API_URL}
-          refetch={getRows}
-        />
-      )}
+      {!loading &&
+        companiesResponse &&
+        formattedCompanies &&
+        formattedCompanies?.length > 0 && (
+          <>
+            <TableFromDocuments
+              cols={getColumnTitles<ICompanyDocument>(
+                formattedCompanies[0],
+                TableColumns
+              )}
+              rows={formattedCompanies}
+              resourceBaseUrl="/dashboard/companies"
+              apiBaseUrl={COMPANIES_BASE_API_URL}
+              refetch={getRows}
+            />
+            <Pagination
+              total={companiesResponse.count}
+              limit={limit}
+              currentPage={currentPage}
+              onClick={handlePageChange}
+            />
+          </>
+        )}
     </>
   );
 };

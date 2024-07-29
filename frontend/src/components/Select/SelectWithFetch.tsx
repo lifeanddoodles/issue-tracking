@@ -26,7 +26,16 @@ const SelectWithFetch = forwardRef(
     }: ISelectWithFetchProps<T>,
     ref: React.ForwardedRef<HTMLSelectElement>
   ): React.ReactElement => {
-    const { data, loading, error, sendRequest } = useFetch<T[] | null>(null);
+    const { data, loading, error, sendRequest } = useFetch<
+      | T[]
+      | {
+          data: T[];
+          count: number;
+          pagination: { [key: string]: number; limit: number };
+          success: boolean;
+        }
+      | null
+    >(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       onChange && onChange(e);
@@ -37,7 +46,8 @@ const SelectWithFetch = forwardRef(
     }, [url, query, sendRequest]);
 
     const resourceOptions = useMemo(() => {
-      if (data !== null) return getFormattedOptions(data);
+      if (data !== null)
+        return getFormattedOptions("data" in data ? data["data"] : data);
       return [];
     }, [data, getFormattedOptions]);
 

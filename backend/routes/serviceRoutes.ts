@@ -7,6 +7,8 @@ import {
   updateService,
 } from "../controllers/serviceControllers.js";
 import { isAdmin } from "../middleware/authMiddleware.ts";
+import formatResults from "../middleware/formatResults.ts";
+import Service from "../models/serviceModel.js";
 
 const router = express.Router();
 
@@ -18,7 +20,7 @@ router.post("/", addService);
 // @desc Show all services
 // @route GET /api/services/
 // @access Public
-router.get("/", getServices);
+router.get("/", formatResults(Service), getServices);
 
 // @desc Show one service
 // @route GET /api/services/:serviceId
